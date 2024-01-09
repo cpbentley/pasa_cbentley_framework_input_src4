@@ -52,8 +52,14 @@ public interface ITechCanvasAppli extends ITechByteObject {
     */
    public static final int CANVAS_APP_OFFSET_04_SCREEN_MODE1    = A_OBJECT_BASIC_SIZE + 3;
 
+   /**
+    * 
+    */
    public static final int CANVAS_APP_OFFSET_05_DEBUG_FLAGS1    = A_OBJECT_BASIC_SIZE + 4;
 
+   /**
+    * 
+    */
    public static final int CANVAS_APP_OFFSET_06_BG_COLOR4       = A_OBJECT_BASIC_SIZE + 5;
 
 }

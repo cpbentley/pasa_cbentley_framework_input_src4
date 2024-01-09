@@ -18,9 +18,9 @@ public class LogConfiguratorGameLoop implements ILogConfigurator {
       
       log.setLevelGlobal(LVL_03_FINEST);
       
-      log.setFlagPrint(MASTER_FLAG_03_ONLY_POSITIVES, true);
-      log.setFlagPrint(MASTER_FLAG_05_IGNORE_FLAGS, true);
-      log.setFlagPrint(MASTER_FLAG_09_TREAT_STRINGABLE_CLASS, true);
+      log.setFlagMaster(MASTER_FLAG_03_ONLY_POSITIVES, true);
+      log.setFlagMaster(MASTER_FLAG_05_IGNORE_FLAGS, true);
+      log.setFlagMaster(MASTER_FLAG_09_TREAT_STRINGABLE_CLASS, true);
       
       log.setClassPositives(Simulation.class, true);
       log.setClassPositives(FrameData.class, true);

@@ -327,10 +327,13 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    /**
+    * Creates an {@link CanvasAppliInput} with the given Host and Appli parameters
     * 
-    * @param inputCtx
-    * @param mi
+    * Subclass must call {@link CanvasAppliInput#a_Init()} at the end of its constructor.
+    * 
+    * @param ic {@link InputCtx}
     * @param techCanvasAppli {@link ITechCanvasAppli}
+    * @param techCanvasHost  {@link ITechCanvasHost}
     */
    public CanvasAppliInput(InputCtx ic, ByteObject techCanvasAppli, ByteObject techCanvasHost) {
       super(ic.getCUC(), techCanvasHost);
@@ -341,6 +344,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       threadUpdateRender = Thread.currentThread();
       eventThread = Thread.currentThread();
       sema = new MutexSignal(ic.getUCtx());
+
       //#debug
       toDLog().pInit("Init Thread" + threadRender, null, CanvasAppliInput.class, "Constructor");
 
@@ -1059,7 +1063,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
 
       if (ic.toStringHasToStringFlag(IFlagsToStringInput.D_FLAG_22_MOVE_POINTERS)) {
          //we want to block printing on the console
-         toDLog().getDefault().getConfig().setFlagPrint(ITechConfig.MASTER_FLAG_01_BLOCK_ALL_PRINT, true); //disable sysout 
+         toDLog().getDefault().getConfig().setFlagMaster(ITechConfig.MASTER_FLAG_01_BLOCK_ALL_PRINT, true); //disable sysout 
       }
       //#enddebug
    }
@@ -1068,7 +1072,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       //#mdebug
       if (ic.toStringHasToStringFlag(IFlagsToStringInput.D_FLAG_22_MOVE_POINTERS)) {
          //#debug
-         toDLog().getDefault().getConfig().setFlagPrint(ITechConfig.MASTER_FLAG_01_BLOCK_ALL_PRINT, true); //disable sysout 
+         toDLog().getDefault().getConfig().setFlagMaster(ITechConfig.MASTER_FLAG_01_BLOCK_ALL_PRINT, true); //disable sysout 
       }
       //#debug
       toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerMovedStart", LVL_03_FINEST, true);
@@ -1557,7 +1561,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       }
 
       //#debug
-      toDLog().pFlow("After mode is now " + ToStringStaticInput.toStringThreadingMode(threadingMode), this, CanvasAppliInput.class, "setThreadingMode", LVL_05_FINE, false);
+      toDLog().pFlow("Thread Mode is now :<" + ToStringStaticInput.toStringThreadingMode(threadingMode) + ">", this, CanvasAppliInput.class, "setThreadingMode", LVL_05_FINE, false);
    }
 
    private void setThreadStop() {
