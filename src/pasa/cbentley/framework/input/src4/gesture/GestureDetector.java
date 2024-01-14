@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.src4.logging.IDLog;
+import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.core.src4.logging.ITechLvl;
 import pasa.cbentley.core.src4.utils.BitUtils;
 import pasa.cbentley.core.src4.utils.IntUtils;
@@ -55,7 +56,7 @@ import pasa.cbentley.framework.input.src4.ctx.InputCtx;
  * @author Charles-Philip Bentley
  *
  */
-public class GestureDetector implements ITechGestures {
+public class GestureDetector implements ITechGestures, IStringable {
 
    /**
     * Modifies X and Y values until they reach their final value.

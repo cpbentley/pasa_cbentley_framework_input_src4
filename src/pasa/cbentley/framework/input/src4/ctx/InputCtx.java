@@ -2,8 +2,8 @@ package pasa.cbentley.framework.input.src4.ctx;
 
 import pasa.cbentley.byteobjects.src4.core.ByteObject;
 import pasa.cbentley.byteobjects.src4.ctx.ABOCtx;
-import pasa.cbentley.byteobjects.src4.ctx.IBOTypesBOC;
 import pasa.cbentley.byteobjects.src4.ctx.IConfigBO;
+import pasa.cbentley.byteobjects.src4.ctx.IStaticIDsBO;
 import pasa.cbentley.core.src4.ctx.CtxManager;
 import pasa.cbentley.core.src4.ctx.ICtx;
 import pasa.cbentley.core.src4.interfaces.ITimeCtrl;
@@ -55,7 +55,7 @@ public class InputCtx extends ABOCtx implements ITechCtxSettingsInput {
       boModule = new BOModuleInput(this);
 
       CtxManager manager = uc.getCtxManager();
-      manager.registerStaticRange(this, IBOTypesBOC.SID_BOTYPE_3, IBOTypesInput.AZ_BOTYPE_INPUT_A, IBOTypesInput.AZ_BOTYPE_INPUT_Z);
+      manager.registerStaticRange(this, IStaticIDsBO.SID_BYTEOBJECT_TYPES, IBOTypesInput.AZ_BOTYPE_INPUT_A, IBOTypesInput.AZ_BOTYPE_INPUT_Z);
 
       if (this.getClass() == InputCtx.class) {
          a_Init();

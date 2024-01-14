@@ -1,8 +1,8 @@
 package pasa.cbentley.framework.input.src4.ctx;
 
-import pasa.cbentley.core.src4.ctx.IFlagsToString;
+import pasa.cbentley.core.src4.ctx.IToStringFlags;
 
-public interface IFlagsToStringInput extends IFlagsToString {
+public interface IFlagsToStringInput extends IToStringFlags {
    /**
     * Debug prints in move
     */

@@ -1,6 +1,6 @@
 package pasa.cbentley.framework.input.src4.interfaces;
 
-import pasa.cbentley.byteobjects.src4.tech.ITechByteObject;
+import pasa.cbentley.byteobjects.src4.core.interfaces.IByteObject;
 import pasa.cbentley.framework.coreui.src4.tech.ITechCanvasHost;
 import pasa.cbentley.framework.input.src4.ctx.IBOTypesInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
@@ -12,7 +12,7 @@ import pasa.cbentley.framework.input.src4.ctx.InputCtx;
  * @author Charles Bentley
  *
  */
-public interface ITechCanvasAppli extends ITechByteObject {
+public interface ITechCanvasAppli extends IByteObject {
 
    public static final int CANVAS_APP_BASIC_SIZE                = A_OBJECT_BASIC_SIZE + 10;
 

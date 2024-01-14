@@ -1,6 +1,6 @@
 package pasa.cbentley.framework.input.src4.ctx;
 
-import pasa.cbentley.byteobjects.src4.tech.ITechCtxSettings;
+import pasa.cbentley.byteobjects.src4.core.interfaces.IBOCtxSettings;
 import pasa.cbentley.framework.coreui.src4.tech.ITechCanvasHost;
 import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
 
@@ -11,7 +11,7 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
  * @author Charles Bentley
  *
  */
-public interface ITechCtxSettingsInput extends ITechCtxSettings {
+public interface ITechCtxSettingsInput extends IBOCtxSettings {
    /**
     * True when application is running in One Thumb Mode
     */
