@@ -14,7 +14,7 @@ import pasa.cbentley.framework.input.src4.InputState;
 import pasa.cbentley.framework.input.src4.CanvasResult;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.ctx.ToStringStaticInput;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 import pasa.cbentley.framework.input.src4.interfaces.IJobEvent;
 
 /**
@@ -51,7 +51,7 @@ import pasa.cbentley.framework.input.src4.interfaces.IJobEvent;
  * This thread will be interrupted on pause and created again
  * when Canvas is unpaused.
  * <br>
- * TODO how is this running with {@link ITechInput#THREADING_1_UI_UPDATERENDERING}
+ * TODO how is this running with {@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING}
  * <br>
  * Don't we want long press to be controlled by update
  * @author Charles-Philip Bentley
@@ -163,7 +163,7 @@ public class JobsEventRunner implements Runnable, IStringable {
     * A new event. check type and cancel pending Jobs. Releases removes Press repeats.
     * Any event cancels a long press.
     * <br>
-    * Called in the {@link ITechInput#THREAD_0_HOST_HUI}.
+    * Called in the {@link ITechPaintThread#THREAD_0_HOST_HUI}.
     * <br>
     * @param is
     */

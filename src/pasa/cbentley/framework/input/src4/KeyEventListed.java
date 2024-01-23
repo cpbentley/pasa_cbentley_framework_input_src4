@@ -6,7 +6,7 @@ import pasa.cbentley.core.src4.structs.listdoublelink.LinkedListDouble;
 import pasa.cbentley.core.src4.structs.listdoublelink.ListElement;
 import pasa.cbentley.framework.coreui.src4.event.DeviceEvent;
 import pasa.cbentley.framework.coreui.src4.event.RepeatEvent;
-import pasa.cbentley.framework.coreui.src4.tech.IBCodes;
+import pasa.cbentley.framework.coreui.src4.tech.ITechCodes;
 import pasa.cbentley.framework.input.src4.event.NUpleEvent;
 
 /**
@@ -129,7 +129,7 @@ public class KeyEventListed extends ListElement {
    }
 
    /**
-    * {@link IBCodes#TIMING_1_SLOW} constraint. which is a long press event time out
+    * {@link ITechCodes#TIMING_1_SLOW} constraint. which is a long press event time out
     * @return
     */
    public int getNUpleStrictSlow() {

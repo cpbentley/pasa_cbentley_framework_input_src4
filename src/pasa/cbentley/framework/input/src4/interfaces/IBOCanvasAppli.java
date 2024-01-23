@@ -1,18 +1,18 @@
 package pasa.cbentley.framework.input.src4.interfaces;
 
 import pasa.cbentley.byteobjects.src4.core.interfaces.IByteObject;
-import pasa.cbentley.framework.coreui.src4.tech.ITechCanvasHost;
+import pasa.cbentley.framework.coreui.src4.tech.IBOCanvasHost;
 import pasa.cbentley.framework.input.src4.ctx.IBOTypesInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 
 /**
  * Config for {@link InputCtx}
  * 
- * Contains a {@link ITechCanvasHost} for the default canvas configuration
+ * Contains a {@link IBOCanvasHost} for the default canvas configuration
  * @author Charles Bentley
  *
  */
-public interface ITechCanvasAppli extends IByteObject {
+public interface IBOCanvasAppli extends IByteObject {
 
    public static final int CANVAS_APP_BASIC_SIZE                = A_OBJECT_BASIC_SIZE + 10;
 
@@ -35,19 +35,19 @@ public interface ITechCanvasAppli extends IByteObject {
     * Set for the controlling canvas
     * 
     * <br>
-    * <li>{@link ITechInput#THREADING_0_ONE_TO_RULE_ALL}
-    * <li>{@link ITechInput#THREADING_1_UI_UPDATERENDERING}
-    * <li>{@link ITechInput#THREADING_2_UIUPDATE_RENDERING}
-    * <li>{@link ITechInput#THREADING_3_THREE_SEPARATE}
+    * <li>{@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}
+    * <li>{@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING}
+    * <li>{@link ITechPaintThread#THREADING_2_UIUPDATE_RENDERING}
+    * <li>{@link ITechPaintThread#THREADING_3_THREE_SEPARATE}
     * 
     */
    public static final int CANVAS_APP_OFFSET_03_THREADING_MODE1 = A_OBJECT_BASIC_SIZE + 2;
 
    /**
-    * <li>{@link ITechCanvasHost#SCREEN_0_TOP_NORMAL}
-    * <li>{@link ITechCanvasHost#SCREEN_1_BOT_UPSIDEDOWN}
-    * <li>{@link ITechCanvasHost#SCREEN_2_LEFT_ROTATED}
-    * <li>{@link ITechCanvasHost#SCREEN_3_RIGHT_ROTATED}
+    * <li>{@link IBOCanvasHost#SCREEN_0_TOP_NORMAL}
+    * <li>{@link IBOCanvasHost#SCREEN_1_BOT_UPSIDEDOWN}
+    * <li>{@link IBOCanvasHost#SCREEN_2_LEFT_ROTATED}
+    * <li>{@link IBOCanvasHost#SCREEN_3_RIGHT_ROTATED}
     * 
     */
    public static final int CANVAS_APP_OFFSET_04_SCREEN_MODE1    = A_OBJECT_BASIC_SIZE + 3;

@@ -15,8 +15,8 @@ import pasa.cbentley.framework.coreui.src4.exec.ExecutionContext;
 import pasa.cbentley.framework.coreui.src4.interfaces.IActionFeedback;
 import pasa.cbentley.framework.coreui.src4.tech.ITechInputFeedback;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.interfaces.IScreenResults;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechScreenResults;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 import pasa.cbentley.framework.input.src4.interfaces.ITechInputCycle;
 
 /**
@@ -37,7 +37,7 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechInputCycle;
  * @author Charles-Philip Bentley
  *
  */
-public class CanvasResult implements ITechInputFeedback, IScreenResults, IStringable {
+public class CanvasResult implements ITechInputFeedback, ITechScreenResults, IStringable {
 
    /**
     * Short Strings describing the actions that were done
@@ -133,7 +133,7 @@ public class CanvasResult implements ITechInputFeedback, IScreenResults, IString
       cycleContext = cycle;
       if (cycleContext == ITechInputCycle.CYCLE_2_ANIMATION_EVENT) {
          lock = new Integer(0);
-         setFlag(IScreenResults.FLAG_15_LOCK, true);
+         setFlag(ITechScreenResults.FLAG_15_LOCK, true);
       }
       resetAll();
    }
@@ -219,8 +219,8 @@ public class CanvasResult implements ITechInputFeedback, IScreenResults, IString
     * <br>
     * False if repaint flag has not yet been build.
     * <br>
-    * <li> {@link ITechInput#REPAINT_01_FULL}
-    * <li> {@link ITechInput#REPAINT_01_FULL}
+    * <li> {@link ITechPaintThread#REPAINT_01_FULL}
+    * <li> {@link ITechPaintThread#REPAINT_01_FULL}
     * 
     * @param flag
     * @return
@@ -309,8 +309,8 @@ public class CanvasResult implements ITechInputFeedback, IScreenResults, IString
          this.screenMessageTimeOut = sr.screenMessageTimeOut;
       }
       //at least one lock is requested
-      if (sr.hasResultFlag(IScreenResults.FLAG_15_LOCK)) {
-         this.setFlag(IScreenResults.FLAG_15_LOCK, true);
+      if (sr.hasResultFlag(ITechScreenResults.FLAG_15_LOCK)) {
+         this.setFlag(ITechScreenResults.FLAG_15_LOCK, true);
       }
       linked = sr;
       mergeSub(sr);
@@ -321,13 +321,13 @@ public class CanvasResult implements ITechInputFeedback, IScreenResults, IString
    }
 
    /**
-    * Notifies paint lock and sets {@link IScreenResults#FLAG_06_ACTIVE} to false.
+    * Notifies paint lock and sets {@link ITechScreenResults#FLAG_06_ACTIVE} to false.
     * <br>
     * <br>
     * 
     */
    public void paintEnd() {
-      setFlag(IScreenResults.FLAG_06_ACTIVE, false);
+      setFlag(ITechScreenResults.FLAG_06_ACTIVE, false);
       //
       if (hasResultFlag(FLAG_15_SCREEN_LOCK)) {
          CanvasResult sr = this;
@@ -522,10 +522,10 @@ public class CanvasResult implements ITechInputFeedback, IScreenResults, IString
          dc.append("RepaintsFlags:NONE");
       } else {
          dc.append("RepaintsFlags:");
-         if (hasRepaintFlag(ITechInput.REPAINT_01_FULL)) {
+         if (hasRepaintFlag(ITechPaintThread.REPAINT_01_FULL)) {
             dc.append("Full");
          }
-         if (hasRepaintFlag(ITechInput.REPAINT_02_EXTERNAL)) {
+         if (hasRepaintFlag(ITechPaintThread.REPAINT_02_EXTERNAL)) {
             dc.append("External");
          }
       }

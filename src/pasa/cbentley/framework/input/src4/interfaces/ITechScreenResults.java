@@ -7,7 +7,7 @@ import pasa.cbentley.framework.input.src4.CanvasResult;
  * @author Charles Bentley
  *
  */
-public interface IScreenResults {
+public interface ITechScreenResults {
 
    /**
     * Flag {@link CanvasResult} as being used in the repaint cycle before that painting call finishes.

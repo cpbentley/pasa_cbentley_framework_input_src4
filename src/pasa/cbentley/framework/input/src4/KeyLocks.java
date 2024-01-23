@@ -5,7 +5,7 @@ import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.src4.logging.IDLog;
 import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.framework.coreui.src4.interfaces.BCodes;
-import pasa.cbentley.framework.coreui.src4.tech.IBCodes;
+import pasa.cbentley.framework.coreui.src4.tech.ITechCodes;
 import pasa.cbentley.framework.coreui.src4.tech.ITechInputFeedback;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.interfaces.ILocks;
@@ -104,7 +104,7 @@ public class KeyLocks implements IStringable {
       if (locksBluePrints != null) {
          if (isLockStarted) {
             //already one key for locking.
-            if (keyPressed == IBCodes.KEY_STAR || keyPressed == IBCodes.KEY_POUND) {
+            if (keyPressed == ITechCodes.KEY_STAR || keyPressed == ITechCodes.KEY_POUND) {
                //only update if key is correct and timing is correct.
                if (is.isLastKeyFastTyped(keyPressed)) {
                   lockUpdate(keyPressed);
@@ -118,7 +118,7 @@ public class KeyLocks implements IStringable {
             }
          } else {
             //no key for locking. clean state.
-            if (keyPressed == IBCodes.KEY_STAR || keyPressed == IBCodes.KEY_POUND) {
+            if (keyPressed == ITechCodes.KEY_STAR || keyPressed == ITechCodes.KEY_POUND) {
                if (is.getNumKeysPressed() == 1) {
                   //update
                   isLockStarted = true;
@@ -268,7 +268,7 @@ public class KeyLocks implements IStringable {
       if (isShortLocked) {
          //this check will be false if short lock was used because the key press is registered
          if (is.isKeyTyped()) { // we have a key type
-            if (key == IBCodes.KEY_STAR || key == IBCodes.KEY_POUND) {
+            if (key == ITechCodes.KEY_STAR || key == ITechCodes.KEY_POUND) {
                isFullLocked = true;
                isShortLocked = false;
                isLockStarted = false;

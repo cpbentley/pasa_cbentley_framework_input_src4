@@ -9,14 +9,14 @@ import pasa.cbentley.framework.input.src4.EventController;
 import pasa.cbentley.framework.input.src4.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.gesture.GestureDetector;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 
 public class EventControllerQueued extends EventController {
 
    /**
     * {@link InputState} queue. Consumed by the update thread as discrete events.
     * <br>
-    * <li> {@link ITechInput#THREAD_0_HOST_HUI} writes host events
+    * <li> {@link ITechPaintThread#THREAD_0_HOST_HUI} writes host events
     * <li> {@link GestureDetector} events
     * <li> Drag events
     * <li> Repeat events

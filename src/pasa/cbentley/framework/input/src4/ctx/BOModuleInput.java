@@ -6,7 +6,7 @@ import pasa.cbentley.byteobjects.src4.ctx.IBOTypesBOC;
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.framework.coreui.src4.ctx.ToStringStaticCoreUi;
-import pasa.cbentley.framework.input.src4.interfaces.ITechCanvasAppli;
+import pasa.cbentley.framework.input.src4.interfaces.IBOCanvasAppli;
 
 public class BOModuleInput extends BOModuleAbstract {
 
@@ -44,15 +44,15 @@ public class BOModuleInput extends BOModuleAbstract {
       switch (type) {
          case IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI:
             dc.rootN(bo, "ITechCanvasAppli");
-            int subType = bo.get1(ITechCanvasAppli.CANVAS_APP_OFFSET_02_TYPE1);
+            int subType = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_02_TYPE1);
             dc.appendVarWithSpace("subType", subType);
-            int threadMode = bo.get1(ITechCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1);
+            int threadMode = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1);
             dc.appendVarWithNewLine("treadMode", ToStringStaticInput.toStringThreadingMode(threadMode));
             
-            int screenMode = bo.get1(ITechCanvasAppli.CANVAS_APP_OFFSET_04_SCREEN_MODE1);
+            int screenMode = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_04_SCREEN_MODE1);
             dc.appendVarWithNewLine("screenMode", ToStringStaticCoreUi.getStringScreenMode(screenMode));
             
-            int bgColor = bo.get1(ITechCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4);
+            int bgColor = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4);
             dc.appendColorWithSpace("bgColor", bgColor);
           
             //look for a sub type string

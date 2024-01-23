@@ -7,7 +7,7 @@ import pasa.cbentley.framework.input.src4.EventThreader;
 import pasa.cbentley.framework.input.src4.InputState;
 import pasa.cbentley.framework.input.src4.CanvasResult;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 
 /**
  * Each event is discrete. no optimization
@@ -19,7 +19,7 @@ public class EventQueue extends EventThreader {
    private BlockingQueueUnlimited queueUpdateRender;
 
    /**
-    * {@link ITechInput#THREADING_1_UI_UPDATERENDERING}
+    * {@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING}
     * <br>
     * The update and render thread are the same.
     * There is no clocking in this

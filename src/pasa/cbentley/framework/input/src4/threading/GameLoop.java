@@ -9,11 +9,11 @@ import pasa.cbentley.framework.input.src4.EventThreader;
 import pasa.cbentley.framework.input.src4.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.game.FrameData;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 import pasa.cbentley.framework.input.src4.interfaces.ITechInputCycle;
 
 /**
- * A Game loop provides a special clocking for {@link ITechInput#THREADING_1_UI_UPDATERENDERING}
+ * A Game loop provides a special clocking for {@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING}
  * <br>
  * Instead of waiting for Jobs on a queue, a game loops 
  * 

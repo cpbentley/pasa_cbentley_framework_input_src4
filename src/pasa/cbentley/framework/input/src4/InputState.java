@@ -37,11 +37,11 @@ import pasa.cbentley.framework.coreui.src4.event.RepeatEvent;
 import pasa.cbentley.framework.coreui.src4.event.SenseEvent;
 import pasa.cbentley.framework.coreui.src4.event.VoiceEvent;
 import pasa.cbentley.framework.coreui.src4.interfaces.ITechEventHost;
-import pasa.cbentley.framework.coreui.src4.tech.IBCodes;
+import pasa.cbentley.framework.coreui.src4.tech.ITechCodes;
 import pasa.cbentley.framework.coreui.src4.tech.ITechGestures;
 import pasa.cbentley.framework.coreui.src4.tech.IInput;
 import pasa.cbentley.framework.coreui.src4.utils.InputSettings;
-import pasa.cbentley.framework.input.src4.ctx.ITechCtxSettingsInput;
+import pasa.cbentley.framework.input.src4.ctx.IBOCtxSettingsInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.event.ctrl.EventControllerQueued;
 import pasa.cbentley.framework.input.src4.event.jobs.BaseJob;
@@ -52,7 +52,7 @@ import pasa.cbentley.framework.input.src4.event.keys.EventKeyPosition;
 import pasa.cbentley.framework.input.src4.game.FrameData;
 import pasa.cbentley.framework.input.src4.gesture.GestureDetector;
 import pasa.cbentley.framework.input.src4.gesture.GestureInput;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechEvent;
 
 /**
  * Encapsulates the state of input devices (touchscreen, keyboard etc).
@@ -188,7 +188,7 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
  * @author Charles-Philip Bentley
  *
  */
-public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures, IStringable {
+public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, IStringable {
 
    private static final int    MAX_HISTORY            = 100;
 
@@ -457,7 +457,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
     */
    private boolean addDeviceWheeled(DeviceEventXY dex) {
       lastDeviceEventXY = dex;
-      setEventID(ITechInput.EVID_20_WHEEL);
+      setEventID(ITechEvent.EVID_20_WHEEL);
       return true;
    }
 
@@ -529,7 +529,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
 
    private boolean addEventCanvas(CanvasHostEvent ae) {
       lastCanvasEvent = ae;
-      setEventID(ITechInput.EVID_40_CANVAS);
+      setEventID(ITechEvent.EVID_40_CANVAS);
       return true;
    }
 
@@ -683,7 +683,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
       toLog().pFlow("", g, InputState.class, "addGesture@683", LVL_03_FINEST, true);
       lastGestureEvent = g;
       commonEventEnd();
-      setEventID(ITechInput.EVID_15_GESTURE);
+      setEventID(ITechEvent.EVID_15_GESTURE);
       return true;
    }
 
@@ -715,7 +715,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
       DeviceKeys dk = getDeviceKeysKeyboard(boardID);
       boolean res = addKeyEventListedRelease(de, dk);
       if (res) {
-         setEventID(ITechInput.EVID_02_KEYBOARD_RELEASE);
+         setEventID(ITechEvent.EVID_02_KEYBOARD_RELEASE);
       }
       return res;
    }
@@ -787,7 +787,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
       DeviceKeys dk = getDeviceKeyGamePads(boardID);
       boolean res = addKeyEventListedPress(de, dk);
       if (res) {
-         setEventID(ITechInput.EVID_15_PAD_PRESS);
+         setEventID(ITechEvent.EVID_15_PAD_PRESS);
          commonEventEnd();
       }
       return res;
@@ -823,15 +823,15 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
       int boardID = de.getDeviceID();
       DeviceKeys dk = getDeviceKeyGamePads(boardID);
       boolean res = false;
-      if (de.getDeviceButton() == IBCodes.AXIS_X) {
-         res = addPadAxis(de, IBCodes.PAD_LEFT, IBCodes.PAD_RIGHT);
-      } else if (de.getDeviceButton() == IBCodes.AXIS_Y) {
-         res = addPadAxis(de, IBCodes.PAD_UP, IBCodes.PAD_DOWN);
+      if (de.getDeviceButton() == ITechCodes.AXIS_X) {
+         res = addPadAxis(de, ITechCodes.PAD_LEFT, ITechCodes.PAD_RIGHT);
+      } else if (de.getDeviceButton() == ITechCodes.AXIS_Y) {
+         res = addPadAxis(de, ITechCodes.PAD_UP, ITechCodes.PAD_DOWN);
       } else {
          res = addKeyEventListedRelease(de, dk);
       }
       if (res) {
-         setEventID(ITechInput.EVID_16_PAD_RELEASE);
+         setEventID(ITechEvent.EVID_16_PAD_RELEASE);
          commonEventEnd();
       }
       return res;
@@ -872,7 +872,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
          gp = (GesturePointer) gp.getNext();
       }
       commonEventEnd();
-      setEventID(ITechInput.EVID_13_POINTER_MOVE);
+      setEventID(ITechEvent.EVID_13_POINTER_MOVE);
       return true;
    }
 
@@ -881,7 +881,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
       Pointer p = getPointerLazy(pointerID);
       p.setLastPointerEvent(dex);
       lastPointer = p;
-      setEventID(ITechInput.EVID_11_POINTER_PRESS);
+      setEventID(ITechEvent.EVID_11_POINTER_PRESS);
    }
 
    private void addPointerReleased(DeviceEventXY dex, int pointerID) {
@@ -889,7 +889,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
       Pointer p = getPointerLazy(pointerID);
       p.setLastPointerEvent(dex);
       lastPointer = p;
-      setEventID(ITechInput.EVID_12_POINTER_RELEASE);
+      setEventID(ITechEvent.EVID_12_POINTER_RELEASE);
    }
 
    private boolean addKeyEventListedPress(DeviceEvent de, DeviceKeys dk) {
@@ -928,7 +928,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
       DeviceKeys dk = getDeviceKeysKeyboard(boardID);
       boolean res = addKeyEventListedPress(de, dk);
       if (res) {
-         setEventID(ITechInput.EVID_01_KEYBOARD_PRESS);
+         setEventID(ITechEvent.EVID_01_KEYBOARD_PRESS);
       }
       return res;
    }
@@ -1810,7 +1810,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
     * @return
     */
    public int getKeyNum() {
-      if (getKeyCode() >= IBCodes.KEY_NUM0 && getKeyCode() <= IBCodes.KEY_NUM9) {
+      if (getKeyCode() >= ITechCodes.KEY_NUM0 && getKeyCode() <= ITechCodes.KEY_NUM9) {
          return getKeyCode() - 48;
       }
       return -1;
@@ -2346,83 +2346,83 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
    }
 
    public boolean is0() {
-      return getKeyCode() == IBCodes.KEY_NUM0;
+      return getKeyCode() == ITechCodes.KEY_NUM0;
    }
 
    public boolean is0P() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM0);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM0);
    }
 
    public boolean is1() {
-      return getKeyCode() == IBCodes.KEY_NUM1;
+      return getKeyCode() == ITechCodes.KEY_NUM1;
    }
 
    public boolean is1P() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM1);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM1);
    }
 
    public boolean is2() {
-      return getKeyCode() == IBCodes.KEY_NUM2;
+      return getKeyCode() == ITechCodes.KEY_NUM2;
    }
 
    public boolean is2P() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM2);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM2);
    }
 
    public boolean is3() {
-      return getKeyCode() == IBCodes.KEY_NUM3;
+      return getKeyCode() == ITechCodes.KEY_NUM3;
    }
 
    public boolean is3P() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM3);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM3);
    }
 
    public boolean is4() {
-      return getKeyCode() == IBCodes.KEY_NUM4;
+      return getKeyCode() == ITechCodes.KEY_NUM4;
    }
 
    public boolean is4P() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM4);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM4);
    }
 
    public boolean is5() {
-      return getKeyCode() == IBCodes.KEY_NUM5;
+      return getKeyCode() == ITechCodes.KEY_NUM5;
    }
 
    public boolean is5P() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM5);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM5);
    }
 
    public boolean is6() {
-      return getKeyCode() == IBCodes.KEY_NUM6;
+      return getKeyCode() == ITechCodes.KEY_NUM6;
    }
 
    public boolean is6P() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM6);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM6);
    }
 
    public boolean is7() {
-      return getKeyCode() == IBCodes.KEY_NUM7;
+      return getKeyCode() == ITechCodes.KEY_NUM7;
    }
 
    public boolean is7P() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM7);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM7);
    }
 
    public boolean is8() {
-      return getKeyCode() == IBCodes.KEY_NUM8;
+      return getKeyCode() == ITechCodes.KEY_NUM8;
    }
 
    public boolean is8P() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM8);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM8);
    }
 
    public boolean is9() {
-      return getKeyCode() == IBCodes.KEY_NUM9;
+      return getKeyCode() == ITechCodes.KEY_NUM9;
    }
 
    public boolean is9P() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM9);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM9);
    }
 
    public boolean isActive(int key) {
@@ -2430,11 +2430,11 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
    }
 
    public boolean isCancel() {
-      return getKeyCode() == IBCodes.KEY_CANCEL;
+      return getKeyCode() == ITechCodes.KEY_CANCEL;
    }
 
    public boolean isCancelP() {
-      return isPressedKeyboard0(IBCodes.KEY_CANCEL);
+      return isPressedKeyboard0(ITechCodes.KEY_CANCEL);
    }
 
    public boolean isCtxChange() {
@@ -2474,15 +2474,15 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
    }
 
    public boolean isDown() {
-      return getKeyCode() == IBCodes.KEY_DOWN;
+      return getKeyCode() == ITechCodes.KEY_DOWN;
    }
 
    public boolean isDownActive() {
-      return isActive(IBCodes.KEY_DOWN);
+      return isActive(ITechCodes.KEY_DOWN);
    }
 
    public boolean isDownP() {
-      return isPressedKeyboard0(IBCodes.KEY_DOWN);
+      return isPressedKeyboard0(ITechCodes.KEY_DOWN);
    }
 
    /**
@@ -2503,11 +2503,11 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
    }
 
    public boolean isFire() {
-      return getKeyCode() == IBCodes.KEY_FIRE;
+      return getKeyCode() == ITechCodes.KEY_FIRE;
    }
 
    public boolean isFireP() {
-      return isPressedKeyboard0(IBCodes.KEY_FIRE);
+      return isPressedKeyboard0(ITechCodes.KEY_FIRE);
    }
 
    /**
@@ -2558,15 +2558,15 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
    }
 
    public boolean isLeft() {
-      return getKeyCode() == IBCodes.KEY_LEFT;
+      return getKeyCode() == ITechCodes.KEY_LEFT;
    }
 
    public boolean isLeftActive() {
-      return isActive(IBCodes.KEY_LEFT);
+      return isActive(ITechCodes.KEY_LEFT);
    }
 
    public boolean isLeftP() {
-      return isPressedKeyboard0(IBCodes.KEY_LEFT);
+      return isPressedKeyboard0(ITechCodes.KEY_LEFT);
    }
 
    public boolean isLongPress() {
@@ -2577,7 +2577,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
    }
 
    public boolean isMinusP() {
-      return isPressedKeyboard0(IBCodes.KEY_MINUS);
+      return isPressedKeyboard0(ITechCodes.KEY_MINUS);
    }
 
    public boolean isModMoved() {
@@ -2611,15 +2611,15 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
    }
 
    public boolean isNavKey() {
-      return getKeyCode() == IBCodes.KEY_UP || getKeyCode() == IBCodes.KEY_DOWN || getKeyCode() == IBCodes.KEY_LEFT || getKeyCode() == IBCodes.KEY_RIGHT;
+      return getKeyCode() == ITechCodes.KEY_UP || getKeyCode() == ITechCodes.KEY_DOWN || getKeyCode() == ITechCodes.KEY_LEFT || getKeyCode() == ITechCodes.KEY_RIGHT;
    }
 
    public boolean isPhotoP() {
-      return isPressedKeyboard0(IBCodes.KEY_PHOTO);
+      return isPressedKeyboard0(ITechCodes.KEY_PHOTO);
    }
 
    public boolean isPlusP() {
-      return isPressedKeyboard0(IBCodes.KEY_PLUS);
+      return isPressedKeyboard0(ITechCodes.KEY_PLUS);
    }
 
    /**
@@ -2630,7 +2630,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
     * @return
     */
    public boolean isPointerButton0Pressed(int pointerID) {
-      return isPointerButtonPressed(pointerID, IBCodes.PBUTTON_0_DEFAULT);
+      return isPointerButtonPressed(pointerID, ITechCodes.PBUTTON_0_DEFAULT);
    }
 
    /**
@@ -2710,7 +2710,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
     * @return
     */
    public boolean isPointerSlide(int value) {
-      return isPointerSlide(value, IBCodes.POINTER_ID_0);
+      return isPointerSlide(value, ITechCodes.POINTER_ID_0);
    }
 
    /**
@@ -2763,7 +2763,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
     * @return
     */
    public boolean isPoundP() {
-      return isPressedKeyboard0(IBCodes.KEY_POUND);
+      return isPressedKeyboard0(ITechCodes.KEY_POUND);
    }
 
    /**
@@ -2778,7 +2778,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
     * Is the key pressed, among all the keys currently pressed
     * <br>
     * <br>
-    * @param key value from {@link IBCodes#KEY_BACK}, {@link IBCodes#KEY_NUM3}
+    * @param key value from {@link ITechCodes#KEY_BACK}, {@link ITechCodes#KEY_NUM3}
     * @return
     */
    public boolean isPressedKeyboard0(int key) {
@@ -2804,15 +2804,15 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
    }
 
    /**
-    * Is last device event {@link IBCodes#KEY_RIGHT}
+    * Is last device event {@link ITechCodes#KEY_RIGHT}
     * @return
     */
    public boolean isRight() {
-      return getKeyCode() == IBCodes.KEY_RIGHT;
+      return getKeyCode() == ITechCodes.KEY_RIGHT;
    }
 
    public boolean isRightActive() {
-      return isActive(IBCodes.KEY_RIGHT);
+      return isActive(ITechCodes.KEY_RIGHT);
    }
 
    /**
@@ -2820,16 +2820,16 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
     * @return
     */
    public boolean isRightP() {
-      return isPressedKeyboard0(IBCodes.KEY_RIGHT);
+      return isPressedKeyboard0(ITechCodes.KEY_RIGHT);
    }
 
    public boolean isPointerPSecondary() {
       if (lastDeviceEvent == lastDeviceEventXY) {
          if (lastDeviceEventXY.getDeviceMode() == IInput.MOD_0_PRESSED) {
             if (lastDeviceEventXY.getDeviceType() == IInput.DEVICE_1_MOUSE) {
-               return lastDeviceEventXY.getDeviceButton() == IBCodes.PBUTTON_1_RIGHT;
+               return lastDeviceEventXY.getDeviceButton() == ITechCodes.PBUTTON_1_RIGHT;
             } else if (lastDeviceEventXY.getDeviceType() == IInput.DEVICE_4_SCREEN) {
-               return lastDeviceEventXY.getDeviceButton() == IBCodes.FINGER_2;
+               return lastDeviceEventXY.getDeviceButton() == ITechCodes.FINGER_2;
             }
          }
       }
@@ -2840,9 +2840,9 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
       if (lastDeviceEvent == lastDeviceEventXY) {
          if (lastDeviceEventXY.getDeviceMode() == IInput.MOD_0_PRESSED) {
             if (lastDeviceEventXY.getDeviceType() == IInput.DEVICE_1_MOUSE) {
-               return lastDeviceEventXY.getDeviceButton() == IBCodes.PBUTTON_0_DEFAULT;
+               return lastDeviceEventXY.getDeviceButton() == ITechCodes.PBUTTON_0_DEFAULT;
             } else if (lastDeviceEventXY.getDeviceType() == IInput.DEVICE_4_SCREEN) {
-               return lastDeviceEventXY.getDeviceButton() == IBCodes.FINGER_1;
+               return lastDeviceEventXY.getDeviceButton() == ITechCodes.FINGER_1;
             }
          }
       }
@@ -2988,11 +2988,11 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
     * @return
     */
    public boolean isSoftLeftP() {
-      return isPressedKeyboard0(IBCodes.KEY_MENU_LEFT);
+      return isPressedKeyboard0(ITechCodes.KEY_MENU_LEFT);
    }
 
    public boolean isSoftRightP() {
-      return isPressedKeyboard0(IBCodes.KEY_MENU_RIGHT);
+      return isPressedKeyboard0(ITechCodes.KEY_MENU_RIGHT);
    }
 
    /**
@@ -3000,7 +3000,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
     * @return
     */
    public boolean isStarP() {
-      return isPressedKeyboard0(IBCodes.KEY_STAR);
+      return isPressedKeyboard0(ITechCodes.KEY_STAR);
    }
 
    /**
@@ -3081,15 +3081,15 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
    }
 
    public boolean isUp() {
-      return getKeyCode() == IBCodes.KEY_UP;
+      return getKeyCode() == ITechCodes.KEY_UP;
    }
 
    public boolean isUpActive() {
-      return isActive(IBCodes.KEY_UP);
+      return isActive(ITechCodes.KEY_UP);
    }
 
    public boolean isUpP() {
-      return isPressedKeyboard0(IBCodes.KEY_UP);
+      return isPressedKeyboard0(ITechCodes.KEY_UP);
    }
 
    public boolean isVoice() {
@@ -3098,7 +3098,7 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
 
    public boolean isWheelDown() {
       if (isWheeled()) {
-         return lastDeviceEventXY.getY() == IBCodes.PBUTTON_4_WHEEL_DOWN;
+         return lastDeviceEventXY.getY() == ITechCodes.PBUTTON_4_WHEEL_DOWN;
       }
       return false;
    }
@@ -3148,13 +3148,13 @@ public class InputState implements IInput, ITechCtxSettingsInput, ITechGestures,
 
    public boolean isWheelUp() {
       if (isWheeled()) {
-         return lastDeviceEventXY.getY() == IBCodes.PBUTTON_3_WHEEL_UP;
+         return lastDeviceEventXY.getY() == ITechCodes.PBUTTON_3_WHEEL_UP;
       }
       return false;
    }
 
    public boolean isZeroP() {
-      return isPressedKeyboard0(IBCodes.KEY_NUM0);
+      return isPressedKeyboard0(ITechCodes.KEY_NUM0);
    }
 
    private void newEventCanceler(BEvent be) {

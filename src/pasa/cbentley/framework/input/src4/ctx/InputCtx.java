@@ -11,9 +11,9 @@ import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.src4.thread.WorkerThread;
 import pasa.cbentley.framework.core.src4.ctx.CoreFrameworkCtx;
 import pasa.cbentley.framework.coreui.src4.ctx.CoreUiCtx;
-import pasa.cbentley.framework.coreui.src4.tech.ITechCanvasHost;
+import pasa.cbentley.framework.coreui.src4.tech.IBOCanvasHost;
 import pasa.cbentley.framework.input.src4.CanvasAppliInput;
-import pasa.cbentley.framework.input.src4.interfaces.ITechCanvasAppli;
+import pasa.cbentley.framework.input.src4.interfaces.IBOCanvasAppli;
 
 /**
  * Code context for the {@link CanvasAppliInput}.
@@ -23,7 +23,7 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechCanvasAppli;
  * @author Charles Bentley
  *
  */
-public class InputCtx extends ABOCtx implements ITechCtxSettingsInput {
+public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
    public static final int          CTX_ID = 8;
 
    private BOModuleInput            boModule;
@@ -60,8 +60,12 @@ public class InputCtx extends ABOCtx implements ITechCtxSettingsInput {
       if (this.getClass() == InputCtx.class) {
          a_Init();
       }
+      
+      //#debug
+      toDLog().pInit("Created", this, InputCtx.class, "InputCtx", LVL_05_FINE, true);
    }
 
+   
    protected void applySettings(ByteObject settingsNew, ByteObject settingsOld) {
       //default canvas settings are applied when calling method
       //#debug
@@ -77,11 +81,11 @@ public class InputCtx extends ABOCtx implements ITechCtxSettingsInput {
    /**
     * Create a 
     * 
-    * @return {@link ITechCanvasAppli}
+    * @return {@link IBOCanvasAppli}
     */
    public ByteObject createTechCanvasAppliDefault() {
       int type = IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI;
-      int size = ITechCanvasAppli.CANVAS_APP_BASIC_SIZE;
+      int size = IBOCanvasAppli.CANVAS_APP_BASIC_SIZE;
       ByteObject tech = cfc.getBOC().getByteObjectFactory().createByteObject(type, size);
       setTechCanvasAppliDefault(tech);
       return tech;
@@ -93,7 +97,7 @@ public class InputCtx extends ABOCtx implements ITechCtxSettingsInput {
    }
 
    public int getBOCtxSettingSize() {
-      return ITechCtxSettingsInput.CTX_INPUT_BASIC_SIZE;
+      return IBOCtxSettingsInput.CTX_INPUT_BASIC_SIZE;
    }
 
    public CoreFrameworkCtx getCFC() {
@@ -117,7 +121,7 @@ public class InputCtx extends ABOCtx implements ITechCtxSettingsInput {
    }
 
    /**
-    * Parameters used when no {@link ITechCanvasHost} is explicitely define when a {@link CanvasAppliInput}
+    * Parameters used when no {@link IBOCanvasHost} is explicitely define when a {@link CanvasAppliInput}
     * is created.
     * @return
     */
@@ -125,9 +129,9 @@ public class InputCtx extends ABOCtx implements ITechCtxSettingsInput {
       if (cTechDefault == null) {
          //hardcode one here
          ByteObject inTech = this.getSettingsBO();
-         cTechDefault = inTech.getSubFirst(ITechCanvasHost.TCANVAS_TYPE);
+         cTechDefault = inTech.getSubFirst(IBOCanvasHost.TCANVAS_TYPE);
          if (cTechDefault == null) {
-            cTechDefault = getCUC().createTechCanvasHostDefault();
+            cTechDefault = getCUC().createBOCanvasHostDefault();
             inTech.addByteObject(cTechDefault);
          }
       }
@@ -156,8 +160,8 @@ public class InputCtx extends ABOCtx implements ITechCtxSettingsInput {
    public void setTechCanvasAppliDefault(ByteObject tech) {
       ByteObject settingsBO = getSettingsBO();
       //maps from config defaults
-      int defaultThreadingMode = settingsBO.get1(ITechCtxSettingsInput.CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1);
-      tech.set1(ITechCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1, defaultThreadingMode);
+      int defaultThreadingMode = settingsBO.get1(IBOCtxSettingsInput.CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1);
+      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1, defaultThreadingMode);
    }
 
    //#mdebug

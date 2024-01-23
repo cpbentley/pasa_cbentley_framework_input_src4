@@ -2,19 +2,19 @@ package pasa.cbentley.framework.input.src4.ctx;
 
 import pasa.cbentley.core.src4.logging.ToStringStaticBase;
 import pasa.cbentley.framework.input.src4.event.jobs.ITechInputJob;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 
 public class ToStringStaticInput extends ToStringStaticBase {
 
    public static final String toStringThreadingMode(int mode) {
       switch (mode) {
-         case ITechInput.THREADING_0_ONE_TO_RULE_ALL:
+         case ITechPaintThread.THREADING_0_ONE_TO_RULE_ALL:
             return "Passive";
-         case ITechInput.THREADING_1_UI_UPDATERENDERING:
+         case ITechPaintThread.THREADING_1_UI_UPDATERENDERING:
             return "Active Basic";
-         case ITechInput.THREADING_2_UIUPDATE_RENDERING:
+         case ITechPaintThread.THREADING_2_UIUPDATE_RENDERING:
             return "UiUpdate Rendering";
-         case ITechInput.THREADING_3_THREE_SEPARATE:
+         case ITechPaintThread.THREADING_3_THREE_SEPARATE:
             return "Active 3 Threads";
          default:
             return "Unknown" + mode;

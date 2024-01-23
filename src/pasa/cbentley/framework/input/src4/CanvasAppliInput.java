@@ -24,14 +24,14 @@ import pasa.cbentley.framework.coreui.src4.event.DeviceEventXY;
 import pasa.cbentley.framework.coreui.src4.event.GestureArea;
 import pasa.cbentley.framework.coreui.src4.event.GestureEvent;
 import pasa.cbentley.framework.coreui.src4.interfaces.ICanvasAppli;
-import pasa.cbentley.framework.coreui.src4.interfaces.ISenses;
+import pasa.cbentley.framework.coreui.src4.interfaces.ITechSenses;
 import pasa.cbentley.framework.coreui.src4.tech.IInput;
-import pasa.cbentley.framework.coreui.src4.tech.ITechCanvasHost;
-import pasa.cbentley.framework.coreui.src4.tech.ITechFeaturesUI;
+import pasa.cbentley.framework.coreui.src4.tech.IBOCanvasHost;
+import pasa.cbentley.framework.coreui.src4.tech.ITechHostUI;
 import pasa.cbentley.framework.coreui.src4.utils.InputSettings;
 import pasa.cbentley.framework.input.src4.ctx.IBOTypesInput;
 import pasa.cbentley.framework.input.src4.ctx.IFlagsToStringInput;
-import pasa.cbentley.framework.input.src4.ctx.ITechCtxSettingsInput;
+import pasa.cbentley.framework.input.src4.ctx.IBOCtxSettingsInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.ctx.ToStringStaticInput;
 import pasa.cbentley.framework.input.src4.event.ctrl.EventControllerOneThread;
@@ -44,10 +44,11 @@ import pasa.cbentley.framework.input.src4.game.GameLoopFixedSteps;
 import pasa.cbentley.framework.input.src4.game.GameLoopVariable;
 import pasa.cbentley.framework.input.src4.game.GameLoopX;
 import pasa.cbentley.framework.input.src4.gesture.GestureDetector;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 import pasa.cbentley.framework.input.src4.interfaces.IJobEvent;
+import pasa.cbentley.framework.input.src4.interfaces.ITechEvent;
 import pasa.cbentley.framework.input.src4.interfaces.IUpdatableSim;
-import pasa.cbentley.framework.input.src4.interfaces.ITechCanvasAppli;
+import pasa.cbentley.framework.input.src4.interfaces.IBOCanvasAppli;
 import pasa.cbentley.framework.input.src4.threading.GameLoop;
 import pasa.cbentley.framework.input.src4.threading.RenderThread;
 import pasa.cbentley.framework.input.src4.threading.Simulation;
@@ -83,7 +84,7 @@ import pasa.cbentley.framework.input.src4.threading.UpdateThread;
  * <br>
  * When the Host does not support The API generates an event which is caught by the canvas.
  * <br>
- * Canvas settings {@link ITechCanvasHost#TCANVAS_OFFSET_03_SCREEN_MODE1} is updated. if event is internal
+ * Canvas settings {@link IBOCanvasHost#TCANVAS_OFFSET_03_SCREEN_MODE1} is updated. if event is internal
  * <br>
  * 
  * <b>Focuses</b> :
@@ -198,7 +199,7 @@ import pasa.cbentley.framework.input.src4.threading.UpdateThread;
  * @see MCmd
  * @see MCtx
  */
-public abstract class CanvasAppliInput extends CanvasAppliAbstract implements ICanvasAppli, IEventConsumer, ITechCtxSettingsInput {
+public abstract class CanvasAppliInput extends CanvasAppliAbstract implements ICanvasAppli, IEventConsumer, IBOCtxSettingsInput {
 
    public static final boolean   IS_CLIPPING_CHECK = false;
 
@@ -232,7 +233,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    private RenderThread          render;
 
    /**
-    * Null when {@link ITechInput#THREADING_0_ONE_TO_RULE_ALL}
+    * Null when {@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}
     */
    FairLock                      renderLock;
 
@@ -254,7 +255,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    private Simulation            simulationCanvas;
 
    /**
-    * {@link ITechCanvasAppli}
+    * {@link IBOCanvasAppli}
     */
    protected ByteObject          techCanvasAppli;
 
@@ -264,10 +265,10 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * Starts in One Thread GUI.
     * <br>
     * 
-    * <li>{@link ITechInput#THREADING_0_ONE_TO_RULE_ALL}
-    * <li>{@link ITechInput#THREADING_1_UI_UPDATERENDERING}
-    * <li>{@link ITechInput#THREADING_2_UIUPDATE_RENDERING}
-    * <li>{@link ITechInput#THREADING_3_THREE_SEPARATE}
+    * <li>{@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}
+    * <li>{@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING}
+    * <li>{@link ITechPaintThread#THREADING_2_UIUPDATE_RENDERING}
+    * <li>{@link ITechPaintThread#THREADING_3_THREE_SEPARATE}
     * 
     */
    private int                   threadingMode     = -1;
@@ -296,7 +297,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    private Thread                threadUpdateRender;
 
    /**
-    * Null when {@link ITechInput#THREADING_0_ONE_TO_RULE_ALL}
+    * Null when {@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}
     */
    private FairLock              updateLock;
 
@@ -309,21 +310,21 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    /**
     * Creates and register the {@link ModuleInput} singleton with {@link ModuleInput#get(IFrameworkCtx)}.
     * <br>
-    * The default {@link ITechCanvasAppli} settings from {@link InputCtx#getTechCanvasHostDefault()} are used. 
+    * The default {@link IBOCanvasAppli} settings from {@link InputCtx#getTechCanvasHostDefault()} are used. 
     * 
     * @param inputCtx
     */
    public CanvasAppliInput(InputCtx ic) {
-      this(ic, ic.getTechCanvasHostDefault(), ic.getCUC().createTechCanvasHostDefault());
+      this(ic, ic.getTechCanvasHostDefault(), ic.getCUC().createBOCanvasHostDefault());
    }
 
    /**
     * 
     * @param ic
-    * @param techCanvasAppli {@link ITechCanvasAppli}
+    * @param techCanvasAppli {@link IBOCanvasAppli}
     */
    public CanvasAppliInput(InputCtx ic, ByteObject techCanvasAppli) {
-      this(ic, techCanvasAppli, ic.getCUC().createTechCanvasHostDefault());
+      this(ic, techCanvasAppli, ic.getCUC().createBOCanvasHostDefault());
    }
 
    /**
@@ -332,8 +333,8 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * Subclass must call {@link CanvasAppliInput#a_Init()} at the end of its constructor.
     * 
     * @param ic {@link InputCtx}
-    * @param techCanvasAppli {@link ITechCanvasAppli}
-    * @param techCanvasHost  {@link ITechCanvasHost}
+    * @param techCanvasAppli {@link IBOCanvasAppli}
+    * @param techCanvasHost  {@link IBOCanvasHost}
     */
    public CanvasAppliInput(InputCtx ic, ByteObject techCanvasAppli, ByteObject techCanvasHost) {
       super(ic.getCUC(), techCanvasHost);
@@ -377,22 +378,22 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    /**
-    * Applies the {@link ITechCanvasAppli}
+    * Applies the {@link IBOCanvasAppli}
     */
    public void applySettings(ByteObject techCanvasAppli) {
 
       techCanvasAppli.checkType(IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI);
 
       //debug settings
-      int threadMode = techCanvasAppli.get1(ITechCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1);
+      int threadMode = techCanvasAppli.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1);
       setThreadingMode(threadMode);
-      boolean b = techCanvasAppli.hasFlag(ITechCanvasAppli.CANVAS_APP_OFFSET_01_FLAG, ITechCanvasAppli.CANVAS_APP_FLAG_1_FULLSCREEN);
+      boolean b = techCanvasAppli.hasFlag(IBOCanvasAppli.CANVAS_APP_OFFSET_01_FLAG, IBOCanvasAppli.CANVAS_APP_FLAG_1_FULLSCREEN);
       //apply settings on canvas now?
       setFullScreenMode(b);
 
-      int debugF = techCanvasAppli.get1(ITechCanvasAppli.CANVAS_APP_OFFSET_05_DEBUG_FLAGS1);
+      int debugF = techCanvasAppli.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_05_DEBUG_FLAGS1);
       debugFlags = debugF;
-      bgColor = techCanvasAppli.get4(ITechCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4);
+      bgColor = techCanvasAppli.get4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4);
    }
 
    public void checkThreadRender() {
@@ -424,7 +425,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    /**
-    * Called in the update thread {@link ITechInput#THREAD_1_UPDATE}.
+    * Called in the update thread {@link ITechPaintThread#THREAD_1_UPDATE}.
     * <br>
     * Process the requests {@link InputRequests}
     * @param is
@@ -433,28 +434,28 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    private void ctrlEventEnd(InputState is, CanvasResult sr) {
       final int eventID = is.getEventID();
       switch (eventID) {
-         case ITechInput.EVID_01_KEYBOARD_PRESS:
+         case ITechEvent.EVID_01_KEYBOARD_PRESS:
             keyPressedEnd(is, sr);
             break;
-         case ITechInput.EVID_02_KEYBOARD_RELEASE:
+         case ITechEvent.EVID_02_KEYBOARD_RELEASE:
             keyReleasedEnd(is, sr);
             break;
-         case ITechInput.EVID_11_POINTER_PRESS:
+         case ITechEvent.EVID_11_POINTER_PRESS:
             pointerPressedEnd(is, sr);
             break;
-         case ITechInput.EVID_12_POINTER_RELEASE:
+         case ITechEvent.EVID_12_POINTER_RELEASE:
             pointerReleasedEnd(is, sr);
             break;
-         case ITechInput.EVID_13_POINTER_MOVE:
+         case ITechEvent.EVID_13_POINTER_MOVE:
             pointerMovedEnd(is, sr);
             break;
-         case ITechInput.EVID_14_POINTER_DRAG:
+         case ITechEvent.EVID_14_POINTER_DRAG:
             pointerDraggedEnd(is, sr);
             break;
-         case ITechInput.EVID_15_GESTURE:
+         case ITechEvent.EVID_15_GESTURE:
             pointerGesturedEnd(is, sr);
             break;
-         case ITechInput.EVID_20_WHEEL:
+         case ITechEvent.EVID_20_WHEEL:
             pointerWheelEnd(is, sr);
             break;
          default:
@@ -467,7 +468,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    /**
-    * Called in the update thread {@link ITechInput#THREAD_1_UPDATE}.
+    * Called in the update thread {@link ITechPaintThread#THREAD_1_UPDATE}.
     * <br>
     * Time for generic actions.
     * <br>
@@ -480,31 +481,31 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    private void ctrlEventStart(InputState is, CanvasResult sr) {
       final int eventID = is.getEventID();
       switch (eventID) {
-         case ITechInput.EVID_01_KEYBOARD_PRESS:
+         case ITechEvent.EVID_01_KEYBOARD_PRESS:
             keyPressedStart(is, sr);
             break;
-         case ITechInput.EVID_02_KEYBOARD_RELEASE:
+         case ITechEvent.EVID_02_KEYBOARD_RELEASE:
             keyReleasedStart(is, sr);
             break;
-         case ITechInput.EVID_14_POINTER_DRAG:
+         case ITechEvent.EVID_14_POINTER_DRAG:
             pointerDraggedStart(is, sr);
             break;
-         case ITechInput.EVID_12_POINTER_RELEASE:
+         case ITechEvent.EVID_12_POINTER_RELEASE:
             pointerReleasedStart(is, sr);
             break;
-         case ITechInput.EVID_11_POINTER_PRESS:
+         case ITechEvent.EVID_11_POINTER_PRESS:
             pointerPressedStart(is, sr);
             break;
-         case ITechInput.EVID_15_GESTURE:
+         case ITechEvent.EVID_15_GESTURE:
             pointerGesturedStart(is, sr);
             break;
-         case ITechInput.EVID_13_POINTER_MOVE:
+         case ITechEvent.EVID_13_POINTER_MOVE:
             pointerMovedStart(is, sr);
             break;
-         case ITechInput.EVID_20_WHEEL:
+         case ITechEvent.EVID_20_WHEEL:
             pointerWheelStart(is, sr);
             break;
-         case ITechInput.EVID_40_CANVAS:
+         case ITechEvent.EVID_40_CANVAS:
             startEventCanvas(is, sr);
             break;
          default:
@@ -570,7 +571,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    /**
-    * Called in the update thread {@link ITechInput#THREAD_1_UPDATE}
+    * Called in the update thread {@link ITechPaintThread#THREAD_1_UPDATE}
     * @param ic
     */
    protected void ctrlKeyPressed(InputState is, CanvasResult sr) {
@@ -714,7 +715,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    /**
-    * {@link ITechCanvasAppli}
+    * {@link IBOCanvasAppli}
     * @return
     */
    public ByteObject getTechCanvasAppli() {
@@ -727,7 +728,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    public void setBgColor(int color) {
       bgColor = color;
-      techCanvasAppli.set4(ITechCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4, color);
+      techCanvasAppli.set4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4, color);
    }
 
    public EventController getEvCtrl() {
@@ -759,7 +760,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    public int getHeight() {
       if (screenCtrl != null) {
          int orientation = screenCtrl.getOrientation();
-         if (orientation == ITechCanvasHost.SCREEN_0_TOP_NORMAL || orientation == ITechCanvasHost.SCREEN_1_BOT_UPSIDEDOWN) {
+         if (orientation == IBOCanvasHost.SCREEN_0_TOP_NORMAL || orientation == IBOCanvasHost.SCREEN_1_BOT_UPSIDEDOWN) {
             return super.getHeight();
          } else {
             return super.getWidth();
@@ -791,7 +792,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    public int getWidth() {
       if (screenCtrl != null) {
          int orientation = screenCtrl.getOrientation();
-         if (orientation == ITechCanvasHost.SCREEN_0_TOP_NORMAL || orientation == ITechCanvasHost.SCREEN_1_BOT_UPSIDEDOWN) {
+         if (orientation == IBOCanvasHost.SCREEN_0_TOP_NORMAL || orientation == IBOCanvasHost.SCREEN_1_BOT_UPSIDEDOWN) {
             return super.getWidth();
          } else {
             return super.getHeight();
@@ -925,7 +926,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    /**
-    * Called in the thread {@link ITechInput#THREAD_0_HOST_HUI} when an external paint event
+    * Called in the thread {@link ITechPaintThread#THREAD_0_HOST_HUI} when an external paint event
     * is generated.
     * <br>
     * <br>
@@ -947,8 +948,8 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
          //#debug
          toDLog().pDraw("Repaint Call From Outside : Clip Mismatch " + renderCause.toStringClip(g), null, CanvasAppliInput.class, "paint", ITechLvl.LVL_05_FINE, false);
 
-         renderCause.setRepaintFlag(ITechInput.REPAINT_01_FULL, true);
-         renderCause.setRepaintFlag(ITechInput.REPAINT_02_EXTERNAL, true);
+         renderCause.setRepaintFlag(ITechPaintThread.REPAINT_01_FULL, true);
+         renderCause.setRepaintFlag(ITechPaintThread.REPAINT_02_EXTERNAL, true);
       }
       //when rendering a rotated screen. we first draw on an image ? 
       // what if host allows transformation matrix on the IGraphics
@@ -958,13 +959,13 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
          render(img.getGraphics(), state, renderCause);
          int transformation = IImage.TRANSFORM_0_NONE;
          switch (screenCtrl.getOrientation()) {
-            case ITechCanvasHost.SCREEN_2_LEFT_ROTATED:
+            case IBOCanvasHost.SCREEN_2_LEFT_ROTATED:
                transformation = IImage.TRANSFORM_5_ROT_90;
                break;
-            case ITechCanvasHost.SCREEN_3_RIGHT_ROTATED:
+            case IBOCanvasHost.SCREEN_3_RIGHT_ROTATED:
                transformation = IImage.TRANSFORM_6_ROT_270;
                break;
-            case ITechCanvasHost.SCREEN_1_BOT_UPSIDEDOWN:
+            case IBOCanvasHost.SCREEN_1_BOT_UPSIDEDOWN:
                transformation = IImage.TRANSFORM_3_ROT_180;
                break;
             default:
@@ -1027,7 +1028,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
 
    /**
     * Called in Gui thread by
-    * <li> Host who detected a Gesture such as {@link ISenses#GESTURE_TYPE_05_SHAKE}
+    * <li> Host who detected a Gesture such as {@link ITechSenses#GESTURE_TYPE_05_SHAKE}
     * <li> {@link GestureDetector} in its thread sends residual Gesture event
     * <br>
     * <br>
@@ -1153,19 +1154,19 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    protected void processEventToCanvas(InputState ic, CanvasResult sr) {
       int eid = ic.getEventID();
       switch (eid) {
-         case ITechInput.EVID_01_KEYBOARD_PRESS:
+         case ITechEvent.EVID_01_KEYBOARD_PRESS:
             ctrlKeyPressed(ic, sr);
             break;
-         case ITechInput.EVID_02_KEYBOARD_RELEASE:
+         case ITechEvent.EVID_02_KEYBOARD_RELEASE:
             ctrlKeyReleased(ic, sr);
             break;
-         case ITechInput.EVID_11_POINTER_PRESS:
+         case ITechEvent.EVID_11_POINTER_PRESS:
             ctrlPointerPressed(ic, sr);
             break;
-         case ITechInput.EVID_12_POINTER_RELEASE:
+         case ITechEvent.EVID_12_POINTER_RELEASE:
             ctrlPointerReleased(ic, sr);
             break;
-         case ITechInput.EVID_20_WHEEL:
+         case ITechEvent.EVID_20_WHEEL:
             ctrlPointerWheeled(ic, sr);
             break;
          default:
@@ -1174,13 +1175,13 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    /**
-    * Called in the thread {@link ITechInput#THREAD_1_UPDATE}.
+    * Called in the thread {@link ITechPaintThread#THREAD_1_UPDATE}.
     * <br>
     * and it returned true.
     * <br>
     * <br>
     * Updates the simulation/model and create a {@link CanvasResult}
-    * for the rendering thread  {@link ITechInput#THREAD_1_UPDATE} to process
+    * for the rendering thread  {@link ITechPaintThread#THREAD_1_UPDATE} to process
     * @param is
     */
    public void processInputState(InputState is) {
@@ -1378,9 +1379,9 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    /**
-    * Decides what to do with the thread {@link ITechInput#THREAD_1_UPDATE}.
+    * Decides what to do with the thread {@link ITechPaintThread#THREAD_1_UPDATE}.
     * <br>
-    * In {@link ITechInput#THREADING_0_ONE_TO_RULE_ALL}, a repaint is called.
+    * In {@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}, a repaint is called.
     * <br> and the repaint is queued
     * Otherwise, the {@link CanvasResult} is queued in the Render State
     * <br>
@@ -1401,7 +1402,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * @param sr
     */
    public void screenResult(CanvasResult sr) {
-      if (threadingMode == ITechInput.THREADING_0_ONE_TO_RULE_ALL) {
+      if (threadingMode == ITechPaintThread.THREADING_0_ONE_TO_RULE_ALL) {
          if (hasDebugFlag(IFlagsToStringInput.Debug_1_Controller) && sr.isActionDone()) {
             //only debug when there is an action
             //#debug
@@ -1462,7 +1463,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    public void setDragControlled(boolean isDragControlled) {
-      if (threadingMode == ITechInput.THREADING_0_ONE_TO_RULE_ALL) {
+      if (threadingMode == ITechPaintThread.THREADING_0_ONE_TO_RULE_ALL) {
          if (isDragControlled) {
             eventCtrl = new EventControllerOneThreadCtrled(ic, this);
          } else {
@@ -1477,8 +1478,8 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    public int setNextThreadingMode() {
       threadingMode++;
-      if (threadingMode > ITechInput.THREADING_4_UI_CLOCKING) {
-         threadingMode = ITechInput.THREADING_0_ONE_TO_RULE_ALL;
+      if (threadingMode > ITechPaintThread.THREADING_4_UI_CLOCKING) {
+         threadingMode = ITechPaintThread.THREADING_0_ONE_TO_RULE_ALL;
       }
       setThreadingMode(threadingMode);
       return threadingMode;
@@ -1493,10 +1494,10 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * Create an {@link EventController}
     * <br>
     * <br>
-    * <li> {@link ITechInput#THREADING_0_ONE_TO_RULE_ALL}
-    * <li> {@link ITechInput#THREADING_1_UI_UPDATERENDERING}
-    * <li> {@link ITechInput#THREADING_2_UIUPDATE_RENDERING}
-    * <li> {@link ITechInput#THREADING_3_THREE_SEPARATE}
+    * <li> {@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}
+    * <li> {@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING}
+    * <li> {@link ITechPaintThread#THREADING_2_UIUPDATE_RENDERING}
+    * <li> {@link ITechPaintThread#THREADING_3_THREE_SEPARATE}
     * @param threadingMode
     */
    public void setThreadingMode(int threadingMode) {
@@ -1509,10 +1510,10 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       setThreadStop();
       this.threadingMode = threadingMode;
       //we first must make sure the threads finish and 
-      if (threadingMode == ITechInput.THREADING_0_ONE_TO_RULE_ALL) {
+      if (threadingMode == ITechPaintThread.THREADING_0_ONE_TO_RULE_ALL) {
          //TODO remove this
          //do we need a drag queue controller?
-         boolean isDragControlled = canvasHost.isCanvasFeatureEnabled(ITechFeaturesUI.FEAT_01_DRAG_CONTROLLER);
+         boolean isDragControlled = canvasHost.isCanvasFeatureEnabled(ITechHostUI.FEAT_01_DRAG_CONTROLLER);
          if (isDragControlled) {
             eventCtrl = new EventControllerOneThreadCtrled(ic, this);
          } else {
@@ -1524,7 +1525,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
          }
          threadUpdateRender = Thread.currentThread();
 
-      } else if (threadingMode == ITechInput.THREADING_1_UI_UPDATERENDERING) {
+      } else if (threadingMode == ITechPaintThread.THREADING_1_UI_UPDATERENDERING) {
          //what kind of game loop?
          gl = new GameLoopX(ic, this);
          FrameData frameData = gl.getFrameData();
@@ -1538,13 +1539,13 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
          threadUpdateRender = new Thread(gl);
          threadUpdateRender.start();
 
-      } else if (threadingMode == ITechInput.THREADING_2_UIUPDATE_RENDERING) {
+      } else if (threadingMode == ITechPaintThread.THREADING_2_UIUPDATE_RENDERING) {
          ///only one rendering thread.
          EventThreader et = new RenderThread(ic, this);
          threadRender = new Thread(et);
          threadRender.start();
 
-      } else if (threadingMode == ITechInput.THREADING_3_THREE_SEPARATE) {
+      } else if (threadingMode == ITechPaintThread.THREADING_3_THREE_SEPARATE) {
          EventThreader et = new RenderThread(ic, this);
          threadRender = new Thread(et);
          threadRender.start();
@@ -1570,7 +1571,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
          return;
       }
       //we first must make sure the threads finish and 
-      if (oldThreadMode == ITechInput.THREADING_0_ONE_TO_RULE_ALL) {
+      if (oldThreadMode == ITechPaintThread.THREADING_0_ONE_TO_RULE_ALL) {
          //nothing to stop
       } else {
          if (threadUpdate != null) {
@@ -1599,7 +1600,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    }
 
    /**
-    * {@link ITechInput#THREADING_0_ONE_TO_RULE_ALL}, the call be done serially
+    * {@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}, the call be done serially
     * @param sim
     */
    public void simulationAdd(IUpdatableSim sim) {

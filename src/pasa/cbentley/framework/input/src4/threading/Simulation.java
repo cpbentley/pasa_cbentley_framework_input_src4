@@ -10,7 +10,7 @@ import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.framework.input.src4.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.game.FrameData;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 import pasa.cbentley.framework.input.src4.interfaces.IUpdatableSim;
 
 /**
@@ -42,7 +42,7 @@ public class Simulation implements IStringable {
    }
 
    /**
-    * {@link ITechInput#THREADING_0_ONE_TO_RULE_ALL}, the call be done serially
+    * {@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}, the call be done serially
     * @param sim
     */
    public void simulationAdd(IUpdatableSim sim) {

@@ -7,9 +7,9 @@ import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.core.src4.structs.FiFoQueue;
 import pasa.cbentley.framework.input.src4.ctx.IFlagsToStringInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 import pasa.cbentley.framework.input.src4.interfaces.ITechInputCycle;
-import pasa.cbentley.framework.input.src4.interfaces.IScreenResults;
+import pasa.cbentley.framework.input.src4.interfaces.ITechScreenResults;
 
 /**
  * Manages the {@link CanvasResult} and repaint mechanics for a {@link CanvasAppliInput}
@@ -100,7 +100,7 @@ public class RepaintCtrl implements IStringable, ITechInputCycle {
     */
    void attachScreenResult() {
       CanvasResult sr = canvasResultEvent;
-      if (canvasResultEvent.hasResultFlag(IScreenResults.FLAG_06_ACTIVE)) {
+      if (canvasResultEvent.hasResultFlag(ITechScreenResults.FLAG_06_ACTIVE)) {
          //use another
          sr = new CanvasResult(ic, canvas, CYCLE_0_USER_EVENT);
       } else {
@@ -147,13 +147,13 @@ public class RepaintCtrl implements IStringable, ITechInputCycle {
 
       CanvasResult sr = getEmptySR(CYCLE_0_USER_EVENT);
       //do a full repaint according to framework semantics
-      sr.setRepaintFlag(ITechInput.REPAINT_01_FULL, true);
-      sr.setRepaintFlag(ITechInput.REPAINT_02_EXTERNAL, true);
+      sr.setRepaintFlag(ITechPaintThread.REPAINT_01_FULL, true);
+      sr.setRepaintFlag(ITechPaintThread.REPAINT_02_EXTERNAL, true);
       return sr;
    }
 
    /**
-    * Merge all pending Results into 1 to be used by the thread {@link ITechInput#THREAD_2_RENDER}
+    * Merge all pending Results into 1 to be used by the thread {@link ITechPaintThread#THREAD_2_RENDER}
     * <br>
     * Never returns null.
     * @return
@@ -173,7 +173,7 @@ public class RepaintCtrl implements IStringable, ITechInputCycle {
          }
          //debug stuff
          if (canvas.hasDebugFlag(IFlagsToStringInput.Debug_8_ForceFullRepaints)) {
-            sr.setRepaintFlag(ITechInput.REPAINT_01_FULL, true);
+            sr.setRepaintFlag(ITechPaintThread.REPAINT_01_FULL, true);
          }
          if (sr == null) {
             throw new NullPointerException();
@@ -294,7 +294,7 @@ public class RepaintCtrl implements IStringable, ITechInputCycle {
     */
    public void repaint(CanvasResult sr) {
       //call the repaint method
-      if (sr.hasRepaintFlag(ITechInput.REPAINT_01_FULL)) {
+      if (sr.hasRepaintFlag(ITechPaintThread.REPAINT_01_FULL)) {
          canvas.repaintHiJack();
       } else {
          //#debug

@@ -6,7 +6,7 @@ import pasa.cbentley.core.src4.logging.IDLog;
 import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.framework.coreui.src4.event.BEvent;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 
 /**
  * Control how event state is added to the {@link InputState}.
@@ -32,15 +32,15 @@ public abstract class EventController implements IStringable {
     * 
     * Fetch the current {@link InputState}, i.e. the very latest {@link InputState}.
     * <br>
-    * The {@link InputState} is updated by the {@link ITechInput#THREAD_0_HOST_HUI} by external
+    * The {@link InputState} is updated by the {@link ITechPaintThread#THREAD_0_HOST_HUI} by external
     * events.
     * <br>
     * In Threading Configuration 
-    * <li>{@link ITechInput#THREADING_1_UI_UPDATERENDERING} 
-    * <li>{@link ITechInput#THREADING_3_THREE_SEPARATE} 
+    * <li>{@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING} 
+    * <li>{@link ITechPaintThread#THREADING_3_THREE_SEPARATE} 
     * <br>
     * In Threading Configuration
-    * <li>{@link ITechInput#THREADING_2_UIUPDATE_RENDERING} 
+    * <li>{@link ITechPaintThread#THREADING_2_UIUPDATE_RENDERING} 
     * <br>
     * 
     * @return

@@ -6,7 +6,7 @@ import pasa.cbentley.framework.input.src4.CanvasAppliInput;
 import pasa.cbentley.framework.input.src4.EventController;
 import pasa.cbentley.framework.input.src4.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.interfaces.ITechInput;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 
 /**
  * No special treatment.
@@ -24,7 +24,7 @@ public class EventControllerOneThread extends EventController {
     * <br>
     * In a single thread there is only a single reference.
     * <br>
-    * In Mode {@link ITechInput#THREADING_1_UI_UPDATERENDERING},
+    * In Mode {@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING},
     * the UI thread updates the {@link InputState}
     * 
     * <br>
