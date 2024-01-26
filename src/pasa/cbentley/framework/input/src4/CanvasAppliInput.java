@@ -1,21 +1,19 @@
 package pasa.cbentley.framework.input.src4;
 
-import java.util.Enumeration;
-import java.util.Vector;
-
 import pasa.cbentley.byteobjects.src4.core.ByteObject;
+import pasa.cbentley.byteobjects.src4.stator.StatorWriterBO;
 import pasa.cbentley.core.src4.event.BusEvent;
 import pasa.cbentley.core.src4.event.IEventConsumer;
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.core.src4.logging.IDLog;
 import pasa.cbentley.core.src4.logging.ITechConfig;
 import pasa.cbentley.core.src4.logging.ITechLvl;
+import pasa.cbentley.core.src4.stator.StatorReader;
+import pasa.cbentley.core.src4.stator.StatorWriter;
 import pasa.cbentley.core.src4.structs.synch.FairLock;
 import pasa.cbentley.core.src4.structs.synch.MutexSignal;
 import pasa.cbentley.core.src4.utils.BitUtils;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IImage;
-import pasa.cbentley.framework.coredraw.src4.interfaces.IScaler;
 import pasa.cbentley.framework.coredraw.src4.interfaces.ITechGraphics;
 import pasa.cbentley.framework.coreui.src4.engine.CanvasAppliAbstract;
 import pasa.cbentley.framework.coreui.src4.event.BEvent;
@@ -25,13 +23,13 @@ import pasa.cbentley.framework.coreui.src4.event.GestureArea;
 import pasa.cbentley.framework.coreui.src4.event.GestureEvent;
 import pasa.cbentley.framework.coreui.src4.interfaces.ICanvasAppli;
 import pasa.cbentley.framework.coreui.src4.interfaces.ITechSenses;
-import pasa.cbentley.framework.coreui.src4.tech.IInput;
 import pasa.cbentley.framework.coreui.src4.tech.IBOCanvasHost;
+import pasa.cbentley.framework.coreui.src4.tech.IInput;
 import pasa.cbentley.framework.coreui.src4.tech.ITechHostUI;
 import pasa.cbentley.framework.coreui.src4.utils.InputSettings;
+import pasa.cbentley.framework.input.src4.ctx.IBOCtxSettingsInput;
 import pasa.cbentley.framework.input.src4.ctx.IBOTypesInput;
 import pasa.cbentley.framework.input.src4.ctx.IFlagsToStringInput;
-import pasa.cbentley.framework.input.src4.ctx.IBOCtxSettingsInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.ctx.ToStringStaticInput;
 import pasa.cbentley.framework.input.src4.event.ctrl.EventControllerOneThread;
@@ -40,15 +38,13 @@ import pasa.cbentley.framework.input.src4.event.ctrl.EventControllerQueued;
 import pasa.cbentley.framework.input.src4.event.jobs.GestureTrailJob;
 import pasa.cbentley.framework.input.src4.event.jobs.JobsEventRunner;
 import pasa.cbentley.framework.input.src4.game.FrameData;
-import pasa.cbentley.framework.input.src4.game.GameLoopFixedSteps;
-import pasa.cbentley.framework.input.src4.game.GameLoopVariable;
 import pasa.cbentley.framework.input.src4.game.GameLoopX;
 import pasa.cbentley.framework.input.src4.gesture.GestureDetector;
-import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
+import pasa.cbentley.framework.input.src4.interfaces.IBOCanvasAppli;
 import pasa.cbentley.framework.input.src4.interfaces.IJobEvent;
 import pasa.cbentley.framework.input.src4.interfaces.ITechEvent;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 import pasa.cbentley.framework.input.src4.interfaces.IUpdatableSim;
-import pasa.cbentley.framework.input.src4.interfaces.IBOCanvasAppli;
 import pasa.cbentley.framework.input.src4.threading.GameLoop;
 import pasa.cbentley.framework.input.src4.threading.RenderThread;
 import pasa.cbentley.framework.input.src4.threading.Simulation;
@@ -84,7 +80,7 @@ import pasa.cbentley.framework.input.src4.threading.UpdateThread;
  * <br>
  * When the Host does not support The API generates an event which is caught by the canvas.
  * <br>
- * Canvas settings {@link IBOCanvasHost#TCANVAS_OFFSET_03_SCREEN_MODE1} is updated. if event is internal
+ * Canvas settings {@link IBOCanvasAppli#CANVAS_APP_OFFSET_04_SCREEN_MODE1} is updated. if event is internal
  * <br>
  * 
  * <b>Focuses</b> :
@@ -203,6 +199,8 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
 
    public static final boolean   IS_CLIPPING_CHECK = false;
 
+   private int                   bgColor;
+
    private int                   debugFlags;
 
    /**
@@ -225,6 +223,12 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    private Thread                eventThread;
 
    private GestureArea           gaCanvas;
+
+   private GameLoop gl;
+
+   protected final InputCtx      ic;
+
+   private boolean               isCtrlEnabled;
 
    protected boolean             isDebugInputConfig;
 
@@ -257,7 +261,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    /**
     * {@link IBOCanvasAppli}
     */
-   protected ByteObject          techCanvasAppli;
+   protected ByteObject          boCanvasAppli;
 
    /**
     * Set by the constructor.
@@ -273,8 +277,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    private int                   threadingMode     = -1;
 
-   private boolean               isCtrlEnabled;
-
    /**
     * Initialized to the thread that will render.
     * 
@@ -284,8 +286,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * rendering
     */
    private Thread                threadRender;
-
-   private int                   bgColor;
 
    /**
     * The update thread wait until
@@ -304,8 +304,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    private UpdateThread          updater;
 
    private volatile boolean      waiters           = false;
-
-   protected final InputCtx      ic;
 
    /**
     * Creates and register the {@link ModuleInput} singleton with {@link ModuleInput#get(IFrameworkCtx)}.
@@ -339,7 +337,10 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    public CanvasAppliInput(InputCtx ic, ByteObject techCanvasAppli, ByteObject techCanvasHost) {
       super(ic.getCUC(), techCanvasHost);
       this.ic = ic;
-      this.techCanvasAppli = techCanvasAppli;
+      if (techCanvasAppli == null) {
+         throw new NullPointerException();
+      }
+      this.boCanvasAppli = techCanvasAppli;
       threadRender = Thread.currentThread();
       threadUpdate = Thread.currentThread();
       threadUpdateRender = Thread.currentThread();
@@ -358,7 +359,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       repaintControl = createRepaintCtrl();
       eventRun = new JobsEventRunner(ic, this); //thread will auto start when first job is added
 
-      applySettings(techCanvasAppli);
+      applySettings(boCanvasAppli);
    }
 
    /**
@@ -463,10 +464,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       }
    }
 
-   public InputCtx getIC() {
-      return ic;
-   }
-
    /**
     * Called in the update thread {@link ITechPaintThread#THREAD_1_UPDATE}.
     * <br>
@@ -511,18 +508,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
          default:
             break;
       }
-   }
-
-   protected boolean isCtrlEnabled() {
-      return isCtrlEnabled;
-   }
-
-   public void setCtrlEnableTrue() {
-      isCtrlEnabled = true;
-   }
-
-   public void startEventCanvas(InputState is, CanvasResult sr) {
-
    }
 
    private void ctrlInputRequests(InputState is) {
@@ -654,6 +639,16 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    protected abstract void ctrlUIEvent(InputState is, CanvasResult sr);
 
    /**
+    * 
+    */
+   public void eventCanvasSize(int w, int h) {
+      if (gaCanvas != null) {
+         gaCanvas.h = h;
+         gaCanvas.w = w;
+      }
+   }
+
+   /**
     * We delegate to the {@link EventController}.
     * 
     * He is able to queue certains event necessary. It is chosen by the gameloop if any.
@@ -667,16 +662,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       //so when another tread wants it need to acquire lock ?
 
       //compare with creating a copy of InputState
-   }
-
-   /**
-    * 
-    */
-   public void eventCanvasSize(int w, int h) {
-      if (gaCanvas != null) {
-         gaCanvas.h = h;
-         gaCanvas.w = w;
-      }
    }
 
    /**
@@ -714,23 +699,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       return bgColor;
    }
 
-   /**
-    * {@link IBOCanvasAppli}
-    * @return
-    */
-   public ByteObject getTechCanvasAppli() {
-      return techCanvasAppli;
-   }
-
-   /**
-    * 
-    * @param color
-    */
-   public void setBgColor(int color) {
-      bgColor = color;
-      techCanvasAppli.set4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4, color);
-   }
-
    public EventController getEvCtrl() {
       return eventCtrl;
    }
@@ -760,7 +728,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    public int getHeight() {
       if (screenCtrl != null) {
          int orientation = screenCtrl.getOrientation();
-         if (orientation == IBOCanvasHost.SCREEN_0_TOP_NORMAL || orientation == IBOCanvasHost.SCREEN_1_BOT_UPSIDEDOWN) {
+         if (orientation == ITechHostUI.SCREEN_0_TOP_NORMAL || orientation == ITechHostUI.SCREEN_1_BOT_UPSIDEDOWN) {
             return super.getHeight();
          } else {
             return super.getWidth();
@@ -768,6 +736,10 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       } else {
          return super.getHeight();
       }
+   }
+
+   public InputCtx getIC() {
+      return ic;
    }
 
    public InputSettings getInputSettings() {
@@ -785,6 +757,21 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       return screenCtrl;
    }
 
+   public Simulation getSimulationLazy() {
+      if (simulationCanvas == null) {
+         simulationCanvas = new Simulation(ic);
+      }
+      return simulationCanvas;
+   }
+
+   /**
+    * {@link IBOCanvasAppli}
+    * @return
+    */
+   public ByteObject getTechCanvasAppli() {
+      return boCanvasAppli;
+   }
+
    public int getThreadingMode() {
       return threadingMode;
    }
@@ -792,7 +779,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    public int getWidth() {
       if (screenCtrl != null) {
          int orientation = screenCtrl.getOrientation();
-         if (orientation == IBOCanvasHost.SCREEN_0_TOP_NORMAL || orientation == IBOCanvasHost.SCREEN_1_BOT_UPSIDEDOWN) {
+         if (orientation == ITechHostUI.SCREEN_0_TOP_NORMAL || orientation == ITechHostUI.SCREEN_1_BOT_UPSIDEDOWN) {
             return super.getWidth();
          } else {
             return super.getHeight();
@@ -802,6 +789,10 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       }
    }
 
+   public boolean hasCanvasFeatureSupport(int feature) {
+      return canvasHost.isCanvasFeatureEnabled(feature);
+   }
+
    /**
     * {@link IFlagsToStringInput}
     * @param flag
@@ -809,6 +800,10 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    public boolean hasDebugFlag(int flag) {
       return BitUtils.hasFlag(debugFlags, flag);
+   }
+
+   protected boolean isCtrlEnabled() {
+      return isCtrlEnabled;
    }
 
    public boolean isDragControlled() {
@@ -959,13 +954,13 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
          render(img.getGraphics(), state, renderCause);
          int transformation = IImage.TRANSFORM_0_NONE;
          switch (screenCtrl.getOrientation()) {
-            case IBOCanvasHost.SCREEN_2_LEFT_ROTATED:
+            case ITechHostUI.SCREEN_2_LEFT_ROTATED:
                transformation = IImage.TRANSFORM_5_ROT_90;
                break;
-            case IBOCanvasHost.SCREEN_3_RIGHT_ROTATED:
+            case ITechHostUI.SCREEN_3_RIGHT_ROTATED:
                transformation = IImage.TRANSFORM_6_ROT_270;
                break;
-            case IBOCanvasHost.SCREEN_1_BOT_UPSIDEDOWN:
+            case ITechHostUI.SCREEN_1_BOT_UPSIDEDOWN:
                transformation = IImage.TRANSFORM_3_ROT_180;
                break;
             default:
@@ -1325,13 +1320,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       super.repaint();
    }
 
-   public Simulation getSimulationLazy() {
-      if (simulationCanvas == null) {
-         simulationCanvas = new Simulation(ic);
-      }
-      return simulationCanvas;
-   }
-
    /**
     * Any code that modifies rendering state must be done here.
     * <br>
@@ -1458,6 +1446,19 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       throw new RuntimeException();
    }
 
+   /**
+    * 
+    * @param color
+    */
+   public void setBgColor(int color) {
+      bgColor = color;
+      boCanvasAppli.set4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4, color);
+   }
+
+   public void setCtrlEnableTrue() {
+      isCtrlEnabled = true;
+   }
+
    public void setDebugFlag(int flag, boolean v) {
       debugFlags = BitUtils.setFlag(debugFlags, flag, v);
    }
@@ -1484,8 +1485,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       setThreadingMode(threadingMode);
       return threadingMode;
    }
-
-   private GameLoop gl;
 
    /**
     * Can be called anywhere in the constructor
@@ -1587,8 +1586,12 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       }
    }
 
-   public boolean hasCanvasFeatureSupport(int feature) {
-      return canvasHost.isCanvasFeatureEnabled(feature);
+   /**
+    * {@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}, the call be done serially
+    * @param sim
+    */
+   public void simulationAdd(IUpdatableSim sim) {
+      getSimulationLazy().simulationAdd(sim);
    }
 
    /**
@@ -1599,12 +1602,24 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       getSimulationLazy().simulationUpdate(is);
    }
 
-   /**
-    * {@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}, the call be done serially
-    * @param sim
-    */
-   public void simulationAdd(IUpdatableSim sim) {
-      getSimulationLazy().simulationAdd(sim);
+   public void startEventCanvas(InputState is, CanvasResult sr) {
+
+   }
+
+   public void stateReadFrom(StatorReader state) {
+      super.stateReadFrom(state);
+   }
+
+   public void stateWriteTo(StatorWriter state) {
+      super.stateWriteTo(state);
+      //a priori no state that won't be constructed back with boCanvasAppli
+      
+      
+   }
+
+   protected void stateWriteToParamSub(StatorWriter state) {
+      super.stateWriteToParamSub(state);
+      ((StatorWriterBO)state).writeByteObject(boCanvasAppli); //it is not null
    }
 
    //#mdebug
@@ -1617,7 +1632,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       dc.nlThread("threadUpdate", threadUpdate);
       dc.nlThread("threadUpdateRender", threadUpdateRender);
 
-      dc.nlLvl(techCanvasAppli, "techCanvasAppli");
+      dc.nlLvl(boCanvasAppli, "boCanvasAppli");
 
       dc.nlLvl(simulationCanvas, "simulationCanvas");
       dc.nlLvl(gaCanvas, "GestureArea");

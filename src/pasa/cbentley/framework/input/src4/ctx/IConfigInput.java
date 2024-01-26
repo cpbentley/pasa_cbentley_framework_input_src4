@@ -2,6 +2,7 @@ package pasa.cbentley.framework.input.src4.ctx;
 
 import pasa.cbentley.byteobjects.src4.ctx.IConfigBO;
 import pasa.cbentley.framework.coreui.src4.tech.IBOCanvasHost;
+import pasa.cbentley.framework.coreui.src4.tech.ITechHostUI;
 import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 
 /**
@@ -24,10 +25,10 @@ public interface IConfigInput extends IConfigBO {
    public int getCanvasDefaultThreadingMode();
 
    /**
-    * <li>{@link IBOCanvasHost#SCREEN_0_TOP_NORMAL}
-    * <li>{@link IBOCanvasHost#SCREEN_1_BOT_UPSIDEDOWN}
-    * <li>{@link IBOCanvasHost#SCREEN_2_LEFT_ROTATED}
-    * <li>{@link IBOCanvasHost#SCREEN_3_RIGHT_ROTATED}
+    * <li>{@link ITechHostUI#SCREEN_0_TOP_NORMAL}
+    * <li>{@link ITechHostUI#SCREEN_1_BOT_UPSIDEDOWN}
+    * <li>{@link ITechHostUI#SCREEN_2_LEFT_ROTATED}
+    * <li>{@link ITechHostUI#SCREEN_3_RIGHT_ROTATED}
     * @return
     */
    public int getCanvasDefaultScreenMode();

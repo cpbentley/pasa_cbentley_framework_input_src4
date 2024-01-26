@@ -2,6 +2,7 @@ package pasa.cbentley.framework.input.src4.ctx;
 
 import pasa.cbentley.byteobjects.src4.core.interfaces.IBOCtxSettings;
 import pasa.cbentley.framework.coreui.src4.tech.IBOCanvasHost;
+import pasa.cbentley.framework.coreui.src4.tech.ITechHostUI;
 import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 
 /**
@@ -50,10 +51,10 @@ public interface IBOCtxSettingsInput extends IBOCtxSettings {
    public static final int CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1 = CTX_BASIC_SIZE + 1;
 
    /**
-    * <li>{@link IBOCanvasHost#SCREEN_0_TOP_NORMAL}
-    * <li>{@link IBOCanvasHost#SCREEN_1_BOT_UPSIDEDOWN}
-    * <li>{@link IBOCanvasHost#SCREEN_2_LEFT_ROTATED}
-    * <li>{@link IBOCanvasHost#SCREEN_3_RIGHT_ROTATED}
+    * <li>{@link ITechHostUI#SCREEN_0_TOP_NORMAL}
+    * <li>{@link ITechHostUI#SCREEN_1_BOT_UPSIDEDOWN}
+    * <li>{@link ITechHostUI#SCREEN_2_LEFT_ROTATED}
+    * <li>{@link ITechHostUI#SCREEN_3_RIGHT_ROTATED}
     * 
     */
    public static final int CTX_INPUT_OFFSET_03_CANVAS_DEFAULT_SCREEN_MODE1    = CTX_BASIC_SIZE + 2;

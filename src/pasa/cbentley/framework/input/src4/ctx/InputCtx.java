@@ -60,12 +60,11 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
       if (this.getClass() == InputCtx.class) {
          a_Init();
       }
-      
+
       //#debug
       toDLog().pInit("Created", this, InputCtx.class, "InputCtx", LVL_05_FINE, true);
    }
 
-   
    protected void applySettings(ByteObject settingsNew, ByteObject settingsOld) {
       //default canvas settings are applied when calling method
       //#debug
@@ -83,7 +82,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
     * 
     * @return {@link IBOCanvasAppli}
     */
-   public ByteObject createTechCanvasAppliDefault() {
+   public ByteObject createBOCanvasAppliDefault() {
       int type = IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI;
       int size = IBOCanvasAppli.CANVAS_APP_BASIC_SIZE;
       ByteObject tech = cfc.getBOC().getByteObjectFactory().createByteObject(type, size);
@@ -169,7 +168,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
       dc.root(this, InputCtx.class, 136);
       toStringPrivate(dc);
       super.toString(dc.sup());
-      dc.nlLvl(createTechCanvasAppliDefault(), "createTechCanvasAppliDefault");
+      dc.nlLvl(createBOCanvasAppliDefault(), "createTechCanvasAppliDefault");
       dc.nlLvl(cfc, "cfc");
       dc.nlLvl(workerThread, "workerThread");
    }
@@ -182,6 +181,22 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
 
    private void toStringPrivate(Dctx dc) {
 
+   }
+
+   public ByteObject getBOAppliFromParam(ByteObject boCanvasHost, Object object) {
+      if (object != null && object instanceof ByteObject) {
+         ByteObject bo = (ByteObject) object;
+         if (bo.getType() == IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI) {
+            return bo;
+         }
+      }
+      if (boCanvasHost != null) {
+         ByteObject bo = boCanvasHost.getSubFirst(IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI);
+         if (bo != null) {
+            return bo;
+         }
+      }
+      return createBOCanvasAppliDefault();
    }
 
    //#enddebug

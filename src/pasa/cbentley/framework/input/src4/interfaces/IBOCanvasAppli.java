@@ -2,6 +2,7 @@ package pasa.cbentley.framework.input.src4.interfaces;
 
 import pasa.cbentley.byteobjects.src4.core.interfaces.IByteObject;
 import pasa.cbentley.framework.coreui.src4.tech.IBOCanvasHost;
+import pasa.cbentley.framework.coreui.src4.tech.ITechHostUI;
 import pasa.cbentley.framework.input.src4.ctx.IBOTypesInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 
@@ -44,10 +45,10 @@ public interface IBOCanvasAppli extends IByteObject {
    public static final int CANVAS_APP_OFFSET_03_THREADING_MODE1 = A_OBJECT_BASIC_SIZE + 2;
 
    /**
-    * <li>{@link IBOCanvasHost#SCREEN_0_TOP_NORMAL}
-    * <li>{@link IBOCanvasHost#SCREEN_1_BOT_UPSIDEDOWN}
-    * <li>{@link IBOCanvasHost#SCREEN_2_LEFT_ROTATED}
-    * <li>{@link IBOCanvasHost#SCREEN_3_RIGHT_ROTATED}
+    * <li>{@link ITechHostUI#SCREEN_0_TOP_NORMAL}
+    * <li>{@link ITechHostUI#SCREEN_1_BOT_UPSIDEDOWN}
+    * <li>{@link ITechHostUI#SCREEN_2_LEFT_ROTATED}
+    * <li>{@link ITechHostUI#SCREEN_3_RIGHT_ROTATED}
     * 
     */
    public static final int CANVAS_APP_OFFSET_04_SCREEN_MODE1    = A_OBJECT_BASIC_SIZE + 3;
