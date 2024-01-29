@@ -3,7 +3,6 @@ package pasa.cbentley.framework.input.src4;
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.interfaces.C;
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.core.src4.logging.IDLog;
 import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.core.src4.structs.FiFoQueue;
 import pasa.cbentley.core.src4.structs.IntToStrings;
@@ -15,9 +14,10 @@ import pasa.cbentley.framework.coreui.src4.exec.ExecutionContext;
 import pasa.cbentley.framework.coreui.src4.interfaces.IActionFeedback;
 import pasa.cbentley.framework.coreui.src4.tech.ITechInputFeedback;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.interfaces.ITechScreenResults;
-import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
+import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 import pasa.cbentley.framework.input.src4.interfaces.ITechInputCycle;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
+import pasa.cbentley.framework.input.src4.interfaces.ITechScreenResults;
 
 /**
  * Used by {@link InputState} to coalesce the {@link CanvasAppliInput} consequences of executing code.
@@ -37,7 +37,7 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechInputCycle;
  * @author Charles-Philip Bentley
  *
  */
-public class CanvasResult implements ITechInputFeedback, ITechScreenResults, IStringable {
+public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechScreenResults, IStringable {
 
    /**
     * Short Strings describing the actions that were done
@@ -75,8 +75,6 @@ public class CanvasResult implements ITechInputFeedback, ITechScreenResults, ISt
    private ExecutionContext   exctx;
 
    private InputState         inputState;
-
-   protected final InputCtx   ic;
 
    private float              interpolation;
 
@@ -124,7 +122,7 @@ public class CanvasResult implements ITechInputFeedback, ITechScreenResults, ISt
     * @param cycle
     */
    public CanvasResult(InputCtx ic, CanvasAppliInput ctrl, int cycle) {
-      this.ic = ic;
+      super(ic);
       UCtx uc = ic.getUCtx();
       sema = new MutexSignal(uc);
       runUpdates = new FiFoQueue(uc);
@@ -506,17 +504,13 @@ public class CanvasResult implements ITechInputFeedback, ITechScreenResults, ISt
       cycleContext = type;
    }
 
-   public IDLog toDLog() {
-      return ic.toDLog();
-   }
 
    //#mdebug
-   public String toString() {
-      return Dctx.toString(this);
-   }
-
    public void toString(Dctx dc) {
-      dc.root(this, "ScreenResult");
+      dc.root(this, CanvasResult.class, 530);
+      toStringPrivate(dc);
+      super.toString(dc.sup());
+
       dc.nl();
       if (repaintFlags == 0) {
          dc.append("RepaintsFlags:NONE");
@@ -549,15 +543,13 @@ public class CanvasResult implements ITechInputFeedback, ITechScreenResults, ISt
       dc.appendVarWithSpace("Message", screenMessage);
       dc.appendVarWithSpace("Anchor", screenMessage);
       dc.appendVarWithSpace("Interpolation", StringUtils.prettyFloat(interpolation));
-
-   }
-
-   public String toString1Line() {
-      return Dctx.toString1Line(this);
    }
 
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, "ScreenResult");
+      dc.root1Line(this, CanvasResult.class);
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
+
    }
 
    public void toStringActionString1Line(Dctx sb) {
@@ -567,6 +559,7 @@ public class CanvasResult implements ITechInputFeedback, ITechScreenResults, ISt
          sb.append("]");
       }
    }
+
 
    public String toStringClip(IGraphics g) {
       Dctx d = new Dctx(inputState.toStringGetUCtx());
@@ -579,8 +572,8 @@ public class CanvasResult implements ITechInputFeedback, ITechScreenResults, ISt
       sb.append(" Graphics:[" + g.getClipX() + "," + g.getClipY() + " " + g.getClipWidth() + "," + g.getClipHeight() + "]");
    }
 
-   public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
+   private void toStringPrivate(Dctx dc) {
+
    }
 
    public String toStringRepaintFlags() {

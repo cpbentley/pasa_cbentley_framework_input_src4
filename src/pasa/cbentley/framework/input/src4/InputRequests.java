@@ -21,6 +21,7 @@ import pasa.cbentley.framework.coreui.src4.event.VoiceEvent;
 import pasa.cbentley.framework.coreui.src4.interfaces.IHostGestures;
 import pasa.cbentley.framework.coreui.src4.tech.ITechGestures;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 import pasa.cbentley.framework.input.src4.event.NUpleEvent;
 import pasa.cbentley.framework.input.src4.event.jobs.BaseJob;
 import pasa.cbentley.framework.input.src4.event.jobs.GestureTrailJob;
@@ -60,7 +61,7 @@ import pasa.cbentley.framework.input.src4.event.jobs.RepeatJob;
  * @author Charles Bentley
  *
  */
-public class InputRequests implements IStringable {
+public class InputRequests extends ObjectIC implements IStringable {
 
    /**
     * index is
@@ -101,7 +102,6 @@ public class InputRequests implements IStringable {
 
    private int              gridPath  = -1;
 
-   protected final InputCtx ic;
 
    private InputState       is;
 
@@ -120,7 +120,7 @@ public class InputRequests implements IStringable {
    private int              requestID = 1;
 
    public InputRequests(InputCtx ic, CanvasAppliInput canvas, InputState is) {
-      this.ic = ic;
+      super(ic);
       this.canvas = canvas;
       this.is = is;
       actual = new IntBuffer[ITechGestures.MAX_GESTURE];
@@ -507,14 +507,14 @@ public class InputRequests implements IStringable {
       throw new RuntimeException();
    }
 
+
+
    //#mdebug
-   public String toString() {
-      return Dctx.toString(this);
-   }
-
    public void toString(Dctx dc) {
-      dc.root(this, InputRequests.class);
-
+      dc.root(this, InputRequests.class, 530);
+      toStringPrivate(dc);
+      super.toString(dc.sup());
+      
       dc.appendVarWithSpace("gesturePointer", gesturePointer);
       dc.appendVarWithSpace("requestID", requestID);
       dc.appendVarWithSpace("dragReleaseGestures", dragReleaseGestures);
@@ -532,20 +532,19 @@ public class InputRequests implements IStringable {
 
       dc.nlLvl(itosJob, "itosJob");
       dc.nlLvl(nupleListActive, "nupleListActive");
-
    }
 
-   public String toString1Line() {
-      return Dctx.toString1Line(this);
+   private void toStringPrivate(Dctx dc) {
+      
    }
 
-   public void toString1Line(Dctx sb) {
-      sb.root1Line(this, InputRequests.class);
+   public void toString1Line(Dctx dc) {
+      dc.root1Line(this, InputRequests.class);
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
    }
 
-   public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
-   }
    //#enddebug
+   
 
 }

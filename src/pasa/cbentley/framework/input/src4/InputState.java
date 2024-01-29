@@ -37,9 +37,9 @@ import pasa.cbentley.framework.coreui.src4.event.RepeatEvent;
 import pasa.cbentley.framework.coreui.src4.event.SenseEvent;
 import pasa.cbentley.framework.coreui.src4.event.VoiceEvent;
 import pasa.cbentley.framework.coreui.src4.interfaces.ITechEventHost;
+import pasa.cbentley.framework.coreui.src4.tech.IInput;
 import pasa.cbentley.framework.coreui.src4.tech.ITechCodes;
 import pasa.cbentley.framework.coreui.src4.tech.ITechGestures;
-import pasa.cbentley.framework.coreui.src4.tech.IInput;
 import pasa.cbentley.framework.coreui.src4.utils.InputSettings;
 import pasa.cbentley.framework.input.src4.ctx.IBOCtxSettingsInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
@@ -1900,7 +1900,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
          int type = de.getDeviceType();
          if (type == DEVICE_0_KEYBOARD) {
             int key = de.getDeviceButton();
-            return ToStringStaticCoreUi.getStringKey(key);
+            return ToStringStaticCoreUi.toStringKey(key);
          }
       }
       return b.toString();
@@ -1914,7 +1914,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
             int key = de.getDeviceButton();
             int id = de.getDeviceID();
             int mode = de.getDeviceMode();
-            return ToStringStaticCoreUi.getStringMod(mode) + ToStringStaticCoreUi.getStringKey(key) + "Kb[" + id + "]";
+            return ToStringStaticCoreUi.toStringMod(mode) + ToStringStaticCoreUi.toStringKey(key) + "Kb[" + id + "]";
          } else if (type == DEVICE_1_MOUSE) {
             DeviceEventXY dex = (DeviceEventXY) b;
 
@@ -3373,7 +3373,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
    public void toString(Dctx dc) {
       dc.root(this, InputState.class);
       dc.appendVarWithSpace("getKeyCode", getKeyCode());
-      dc.appendVarWithSpace("Mode", ToStringStaticCoreUi.getStringMod(getMode()));
+      dc.appendVarWithSpace("Mode", ToStringStaticCoreUi.toStringMod(getMode()));
       dc.nl();
       dc.appendVarWithSpace("isKeyTyped", isKeyTyped());
       dc.appendVarWithSpace("isFastKeyTyped", isLastKeyFastTyped(getKeyCode()));
@@ -3459,7 +3459,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       sb.append("#InpuConfig ");
       sb.append(getKeyCode());
       sb.append('\t');
-      sb.append(ToStringStaticCoreUi.getStringMod(getMode()));
+      sb.append(ToStringStaticCoreUi.toStringMod(getMode()));
       sb.append('\t');
       sb.append(getX() + "," + getY());
       return sb.toString();

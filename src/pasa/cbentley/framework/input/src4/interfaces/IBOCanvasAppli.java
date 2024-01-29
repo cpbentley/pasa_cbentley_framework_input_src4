@@ -17,7 +17,7 @@ public interface IBOCanvasAppli extends IByteObject {
 
    public static final int CANVAS_APP_BASIC_SIZE                = A_OBJECT_BASIC_SIZE + 10;
 
-   public static final int CANVAS_APP_TYPE                      = IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI;
+   public static final int CANVAS_APP_BASE_TYPE                 = IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI;
 
    public static final int CANVAS_APP_FLAG_1_FULLSCREEN         = 1 << 0;
 
@@ -30,7 +30,7 @@ public interface IBOCanvasAppli extends IByteObject {
    /**
     * Sub type of canvas
     */
-   public static final int CANVAS_APP_OFFSET_02_TYPE1           = A_OBJECT_BASIC_SIZE + 1;
+   public static final int CANVAS_APP_OFFSET_02_TYPE_SUB1       = A_OBJECT_BASIC_SIZE + 1;
 
    /**
     * Set for the controlling canvas

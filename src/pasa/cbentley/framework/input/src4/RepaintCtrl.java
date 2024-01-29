@@ -2,13 +2,13 @@ package pasa.cbentley.framework.input.src4;
 
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.core.src4.logging.IDLog;
 import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.core.src4.structs.FiFoQueue;
 import pasa.cbentley.framework.input.src4.ctx.IFlagsToStringInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
+import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 import pasa.cbentley.framework.input.src4.interfaces.ITechInputCycle;
+import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 import pasa.cbentley.framework.input.src4.interfaces.ITechScreenResults;
 
 /**
@@ -19,7 +19,7 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechScreenResults;
  * @author Charles Bentley
  *
  */
-public class RepaintCtrl implements IStringable, ITechInputCycle {
+public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycle {
    /**
     * 
     */
@@ -71,14 +71,13 @@ public class RepaintCtrl implements IStringable, ITechInputCycle {
     */
    protected CanvasResult     canvasResultEvent;
 
-   protected final InputCtx   ic;
 
    /**
     * T
     * @param canvas
     */
    public RepaintCtrl(InputCtx ic, CanvasAppliInput canvas) {
-      this.ic = ic;
+      super(ic);
       this.canvas = canvas;
       UCtx uc = ic.getUCtx();
       queue = new FiFoQueue(uc);
@@ -342,37 +341,33 @@ public class RepaintCtrl implements IStringable, ITechInputCycle {
       return sr;
    }
 
+
    //#mdebug
-   public IDLog toDLog() {
-      return toStringGetUCtx().toDLog();
-   }
-
-   public String toString() {
-      return Dctx.toString(this);
-   }
-
    public void toString(Dctx dc) {
-      dc.root(this, "RepaintCtrl");
+      dc.root(this, RepaintCtrl.class, 350);
       toStringPrivate(dc);
-   }
-
-   public String toString1Line() {
-      return Dctx.toString1Line(this);
+      super.toString(dc.sup());
+      
+      dc.nlLvl(canvasResultEvent, "canvasResultEvent");
+      dc.nlLvl(canvasResultBusiness, "canvasResultBusiness");
+      dc.nlLvl(canvas, "canvas");
+      dc.nlLvl(queue, "queue");
+      dc.nlLvl(queueSR, "queueSR");
+      dc.nlLvl(runUpdates, "runUpdates");
    }
 
    private void toStringPrivate(Dctx dc) {
-
+      dc.appendVarWithSpace("isEventThreadState", isEventThreadState);
    }
 
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, "RepaintCtrl");
+      dc.root1Line(this, RepaintCtrl.class);
       toStringPrivate(dc);
-   }
-
-   public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
+      super.toString1Line(dc.sup1Line());
    }
 
    //#enddebug
+   
+
 
 }

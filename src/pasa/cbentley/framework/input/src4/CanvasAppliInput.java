@@ -224,7 +224,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
 
    private GestureArea           gaCanvas;
 
-   private GameLoop gl;
+   private GameLoop              gl;
 
    protected final InputCtx      ic;
 
@@ -331,16 +331,16 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * Subclass must call {@link CanvasAppliInput#a_Init()} at the end of its constructor.
     * 
     * @param ic {@link InputCtx}
-    * @param techCanvasAppli {@link IBOCanvasAppli}
-    * @param techCanvasHost  {@link IBOCanvasHost}
+    * @param boCanvasAppli {@link IBOCanvasAppli}
+    * @param boCanvasHost  {@link IBOCanvasHost}
     */
-   public CanvasAppliInput(InputCtx ic, ByteObject techCanvasAppli, ByteObject techCanvasHost) {
-      super(ic.getCUC(), techCanvasHost);
+   public CanvasAppliInput(InputCtx ic, ByteObject boCanvasAppli, ByteObject boCanvasHost) {
+      super(ic.getCUC(), boCanvasHost);
       this.ic = ic;
-      if (techCanvasAppli == null) {
+      if (boCanvasAppli == null) {
          throw new NullPointerException();
       }
-      this.boCanvasAppli = techCanvasAppli;
+      this.boCanvasAppli = boCanvasAppli;
       threadRender = Thread.currentThread();
       threadUpdate = Thread.currentThread();
       threadUpdateRender = Thread.currentThread();
@@ -421,6 +421,10 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       return new InputState(ic, this);
    }
 
+   /**
+    * Override this for more specific {@link RepaintCtrl}
+    * @return
+    */
    protected RepaintCtrl createRepaintCtrl() {
       return new RepaintCtrl(ic, this);
    }
@@ -639,22 +643,17 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    protected abstract void ctrlUIEvent(InputState is, CanvasResult sr);
 
    /**
-    * 
-    */
-   public void eventCanvasSize(int w, int h) {
-      if (gaCanvas != null) {
-         gaCanvas.h = h;
-         gaCanvas.w = w;
-      }
-   }
-
-   /**
     * We delegate to the {@link EventController}.
     * 
     * He is able to queue certains event necessary. It is chosen by the gameloop if any.
     */
    protected void eventToCanvas(BEvent g) {
+      //#debug
+      toDLog().pEvent("", g, CanvasAppliInput.class, "eventToCanvas@653", LVL_05_FINE, DEV_4_THREAD);
+
+      
       //TODO put a lock
+      
       eventCtrl.event(g, this);
 
       //release lock
@@ -768,7 +767,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * {@link IBOCanvasAppli}
     * @return
     */
-   public ByteObject getTechCanvasAppli() {
+   public ByteObject getBOCanvasAppli() {
       return boCanvasAppli;
    }
 
@@ -1463,16 +1462,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       debugFlags = BitUtils.setFlag(debugFlags, flag, v);
    }
 
-   public void setDragControlled(boolean isDragControlled) {
-      if (threadingMode == ITechPaintThread.THREADING_0_ONE_TO_RULE_ALL) {
-         if (isDragControlled) {
-            eventCtrl = new EventControllerOneThreadCtrled(ic, this);
-         } else {
-            eventCtrl = new EventControllerOneThread(ic, this);
-         }
-      }
-   }
-
    /**
     * Synchronize this How?
     * @return
@@ -1501,7 +1490,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    public void setThreadingMode(int threadingMode) {
       //#debug
-      toDLog().pInit1("Mode to " + ToStringStaticInput.toStringThreadingMode(threadingMode) + " from " + ToStringStaticInput.toStringThreadingMode(this.threadingMode), null, CanvasAppliInput.class, "setThreadingMode");
+      toDLog().pInit1("Mode to " + ToStringStaticInput.toStringThreadingMode(threadingMode) + " from " + ToStringStaticInput.toStringThreadingMode(this.threadingMode), null, CanvasAppliInput.class, "setThreadingMode@1503");
 
       if (this.threadingMode == threadingMode) {
          return;
@@ -1560,8 +1549,11 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
          throw new IllegalArgumentException("Ünknown threading mode " + threadingMode);
       }
 
+      if(eventCtrl == null) {
+         throw new NullPointerException("We must initialize eventCtrl here");
+      }
       //#debug
-      toDLog().pFlow("Thread Mode is now :<" + ToStringStaticInput.toStringThreadingMode(threadingMode) + ">", this, CanvasAppliInput.class, "setThreadingMode", LVL_05_FINE, false);
+      toDLog().pFlowBig("Thread Mode is now :[" + ToStringStaticInput.toStringThreadingMode(threadingMode) + "]", this, CanvasAppliInput.class, "setThreadingMode@1563");
    }
 
    private void setThreadStop() {
@@ -1613,20 +1605,21 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    public void stateWriteTo(StatorWriter state) {
       super.stateWriteTo(state);
       //a priori no state that won't be constructed back with boCanvasAppli
-      
-      
+
    }
 
    protected void stateWriteToParamSub(StatorWriter state) {
       super.stateWriteToParamSub(state);
-      ((StatorWriterBO)state).writeByteObject(boCanvasAppli); //it is not null
+      ((StatorWriterBO) state).writeByteObject(boCanvasAppli); //it is not null
    }
 
    //#mdebug
    public void toString(Dctx dc) {
       dc.root(this, CanvasAppliInput.class, 1497);
+      toStringPrivate(dc);
       super.toString(dc.sup());
 
+      
       dc.nlThread("eventThread", eventThread);
       dc.nlThread("threadRender", threadRender);
       dc.nlThread("threadUpdate", threadUpdate);
@@ -1642,12 +1635,18 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       dc.nlLvl(screenCtrl, "ScreenOrientation");
    }
 
+   private void toStringPrivate(Dctx dc) {
+      dc.appendVarWithSpace("bgColor", bgColor);
+   }
+
    /**
     * Called when  {@link Dctx} see the same object for another time
     * @param dc
     */
    public void toString1Line(Dctx dc) {
       dc.root1Line(this, CanvasAppliInput.class);
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
    }
    //#enddebug
 

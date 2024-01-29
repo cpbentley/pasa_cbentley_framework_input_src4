@@ -52,7 +52,7 @@ public class EventKeyGridCrossing extends EventKey {
    }
 
    public String getUserLineString() {
-      return "Grid " + " " + ToStringStaticCoreUi.getStringGridType(grid) + " " + ToStringStaticCoreUi.toStringKeyEventUserLine(patternAction);
+      return "Grid " + " " + ToStringStaticCoreUi.toStringGridType(grid) + " " + ToStringStaticCoreUi.toStringKeyEventUserLine(patternAction);
    }
 
    public int getCurrentGrid() {
@@ -69,14 +69,14 @@ public class EventKeyGridCrossing extends EventKey {
       dc.root(this, "EventKeyGrid");
       super.toString(dc.sup());
       dc.appendVarWithSpace("PointerID", pointerID);
-      dc.appendVarWithSpace("Grid", ToStringStaticCoreUi.getStringGridType(grid));
+      dc.appendVarWithSpace("Grid", ToStringStaticCoreUi.toStringGridType(grid));
       dc.nlLvl(ga);
    }
 
    public void toString1Line(Dctx dc) {
       dc.root1Line(this, "EventKeyGrid");
       dc.appendVarWithSpace("PointerID", pointerID);
-      dc.appendVarWithSpace("Grid", ToStringStaticCoreUi.getStringGridType(grid));
+      dc.appendVarWithSpace("Grid", ToStringStaticCoreUi.toStringGridType(grid));
       dc.nlLvl(ga);
       super.toString1Line(dc.sup1Line());
    }

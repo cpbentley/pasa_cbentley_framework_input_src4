@@ -44,13 +44,13 @@ public class BOModuleInput extends BOModuleAbstract {
       switch (type) {
          case IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI:
             dc.rootN(bo, "ITechCanvasAppli");
-            int subType = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_02_TYPE1);
+            int subType = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_02_TYPE_SUB1);
             dc.appendVarWithSpace("subType", subType);
             int threadMode = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1);
             dc.appendVarWithNewLine("treadMode", ToStringStaticInput.toStringThreadingMode(threadMode));
             
             int screenMode = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_04_SCREEN_MODE1);
-            dc.appendVarWithNewLine("screenMode", ToStringStaticCoreUi.getStringScreenMode(screenMode));
+            dc.appendVarWithNewLine("screenMode", ToStringStaticCoreUi.toStringScreenMode(screenMode));
             
             int bgColor = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4);
             dc.appendColorWithSpace("bgColor", bgColor);

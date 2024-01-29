@@ -1,43 +1,27 @@
 package pasa.cbentley.framework.input.src4;
 
-import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.src4.logging.IStringable;
+import pasa.cbentley.framework.coreui.src4.ctx.ToStringStaticCoreUi;
 import pasa.cbentley.framework.coreui.src4.tech.ITechCodes;
 import pasa.cbentley.framework.coreui.src4.tech.ITechHostUI;
 import pasa.cbentley.framework.input.src4.ctx.IBOCtxSettingsInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 
 /**
  * The screen control class
  * @author Charles Bentley
  *
  */
-public class ScreenOrientationCtrl implements IBOCtxSettingsInput, IStringable {
-
-   public static String toStringConfig(int c) {
-      switch (c) {
-         case ITechHostUI.SCREEN_0_TOP_NORMAL:
-            return "Normal";
-         case ITechHostUI.SCREEN_1_BOT_UPSIDEDOWN:
-            return "UpsideDown";
-         case ITechHostUI.SCREEN_2_LEFT_ROTATED:
-            return "Left";
-         case ITechHostUI.SCREEN_3_RIGHT_ROTATED:
-            return "Right";
-         default:
-            return "UnknownConfig" + c;
-      }
-   }
+public class ScreenOrientationCtrl extends ObjectIC implements IBOCtxSettingsInput, IStringable {
 
    private CanvasAppliInput canvas;
-
-   protected final InputCtx ic;
 
    private int              screenConfig;
 
    public ScreenOrientationCtrl(InputCtx ic, CanvasAppliInput canvas) {
-      this.ic = ic;
+      super(ic);
       this.canvas = canvas;
    }
 
@@ -60,7 +44,25 @@ public class ScreenOrientationCtrl implements IBOCtxSettingsInput, IStringable {
       } else {
          //ask the canvas to deal with new config
       }
-      canvas.postRotation();
+      //canvas.postRotation();
+      
+//      int oldw = canvas.getWidth();
+//      int oldh = canvas.getHeight();
+//      //size for the image layer
+//      int w = 0;
+//      int h = 0;
+//      if (newConfig == ITechHostUI.SCREEN_1_BOT_UPSIDEDOWN || newConfig == ITechHostUI.SCREEN_0_TOP_NORMAL) {
+//         w = canvas.getWidth();
+//         h = canvas.getHeight();
+//      } else {
+//         w = canvas.getHeight();
+//         h = canvas.getWidth();
+//      }
+//      CanvasHostEvent ch = new CanvasHostEvent(ic.getCUC(), ITechEventHost.ACTION_3_RESIZED, canvas.getCanvasHost());
+//      ch.setW(w);
+//      ch.setH(h);
+//      canvas.event(ch);
+
    }
 
    /**
@@ -153,27 +155,26 @@ public class ScreenOrientationCtrl implements IBOCtxSettingsInput, IStringable {
       return y;
    }
 
+
    //#mdebug
-   public String toString() {
-      return Dctx.toString(this);
-   }
-
    public void toString(Dctx dc) {
-      dc.root(this, "ScreenOrientationCtrl");
-      dc.appendVarWithSpace("Config", toStringConfig(screenConfig));
+      dc.root(this, ScreenOrientationCtrl.class, 170);
+      toStringPrivate(dc);
+      super.toString(dc.sup());
    }
 
-   public String toString1Line() {
-      return Dctx.toString1Line(this);
+   private void toStringPrivate(Dctx dc) {
+      dc.appendVarWithSpace("Config", ToStringStaticCoreUi.toStringScreenConfig(screenConfig));
    }
 
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, "ScreenOrientationCtrl");
-      dc.appendVarWithSpace("Config", toStringConfig(screenConfig));
+      dc.root1Line(this, ScreenOrientationCtrl.class);
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
    }
 
-   public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
-   }
    //#enddebug
+   
+
+   
 }
