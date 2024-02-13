@@ -62,7 +62,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
       }
 
       //#debug
-      toDLog().pInit("Created", this, InputCtx.class, "InputCtx", LVL_05_FINE, true);
+      toDLog().pInit("", this, InputCtx.class, "Created@65", LVL_04_FINER, true);
    }
 
    protected void applySettings(ByteObject settingsNew, ByteObject settingsOld) {
@@ -127,7 +127,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
    public ByteObject getTechCanvasHostDefault() {
       if (cTechDefault == null) {
          //hardcode one here
-         ByteObject inTech = this.getSettingsBO();
+         ByteObject inTech = this.getBOCtxSettings();
          cTechDefault = inTech.getSubFirst(IBOCanvasHost.TCANVAS_TYPE);
          if (cTechDefault == null) {
             cTechDefault = getCUC().createBOCanvasHostDefault();
@@ -157,7 +157,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
    }
 
    public void setTechCanvasAppliDefault(ByteObject tech) {
-      ByteObject settingsBO = getSettingsBO();
+      ByteObject settingsBO = getBOCtxSettings();
       //maps from config defaults
       int defaultThreadingMode = settingsBO.get1(IBOCtxSettingsInput.CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1);
       tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1, defaultThreadingMode);

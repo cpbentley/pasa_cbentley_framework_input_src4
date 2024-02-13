@@ -43,6 +43,7 @@ import pasa.cbentley.framework.coreui.src4.tech.ITechGestures;
 import pasa.cbentley.framework.coreui.src4.utils.InputSettings;
 import pasa.cbentley.framework.input.src4.ctx.IBOCtxSettingsInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 import pasa.cbentley.framework.input.src4.event.ctrl.EventControllerQueued;
 import pasa.cbentley.framework.input.src4.event.jobs.BaseJob;
 import pasa.cbentley.framework.input.src4.event.jobs.JobsEventRunner;
@@ -188,7 +189,7 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechEvent;
  * @author Charles-Philip Bentley
  *
  */
-public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, IStringable {
+public class InputState extends ObjectIC implements IInput, IBOCtxSettingsInput, ITechGestures, IStringable {
 
    private static final int    MAX_HISTORY            = 100;
 
@@ -208,7 +209,6 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
     */
    protected CanvasAppliInput  canvasLast;
 
-   protected final InputCtx    inputCtx;
 
    /**
     * Track the last 100 press and releases with their orders
@@ -382,17 +382,17 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
     * @param mc
     */
    protected InputState(InputCtx ic, CanvasAppliInput mc) {
+      super(ic);
       this.canvasLast = mc;
-      this.inputCtx = ic;
       this.cuc = ic.getCUC();
       this.uc = ic.getUCtx();
       pointers = new Pointer[] { new Pointer(ic, 0) };
       lastPointer = pointers[0];
       lastPointerEvents = new DeviceEventXY[10];
-      deviceKeyMainKeyboard = new DeviceKeys(inputCtx, this, IInput.DEVICE_0_KEYBOARD, 0);
+      deviceKeyMainKeyboard = new DeviceKeys(ic, this, IInput.DEVICE_0_KEYBOARD, 0);
       //make it null but check when first created
-      deviceKeyMainPointer = new DeviceKeys(inputCtx, this, IInput.DEVICE_1_MOUSE, 0);
-      deviceKeyMainTouchScreen = new DeviceKeys(inputCtx, this, IInput.DEVICE_4_SCREEN, 0);
+      deviceKeyMainPointer = new DeviceKeys(ic, this, IInput.DEVICE_1_MOUSE, 0);
+      deviceKeyMainTouchScreen = new DeviceKeys(ic, this, IInput.DEVICE_4_SCREEN, 0);
 
       beEventsHistory = new CircularObjects(uc, 10);
       ignoreTooFastKeyEvents = 10;
@@ -402,7 +402,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       eventCurrent = lastDeviceEvent;
       eventPrevious = lastDeviceEventXY;
 
-      inputRequests = new InputRequests(inputCtx, canvasLast, this);
+      inputRequests = new InputRequests(ic, canvasLast, this);
       keysEmptyList = new LinkedListDouble(uc);
       DeviceEvent emptyEvent = new DeviceEvent(cuc, 0, 0, 0, 0);
       for (int i = 0; i < 10; i++) {
@@ -477,7 +477,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
    public boolean addEvent(BEvent be, CanvasAppliInput canvas) {
       //time the event here
       timePointerEvent();
-      long time = inputCtx.getTimeCtrl().getNowClock();
+      long time = ic.getTimeCtrl().getNowClock();
       be.setTime(time);
       canvasLast = canvas;
       boolean res = true;
@@ -503,7 +503,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       } else {
          res = false;
          //#debug
-         toLog().pEvent("Unknown Event Type " + eventType, be, InputState.class, "addEvent");
+         toDLog().pEvent("Unknown Event Type " + eventType, be, InputState.class, "addEvent");
       }
       if (res) {
          eventPrevious = eventCurrent;
@@ -578,7 +578,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       } else {
          res = false;
          //#debug
-         toLog().pEvent("Unknown Device Type " + deviceType, tu, InputState.class, "addEventDevice");
+         toDLog().pEvent("Unknown Device Type " + deviceType, tu, InputState.class, "addEventDevice");
       }
       if (res) {
          lastDeviceEvent = tu;
@@ -592,7 +592,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
 
    private boolean addEventRepeat(RepeatEvent re) {
       //#debug
-      toLog().pEvent1(" Thread=" + Thread.currentThread(), re, InputState.class, "addEventRepeat@line594");
+      toDLog().pEvent1(" Thread=" + Thread.currentThread(), re, InputState.class, "addEventRepeat@line594");
 
       //TODO special case when only one key? do we use the Mod
       lastRepeatEvent = re;
@@ -610,7 +610,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
     */
    public void addExit(int x, int y, int pointerID) {
       //#debug
-      toLog().pEvent("pointerID " + pointerID, null, InputState.class, "addExit");
+      toDLog().pEvent("pointerID " + pointerID, null, InputState.class, "addExit");
       GesturePointer gp = getGesturePointer0(pointerID);
 
    }
@@ -680,7 +680,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
     */
    public boolean addEventGesture(GestureEvent g) {
       //#debug
-      toLog().pFlow("", g, InputState.class, "addGesture@683", LVL_03_FINEST, true);
+      toDLog().pFlow("", g, InputState.class, "addGesture@683", LVL_03_FINEST, true);
       lastGestureEvent = g;
       commonEventEnd();
       setEventID(ITechEvent.EVID_15_GESTURE);
@@ -998,7 +998,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       if (deviceKeys == null) {
          deviceKeys = new DeviceKeys[index + 1];
          for (int i = 0; i < deviceKeys.length; i++) {
-            deviceKeys[i] = new DeviceKeys(inputCtx, this, deviceType, i + 1);
+            deviceKeys[i] = new DeviceKeys(ic, this, deviceType, i + 1);
          }
       }
       if (deviceKeys.length <= id) {
@@ -1008,7 +1008,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
             newd[i] = old[i];
          }
          for (int i = old.length; i < newd.length; i++) {
-            newd[i] = new DeviceKeys(inputCtx, this, deviceType, i + 1);
+            newd[i] = new DeviceKeys(ic, this, deviceType, i + 1);
          }
          deviceKeys = newd;
       }
@@ -1223,7 +1223,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
 
    public EventKeyDevice createInverseDeviceEvent() {
       DeviceEvent de = getLastDeviceEvent();
-      EventKeyDevice edkDevice = new EventKeyDevice(inputCtx.getCUC(), ITechEventKey.KEY_TYPE_1_CANCEL, de);
+      EventKeyDevice edkDevice = new EventKeyDevice(ic.getCUC(), ITechEventKey.KEY_TYPE_1_CANCEL, de);
       return edkDevice;
    }
 
@@ -1277,7 +1277,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       }
       if (ge == null) {
          //#debug
-         toLog().pEvent1("" + fireKey, gp, InputState.class, "createGestureEvent");
+         toDLog().pEvent1("" + fireKey, gp, InputState.class, "createGestureEvent");
       } else {
          gp.setGestureEvent(ge);
       }
@@ -1442,7 +1442,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
 
    private void gesturePointerRemove(GesturePointer gp) {
       //#debug
-      toLog().pEvent1("", gp, InputState.class, "gesturePointerRemove");
+      toDLog().pEvent1("", gp, InputState.class, "gesturePointerRemove");
       gp.removeFromList();
       numTotalActiveGestures--;
       //TODO if we use a factory pooling for gesture pointer
@@ -1494,7 +1494,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
          }
       }
       if (pointers[pointerID] == null) {
-         pointers[pointerID] = new Pointer(inputCtx, pointerID);
+         pointers[pointerID] = new Pointer(ic, pointerID);
       }
       return pointers[pointerID];
    }
@@ -2235,7 +2235,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       //#mdebug
       if (!(isTypeDevice() && isModPressed())) {
          //#debug
-         toLog().pEvent("Wrong State", this, InputState.class, "getSimultaneousPressed");
+         toDLog().pEvent("Wrong State", this, InputState.class, "getSimultaneousPressed");
          throw new IllegalStateException("Must be called with a press device event state");
       }
       //#enddebug
@@ -3179,7 +3179,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
             Pointer p = pointers[i];
             if (p == null) {
                //#debug
-               toLog().pEvent("Null Pointer", this, InputState.class, "newEventCancelGesture");
+               toDLog().pEvent("Null Pointer", this, InputState.class, "newEventCancelGesture");
                continue;
             }
             int pointerID = p.getPointerID();
@@ -3199,7 +3199,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
                         //#debug
                         String msg = "ACTIVATION OF [" + ek[j].toString1Line() + "] BY " + e.toString1Line();
                         //#debug
-                        toLog().pEvent(msg, gp, InputState.class, "newEventActivateGesture@line3161");
+                        toDLog().pEvent(msg, gp, InputState.class, "newEventActivateGesture@line3161");
                         if (typeKey == ITechEventKey.KEY_TYPE_1_CANCEL) {
                            gesturePointerRemove(gp);
                         } else if (typeKey == ITechEventKey.KEY_TYPE_0_FIRE) {
@@ -3226,13 +3226,6 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       }
    }
 
-   private IDLog toLog() {
-      return inputCtx.toDLog();
-   }
-
-   public IDLog toDLog() {
-      return inputCtx.toDLog();
-   }
 
    /**
     * Event is written as a Sync Check to because it is a sub event and should be generated by the replay
@@ -3303,7 +3296,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       if (de == null) {
          throw new NullPointerException();
       }
-      inputCtx.callSerially(new Runnable() {
+      ic.callSerially(new Runnable() {
 
          public void run() {
             canvasLast.event(de);
@@ -3339,7 +3332,7 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
    }
 
    private void timeEvent() {
-      timeCurrent = inputCtx.getTimeCtrl().getTickMillis();
+      timeCurrent = ic.getTimeCtrl().getTickMillis();
    }
 
    private void timeKeyEvent() {
@@ -3360,18 +3353,18 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       boolean isThread = true;
       if (!isThread) {
          //#debug
-         toLog().pEvent(Thread.currentThread() + " != " + canvasLast.getEventThread(), null, InputState.class, "toLogThreadCheck");
+         toDLog().pEvent(Thread.currentThread() + " != " + canvasLast.getEventThread(), null, InputState.class, "toLogThreadCheck");
          throw new IllegalThreadStateException();
       }
    }
 
    //#mdebug
-   public String toString() {
-      return Dctx.toString(this);
-   }
 
    public void toString(Dctx dc) {
-      dc.root(this, InputState.class);
+      dc.root(this, InputState.class,3370);
+      toStringPrivate(dc);
+      super.toString(dc.sup());
+      
       dc.appendVarWithSpace("getKeyCode", getKeyCode());
       dc.appendVarWithSpace("Mode", ToStringStaticCoreUi.toStringMod(getMode()));
       dc.nl();
@@ -3435,21 +3428,24 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       dc.nlLvl(inputRequests, "inputRequests");
    }
 
-   public String toString1Line() {
-      return Dctx.toString1Line(this);
+   private void toStringPrivate(Dctx dc) {
+
    }
 
-   public void toString1Line(Dctx sb) {
-      sb.root1Line(this, "InputState");
-      sb.appendVarWithSpace("", eventCurrent.toString1Line());
+   public void toString1Line(Dctx dc) {
+      dc.root1Line(this, InputState.class);
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
+      
+      dc.appendVarWithSpace("", eventCurrent.toString1Line());
       KeyEventListed[] pressedKeys = getPressedKeys();
       if (pressedKeys.length > 0) {
-         sb.appendWithSpace("PressedKeys=");
+         dc.appendWithSpace("PressedKeys=");
          for (int i = 0; i < pressedKeys.length; i++) {
             if (i != 0) {
-               sb.append(",");
+               dc.append(",");
             }
-            sb.append(pressedKeys[i].getEventPressed().getUserStringButton());
+            dc.append(pressedKeys[i].getEventPressed().getUserStringButton());
          }
       }
    }
@@ -3470,9 +3466,6 @@ public class InputState implements IInput, IBOCtxSettingsInput, ITechGestures, I
       return lastE.getUserLineString();
    }
 
-   public UCtx toStringGetUCtx() {
-      return uc;
-   }
 
    //#enddebug
 }

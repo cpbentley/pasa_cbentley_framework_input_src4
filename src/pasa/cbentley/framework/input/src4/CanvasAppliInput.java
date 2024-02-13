@@ -201,6 +201,11 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
 
    private int                   bgColor;
 
+   /**
+    * {@link IBOCanvasAppli}
+    */
+   protected ByteObject          boCanvasAppli;
+
    private int                   debugFlags;
 
    /**
@@ -216,7 +221,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * 
     * TODO clear the queue when loss of focus.
     * 
-    * Single instance per application
+    * Single instance per Canvas
     */
    JobsEventRunner               eventRun;
 
@@ -257,11 +262,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * GameLoop is a simulation
     */
    private Simulation            simulationCanvas;
-
-   /**
-    * {@link IBOCanvasAppli}
-    */
-   protected ByteObject          boCanvasAppli;
 
    /**
     * Set by the constructor.
@@ -310,7 +310,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * <br>
     * The default {@link IBOCanvasAppli} settings from {@link InputCtx#getTechCanvasHostDefault()} are used. 
     * 
-    * @param inputCtx
+    * @param ic
     */
    public CanvasAppliInput(InputCtx ic) {
       this(ic, ic.getTechCanvasHostDefault(), ic.getCUC().createBOCanvasHostDefault());
@@ -648,8 +648,9 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     * He is able to queue certains event necessary. It is chosen by the gameloop if any.
     */
    protected void eventToCanvas(BEvent g) {
+      
       //#debug
-      toDLog().pEvent("", g, CanvasAppliInput.class, "eventToCanvas@653", LVL_05_FINE, DEV_4_THREAD);
+      toDLog().pEvent("", g, CanvasAppliInput.class, "eventToCanvas@653", LVL_04_FINER, DEV_4_THREAD);
 
       
       //TODO put a lock
@@ -696,6 +697,14 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    public int getBgColor() {
       return bgColor;
+   }
+
+   /**
+    * {@link IBOCanvasAppli}
+    * @return
+    */
+   public ByteObject getBOCanvasAppli() {
+      return boCanvasAppli;
    }
 
    public EventController getEvCtrl() {
@@ -761,14 +770,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
          simulationCanvas = new Simulation(ic);
       }
       return simulationCanvas;
-   }
-
-   /**
-    * {@link IBOCanvasAppli}
-    * @return
-    */
-   public ByteObject getBOCanvasAppli() {
-      return boCanvasAppli;
    }
 
    public int getThreadingMode() {
@@ -997,7 +998,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
 
    private void pointerDraggedEnd(InputState is, CanvasResult sr) {
       //#debug
-      toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerDraggedEnd", LVL_03_FINEST, true);
+      toDLog().pEvent("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerDraggedEnd", LVL_03_FINEST, true);
    }
 
    /**
@@ -1007,17 +1008,17 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    private void pointerDraggedStart(InputState is, CanvasResult sr) {
       //#debug
-      toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerDraggedStart", LVL_03_FINEST, true);
+      toDLog().pEvent("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerDraggedStart", LVL_03_FINEST, true);
    }
 
    private void pointerGesturedEnd(InputState is, CanvasResult sr) {
       //#debug
-      toDLog().pFlow(" ", null, CanvasAppliInput.class, "pointerGesturedEnd", LVL_03_FINEST, true);
+      toDLog().pEvent(" ", null, CanvasAppliInput.class, "pointerGesturedEnd", LVL_03_FINEST, true);
    }
 
    private void pointerGesturedStart(InputState is, CanvasResult sr) {
       //#debug
-      toDLog().pFlow(" ", null, CanvasAppliInput.class, "pointerGesturedStart", LVL_03_FINEST, true);
+      toDLog().pEvent(" ", null, CanvasAppliInput.class, "pointerGesturedStart", LVL_03_FINEST, true);
    }
 
    /**
@@ -1054,7 +1055,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
 
    private void pointerMovedEnd(InputState is, CanvasResult sr) {
       //#mdebug
-      toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerMovedEnd  ", LVL_03_FINEST, true);
+      toDLog().pEvent("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerMovedEnd  ", LVL_03_FINEST, true);
 
       if (ic.toStringHasToStringFlag(IFlagsToStringInput.D_FLAG_22_MOVE_POINTERS)) {
          //we want to block printing on the console
@@ -1070,7 +1071,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
          toDLog().getDefault().getConfig().setFlagMaster(ITechConfig.MASTER_FLAG_01_BLOCK_ALL_PRINT, true); //disable sysout 
       }
       //#debug
-      toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerMovedStart", LVL_03_FINEST, true);
+      toDLog().pEvent("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerMovedStart", LVL_03_FINEST, true);
       //#enddebug
    }
 
@@ -1085,7 +1086,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    private void pointerPressedEnd(InputState is, CanvasResult sr) {
       //#debug
-      toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerPressedEnd", LVL_03_FINEST, true);
+      toDLog().pEvent("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerPressedEnd", LVL_03_FINEST, true);
    }
 
    /**
@@ -1098,13 +1099,13 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    private void pointerPressedStart(InputState is, CanvasResult sr) {
       //#debug
-      toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerPressedStart", LVL_03_FINEST, true);
+      toDLog().pEvent("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerPressedStart", LVL_03_FINEST, true);
 
    }
 
    private void pointerReleasedEnd(InputState is, CanvasResult sr) {
       //#debug
-      toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerReleasedEnd", LVL_03_FINEST, true);
+      toDLog().pEvent("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerReleasedEnd", LVL_03_FINEST, true);
    }
 
    /**
@@ -1115,17 +1116,17 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    private void pointerReleasedStart(InputState is, CanvasResult sr) {
       //#debug
-      toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerReleasedStart", LVL_03_FINEST, true);
+      toDLog().pEvent("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerReleasedStart", LVL_03_FINEST, true);
    }
 
    private void pointerWheelEnd(InputState is, CanvasResult sr) {
       //#debug
-      toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerWheelEnd", LVL_03_FINEST, true);
+      toDLog().pEvent("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerWheelEnd", LVL_03_FINEST, true);
    }
 
    private void pointerWheelStart(InputState is, CanvasResult sr) {
       //#debug
-      toDLog().pFlow("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerWheelStart", LVL_03_FINEST, true);
+      toDLog().pEvent("at [" + is.getX() + "," + is.getY() + "]", null, CanvasAppliInput.class, "pointerWheelStart", LVL_03_FINEST, true);
    }
 
    public void postRotation() {
@@ -1180,7 +1181,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    public void processInputState(InputState is) {
       //#debug
-      toDLog().pEvent1("Start. Last Event=", is.getEventCurrent(), CanvasAppliInput.class, "processInputState");
+      toDLog().pEvent("Start of Method. Current Event=", is.getEventCurrent(), CanvasAppliInput.class, "processInputState@1184", ITechLvl.LVL_03_FINEST, true);
 
       //create
       CanvasResult sr = repaintControl.startEvent();
@@ -1216,7 +1217,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       eventCtrl.endOfEvent(is); //same for eventCtrl
 
       //#debug
-      toDLog().pEvent1("End", is, CanvasAppliInput.class, "processInputState");
+      toDLog().pEvent("End of Method", is, CanvasAppliInput.class, "processInputState@1220", ITechLvl.LVL_03_FINEST, true);
    }
 
    /**
@@ -1635,10 +1636,6 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       dc.nlLvl(screenCtrl, "ScreenOrientation");
    }
 
-   private void toStringPrivate(Dctx dc) {
-      dc.appendVarWithSpace("bgColor", bgColor);
-   }
-
    /**
     * Called when  {@link Dctx} see the same object for another time
     * @param dc
@@ -1649,5 +1646,9 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       super.toString1Line(dc.sup1Line());
    }
    //#enddebug
+
+   private void toStringPrivate(Dctx dc) {
+      dc.appendVarWithSpace("bgColor", bgColor);
+   }
 
 }
