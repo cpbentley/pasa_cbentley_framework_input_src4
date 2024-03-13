@@ -29,7 +29,7 @@ public class PointerLocal {
     */
    public void addLocalizedTo(Pointer pointer) {
       if (ib == null) {
-         ib = new IntBuffer(ic.getUCtx());
+         ib = new IntBuffer(ic.getUC());
       }
       //when fingers are up and down. pointerIDs change
       ib.addInt(pointer.getPointerID());

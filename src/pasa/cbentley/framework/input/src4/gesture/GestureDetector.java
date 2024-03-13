@@ -720,7 +720,7 @@ public class GestureDetector implements ITechGestures, IStringable {
    }
 
    public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
+      return ic.getUC();
    }
 
    //#enddebug

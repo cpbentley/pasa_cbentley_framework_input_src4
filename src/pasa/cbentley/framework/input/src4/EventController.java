@@ -107,7 +107,7 @@ public abstract class EventController implements IStringable {
    }
 
    public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
+      return ic.getUC();
    }
 
    //#enddebug

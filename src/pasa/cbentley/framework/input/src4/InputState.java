@@ -385,7 +385,7 @@ public class InputState extends ObjectIC implements IInput, IBOCtxSettingsInput,
       super(ic);
       this.canvasLast = mc;
       this.cuc = ic.getCUC();
-      this.uc = ic.getUCtx();
+      this.uc = ic.getUC();
       pointers = new Pointer[] { new Pointer(ic, 0) };
       lastPointer = pointers[0];
       lastPointerEvents = new DeviceEventXY[10];

@@ -345,11 +345,10 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       threadUpdate = Thread.currentThread();
       threadUpdateRender = Thread.currentThread();
       eventThread = Thread.currentThread();
-      sema = new MutexSignal(ic.getUCtx());
+      sema = new MutexSignal(ic.getUC());
 
       //#debug
-      toDLog().pInit("Init Thread" + threadRender, null, CanvasAppliInput.class, "Constructor");
-
+      toDLog().pInit("Init Thread=" + threadRender, null, CanvasAppliInput.class, "Created351");
    }
 
    /**

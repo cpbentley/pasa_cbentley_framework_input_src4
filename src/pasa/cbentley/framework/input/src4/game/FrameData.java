@@ -282,7 +282,7 @@ public class FrameData implements IStringable {
    }
 
    public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
+      return ic.getUC();
    }
 
    private void toStringPrivate(Dctx dc) {

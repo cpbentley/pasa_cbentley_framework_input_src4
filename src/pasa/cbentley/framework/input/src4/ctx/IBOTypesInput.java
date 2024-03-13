@@ -5,9 +5,9 @@ import pasa.cbentley.framework.input.src4.interfaces.IBOCanvasAppli;
 
 public interface IBOTypesInput extends IBOTypesBOC {
 
-   public static final int AZ_BOTYPE_INPUT_A           = 90;
+   public static final int AZ_BOTYPE_INPUT_A           = 101;
 
-   public static final int AZ_BOTYPE_INPUT_Z           = 96;
+   public static final int AZ_BOTYPE_INPUT_Z           = 105;
 
    /**
     * {@link IBOCanvasAppli}

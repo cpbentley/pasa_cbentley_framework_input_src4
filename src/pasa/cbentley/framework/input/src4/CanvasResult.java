@@ -123,7 +123,7 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
     */
    public CanvasResult(InputCtx ic, CanvasAppliInput ctrl, int cycle) {
       super(ic);
-      UCtx uc = ic.getUCtx();
+      UCtx uc = ic.getUC();
       sema = new MutexSignal(uc);
       runUpdates = new FiFoQueue(uc);
       actionStrs = new IntToStrings(uc);
@@ -395,7 +395,7 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
       if (hasRepaintFlag(FLAG_01_ACTION_DONE)) {
          //union of clip
          int[] v = new int[4];
-         v = ic.getUCtx().getGeo2dUtils().getUnion(clipx, clipy, clipw, cliph, x, y, w, h, v);
+         v = ic.getUC().getGeo2dUtils().getUnion(clipx, clipy, clipw, cliph, x, y, w, h, v);
          clipx = v[0];
          clipy = v[1];
          clipw = v[2];

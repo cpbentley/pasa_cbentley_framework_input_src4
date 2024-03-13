@@ -124,7 +124,7 @@ public class InputRequests extends ObjectIC implements IStringable {
       this.canvas = canvas;
       this.is = is;
       actual = new IntBuffer[ITechGestures.MAX_GESTURE];
-      UCtx uc = ic.getUCtx();
+      UCtx uc = ic.getUC();
       repeats = new IntToObjects(uc);
       nupleListActive = new LinkedListDouble(uc);
       itosJob = new IntToObjects(uc);
@@ -137,7 +137,7 @@ public class InputRequests extends ObjectIC implements IStringable {
 
    private void addIt(int inputType, int requestID) {
       if (actual[inputType] == null) {
-         actual[inputType] = new IntBuffer(ic.getUCtx());
+         actual[inputType] = new IntBuffer(ic.getUC());
       }
       actual[inputType].addInt(requestID);
    }

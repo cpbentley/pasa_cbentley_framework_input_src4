@@ -55,8 +55,8 @@ class DeviceKeys implements IStringable {
       this.is = is;
       this.deviceType = deviceType;
       this.deviceID = deviceID;
-      keysPressedList = new LinkedListDouble(ic.getUCtx());
-      keysHistoryList = new LinkedListDouble(ic.getUCtx());
+      keysPressedList = new LinkedListDouble(ic.getUC());
+      keysHistoryList = new LinkedListDouble(ic.getUC());
    }
 
    /**
@@ -204,7 +204,7 @@ class DeviceKeys implements IStringable {
    }
 
    public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
+      return ic.getUC();
    }
 
    //#enddebug

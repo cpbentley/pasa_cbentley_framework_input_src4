@@ -40,7 +40,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
     * @param cfc
     */
    public InputCtx(CoreFrameworkCtx cfc) {
-      this(new ConfigInputDefault(cfc.getUCtx()), cfc);
+      this(new ConfigInputDefault(cfc.getUC()), cfc);
    }
 
    /**
@@ -143,7 +143,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
 
    public WorkerThread getWorkerThreadInput() {
       if (workerThread == null) {
-         workerThread = new WorkerThread(getUCtx());
+         workerThread = new WorkerThread(getUC());
       }
       return workerThread;
    }

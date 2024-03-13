@@ -26,7 +26,7 @@ public class EventQueue extends EventThreader {
     */
    public EventQueue(InputCtx ic, CanvasAppliInput canvas) {
       super(ic,canvas);
-      queueUpdateRender = new BlockingQueueUnlimited(ic.getUCtx());
+      queueUpdateRender = new BlockingQueueUnlimited(ic.getUC());
    }
 
    public void run() {

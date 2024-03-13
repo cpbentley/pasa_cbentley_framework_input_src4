@@ -41,7 +41,7 @@ public class Pointer implements IStringable {
 
    public Pointer(InputCtx ic, int pointerID) {
       this.ic = ic;
-      gestureList = new LinkedListDouble(ic.getUCtx());
+      gestureList = new LinkedListDouble(ic.getUC());
       this.pointerID = pointerID;
       lastPointerEvent = new DeviceEventXY(ic.getCUC(), 0, 0, 0, 0, 0, 0);
    }
@@ -218,7 +218,7 @@ public class Pointer implements IStringable {
    }
 
    public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
+      return ic.getUC();
    }
 
    //#enddebug

@@ -180,7 +180,7 @@ public abstract class BaseJob extends ListElement implements Runnable, IStringab
    }
 
    public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
+      return ic.getUC();
    }
 
    public String toString() {

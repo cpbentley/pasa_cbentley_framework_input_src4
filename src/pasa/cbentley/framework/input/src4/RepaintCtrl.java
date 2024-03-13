@@ -79,7 +79,7 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
    public RepaintCtrl(InputCtx ic, CanvasAppliInput canvas) {
       super(ic);
       this.canvas = canvas;
-      UCtx uc = ic.getUCtx();
+      UCtx uc = ic.getUC();
       queue = new FiFoQueue(uc);
       queueSR = new FiFoQueue(uc);
       if(this.getClass() == RepaintCtrl.class) {

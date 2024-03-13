@@ -35,8 +35,8 @@ public class EventControllerQueued extends EventController {
    public EventControllerQueued(InputCtx ic, CanvasAppliInput canvas) {
       super(ic, canvas);
       lastKnownState = canvas.createInputState();
-      inputQueue = new BlockingQueueUnlimited(ic.getUCtx());
-      inputQueueFresh = new FiFoQueue(ic.getUCtx());
+      inputQueue = new BlockingQueueUnlimited(ic.getUC());
+      inputQueueFresh = new FiFoQueue(ic.getUC());
    }
 
    private void checkThread() {

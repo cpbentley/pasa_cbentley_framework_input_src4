@@ -81,7 +81,7 @@ public class JobsEventRunner implements Runnable, IStringable {
       this.ic = ic;
       this.canvas = ctr;
       mtimer = ic.getTimeCtrl();
-      list = new LinkedListDouble(ic.getUCtx());
+      list = new LinkedListDouble(ic.getUC());
    }
 
    /**
@@ -334,7 +334,7 @@ public class JobsEventRunner implements Runnable, IStringable {
    }
 
    public UCtx toStringGetUCtx() {
-      return ic.getUCtx();
+      return ic.getUC();
    }
 
    //#enddebug
