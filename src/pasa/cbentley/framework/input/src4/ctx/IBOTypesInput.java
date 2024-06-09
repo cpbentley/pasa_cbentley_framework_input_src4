@@ -12,6 +12,6 @@ public interface IBOTypesInput extends IBOTypesBOC {
    /**
     * {@link IBOCanvasAppli}
     */
-   public static final int TYPE_1_TECH_CANVAS_APPLI      = AZ_BOTYPE_INPUT_A + 0;
+   public static final int TYPE_1_CANVAS_APPLI      = AZ_BOTYPE_INPUT_A + 0;
 
 }

@@ -142,7 +142,7 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
    public CanvasResult getExternResult() {
       //repaint call originates from the outside of the Bentley Framework
       //#debug
-      canvas.toDLog().pDraw("Repaint Call From Outside : Null ScreenResult", null, RepaintCtrl.class, "getExternResult");
+      canvas.toDLog().pDraw("Repaint Call From Outside : Null ScreenResult", null, RepaintCtrl.class, "getExternResult@145");
 
       CanvasResult sr = getEmptySR(CYCLE_0_USER_EVENT);
       //do a full repaint according to framework semantics

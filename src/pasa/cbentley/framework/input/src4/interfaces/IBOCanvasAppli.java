@@ -7,9 +7,9 @@ import pasa.cbentley.framework.input.src4.ctx.IBOTypesInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 
 /**
- * Config for {@link InputCtx}
+ * The base canvas definition for the {@link InputCtx} module.
  * 
- * Contains a {@link IBOCanvasHost} for the default canvas configuration
+ * It is contained within a {@link IBOCanvasHost} for the default canvas configuration
  * @author Charles Bentley
  *
  */
@@ -17,7 +17,7 @@ public interface IBOCanvasAppli extends IByteObject {
 
    public static final int CANVAS_APP_BASIC_SIZE                = A_OBJECT_BASIC_SIZE + 10;
 
-   public static final int CANVAS_APP_BASE_TYPE                 = IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI;
+   public static final int CANVAS_APP_BASE_TYPE                 = IBOTypesInput.TYPE_1_CANVAS_APPLI;
 
    public static final int CANVAS_APP_FLAG_1_FULLSCREEN         = 1 << 0;
 

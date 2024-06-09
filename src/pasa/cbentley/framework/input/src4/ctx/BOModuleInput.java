@@ -42,8 +42,8 @@ public class BOModuleInput extends BOModuleAbstract {
    public boolean toString(Dctx dc, ByteObject bo) {
       int type = bo.getType();
       switch (type) {
-         case IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI:
-            dc.rootN(bo, "ITechCanvasAppli");
+         case IBOTypesInput.TYPE_1_CANVAS_APPLI:
+            dc.rootN(bo, "IBOCanvasAppli");
             int subType = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_02_TYPE_SUB1);
             dc.appendVarWithSpace("subType", subType);
             int threadMode = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1);
@@ -52,8 +52,8 @@ public class BOModuleInput extends BOModuleAbstract {
             int screenMode = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_04_SCREEN_MODE1);
             dc.appendVarWithNewLine("screenMode", ToStringStaticCoreUi.toStringScreenMode(screenMode));
             
-            int bgColor = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4);
-            dc.appendColorWithSpace("bgColor", bgColor);
+            int bgColor = bo.get4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4);
+            dc.appendVarWithNewLine("bgColor", bgColor);
           
             //look for a sub type string
             if(subType != 0) {
@@ -71,7 +71,7 @@ public class BOModuleInput extends BOModuleAbstract {
    public boolean toString1Line(Dctx dc, ByteObject bo) {
       int type = bo.getType();
       switch (type) {
-         case IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI:
+         case IBOTypesInput.TYPE_1_CANVAS_APPLI:
             dc.rootN(bo, "CanvasAppli");
             break;
          default:

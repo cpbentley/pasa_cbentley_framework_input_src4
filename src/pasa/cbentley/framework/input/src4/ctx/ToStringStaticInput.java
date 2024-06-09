@@ -38,7 +38,7 @@ public class ToStringStaticInput extends ToStringStaticBase {
 
    public static String toStringTypeBO(int type) {
       switch (type) {
-         case IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI:
+         case IBOTypesInput.TYPE_1_CANVAS_APPLI:
             return "CanvasAppli";
          default:
             return null;

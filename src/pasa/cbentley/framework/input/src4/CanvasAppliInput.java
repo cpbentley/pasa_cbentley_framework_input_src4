@@ -308,12 +308,12 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    /**
     * Creates and register the {@link ModuleInput} singleton with {@link ModuleInput#get(IFrameworkCtx)}.
     * <br>
-    * The default {@link IBOCanvasAppli} settings from {@link InputCtx#getTechCanvasHostDefault()} are used. 
+    * The default {@link IBOCanvasAppli} settings from {@link InputCtx#createBOTechCanvasAppliDefault()} are used. 
     * 
     * @param ic
     */
    public CanvasAppliInput(InputCtx ic) {
-      this(ic, ic.getTechCanvasHostDefault(), ic.getCUC().createBOCanvasHostDefault());
+      this(ic, ic.createBOTechCanvasAppliDefault(), ic.getCUC().createBOCanvasHostDefault());
    }
 
    /**
@@ -340,6 +340,9 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       if (boCanvasAppli == null) {
          throw new NullPointerException();
       }
+      //#debug
+      boCanvasAppli.checkType(IBOTypesInput.TYPE_1_CANVAS_APPLI);
+      
       this.boCanvasAppli = boCanvasAppli;
       threadRender = Thread.currentThread();
       threadUpdate = Thread.currentThread();
@@ -380,20 +383,20 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    /**
     * Applies the {@link IBOCanvasAppli}
     */
-   public void applySettings(ByteObject techCanvasAppli) {
+   public void applySettings(ByteObject boCanvasAppli) {
 
-      techCanvasAppli.checkType(IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI);
+      boCanvasAppli.checkType(IBOTypesInput.TYPE_1_CANVAS_APPLI);
 
       //debug settings
-      int threadMode = techCanvasAppli.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1);
+      int threadMode = boCanvasAppli.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1);
       setThreadingMode(threadMode);
-      boolean b = techCanvasAppli.hasFlag(IBOCanvasAppli.CANVAS_APP_OFFSET_01_FLAG, IBOCanvasAppli.CANVAS_APP_FLAG_1_FULLSCREEN);
+      boolean b = boCanvasAppli.hasFlag(IBOCanvasAppli.CANVAS_APP_OFFSET_01_FLAG, IBOCanvasAppli.CANVAS_APP_FLAG_1_FULLSCREEN);
       //apply settings on canvas now?
       setFullScreenMode(b);
 
-      int debugF = techCanvasAppli.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_05_DEBUG_FLAGS1);
+      int debugF = boCanvasAppli.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_05_DEBUG_FLAGS1);
       debugFlags = debugF;
-      bgColor = techCanvasAppli.get4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4);
+      bgColor = boCanvasAppli.get4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4);
    }
 
    public void checkThreadRender() {

@@ -64,6 +64,9 @@ public interface IBOCtxSettingsInput extends IBOCtxSettings {
     */
    public static final int CTX_INPUT_OFFSET_04_CANVAS_DEFAULT_DEBUG_FLAGS1    = CTX_BASIC_SIZE + 3;
 
+   /**
+    * 
+    */
    public static final int CTX_INPUT_OFFSET_05_CANVAS_DEFAULT_BG_COLOR4       = CTX_BASIC_SIZE + 4;
 
 }

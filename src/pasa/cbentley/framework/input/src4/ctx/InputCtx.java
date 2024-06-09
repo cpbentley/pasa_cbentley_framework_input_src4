@@ -30,8 +30,6 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
 
    protected final CoreFrameworkCtx cfc;
 
-   private ByteObject               cTechDefault;
-
    private WorkerThread             workerThread;
 
    /**
@@ -83,7 +81,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
     * @return {@link IBOCanvasAppli}
     */
    public ByteObject createBOCanvasAppliDefault() {
-      int type = IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI;
+      int type = IBOTypesInput.TYPE_1_CANVAS_APPLI;
       int size = IBOCanvasAppli.CANVAS_APP_BASIC_SIZE;
       ByteObject tech = cfc.getBOC().getByteObjectFactory().createByteObject(type, size);
       setTechCanvasAppliDefault(tech);
@@ -93,6 +91,22 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
    public void exitInputContext() {
       // TODO Auto-generated method stub
 
+   }
+
+   public ByteObject getBOAppliFromParam(ByteObject boCanvasHost, Object object) {
+      if (object != null && object instanceof ByteObject) {
+         ByteObject bo = (ByteObject) object;
+         if (bo.getType() == IBOTypesInput.TYPE_1_CANVAS_APPLI) {
+            return bo;
+         }
+      }
+      if (boCanvasHost != null) {
+         ByteObject bo = boCanvasHost.getSubFirst(IBOTypesInput.TYPE_1_CANVAS_APPLI);
+         if (bo != null) {
+            return bo;
+         }
+      }
+      return createBOCanvasAppliDefault();
    }
 
    public int getBOCtxSettingSize() {
@@ -124,17 +138,19 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
     * is created.
     * @return
     */
-   public ByteObject getTechCanvasHostDefault() {
-      if (cTechDefault == null) {
-         //hardcode one here
-         ByteObject inTech = this.getBOCtxSettings();
-         cTechDefault = inTech.getSubFirst(IBOCanvasHost.TCANVAS_TYPE);
-         if (cTechDefault == null) {
-            cTechDefault = getCUC().createBOCanvasHostDefault();
-            inTech.addByteObject(cTechDefault);
-         }
-      }
-      return cTechDefault;
+   public ByteObject createBOTechCanvasAppliDefault() {
+
+      int type = IBOTypesInput.TYPE_1_CANVAS_APPLI;
+      int size = IBOCanvasAppli.CANVAS_APP_BASIC_SIZE;
+      //
+      ByteObject tech = cfc.getBOC().getByteObjectFactory().createByteObject(type, size);
+
+      ByteObject ctxSettings = this.getBOCtxSettings();
+      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1, ctxSettings.get1(CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1));
+      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_04_SCREEN_MODE1, ctxSettings.get1(CTX_INPUT_OFFSET_03_CANVAS_DEFAULT_SCREEN_MODE1));
+      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_05_DEBUG_FLAGS1, ctxSettings.get1(CTX_INPUT_OFFSET_04_CANVAS_DEFAULT_DEBUG_FLAGS1));
+      tech.set4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4, ctxSettings.get1(CTX_INPUT_OFFSET_05_CANVAS_DEFAULT_BG_COLOR4));
+      return tech;
    }
 
    public ITimeCtrl getTimeCtrl() {
@@ -157,10 +173,11 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
    }
 
    public void setTechCanvasAppliDefault(ByteObject tech) {
-      ByteObject settingsBO = getBOCtxSettings();
-      //maps from config defaults
-      int defaultThreadingMode = settingsBO.get1(IBOCtxSettingsInput.CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1);
-      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1, defaultThreadingMode);
+      ByteObject ctxSettings = this.getBOCtxSettings();
+      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1, ctxSettings.get1(CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1));
+      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_04_SCREEN_MODE1, ctxSettings.get1(CTX_INPUT_OFFSET_03_CANVAS_DEFAULT_SCREEN_MODE1));
+      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_05_DEBUG_FLAGS1, ctxSettings.get1(CTX_INPUT_OFFSET_04_CANVAS_DEFAULT_DEBUG_FLAGS1));
+      tech.set4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4, ctxSettings.get4(CTX_INPUT_OFFSET_05_CANVAS_DEFAULT_BG_COLOR4));
    }
 
    //#mdebug
@@ -181,22 +198,6 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
 
    private void toStringPrivate(Dctx dc) {
 
-   }
-
-   public ByteObject getBOAppliFromParam(ByteObject boCanvasHost, Object object) {
-      if (object != null && object instanceof ByteObject) {
-         ByteObject bo = (ByteObject) object;
-         if (bo.getType() == IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI) {
-            return bo;
-         }
-      }
-      if (boCanvasHost != null) {
-         ByteObject bo = boCanvasHost.getSubFirst(IBOTypesInput.TYPE_1_TECH_CANVAS_APPLI);
-         if (bo != null) {
-            return bo;
-         }
-      }
-      return createBOCanvasAppliDefault();
    }
 
    //#enddebug

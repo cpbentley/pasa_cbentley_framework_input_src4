@@ -34,7 +34,7 @@ public interface IConfigInput extends IConfigBO {
    public int getCanvasDefaultScreenMode();
 
    /**
-    * 
+    * The erase color of a canvas without a specific configuration
     * @return
     */
    public int getCanvasDefaultBgColor();
