@@ -1,12 +1,12 @@
 package pasa.cbentley.framework.input.src4.event.jobs;
 
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.framework.coreui.src4.event.BEvent;
-import pasa.cbentley.framework.coreui.src4.event.RepeatEvent;
-import pasa.cbentley.framework.coreui.src4.tech.IInput;
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
-import pasa.cbentley.framework.input.src4.InputState;
+import pasa.cbentley.framework.core.ui.src4.event.BEvent;
+import pasa.cbentley.framework.core.ui.src4.event.RepeatEvent;
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
+import pasa.cbentley.framework.core.ui.src4.tech.IInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
 import pasa.cbentley.framework.input.src4.interfaces.IJobEvent;
 
 /**
@@ -139,7 +139,7 @@ public class RepeatJob extends TimerJob implements IJobEvent {
 
    public void run() {
       //the state of er is not thread safe... must use sync method on shared state.
-      canvas.getEvCtrl().event(er, canvas);
+      canvas.getEventController().event(er);
    }
 
    //#mdebug

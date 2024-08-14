@@ -178,6 +178,8 @@ public class FrameData implements IStringable {
          fps = 0;
          timeLastFps = 0;
       }
+      //#debug
+      toDLog().pFlow("", this, CanvasLoopGameFramed.class, "nextFrame@182", LVL_03_FINEST, true);
    }
 
    /**
@@ -222,7 +224,7 @@ public class FrameData implements IStringable {
 
    public void startNew() {
       //#debug
-      toDLog().pFlow("", this, FrameData.class, "startNew", LVL_04_FINER, true);
+      toDLog().pFlow("", this, FrameData.class, "startNew@225", LVL_04_FINER, true);
 
       tickFrameTime();
       updateCountFrame = 0;
@@ -247,7 +249,7 @@ public class FrameData implements IStringable {
    }
 
    public void toString(Dctx dc) {
-      dc.root(this, FrameData.class, "@line128");
+      dc.root(this, FrameData.class, 250);
       toStringPrivate(dc);
 
       dc.appendVarWithSpace("interpolation", interpolation);
@@ -274,7 +276,7 @@ public class FrameData implements IStringable {
    }
 
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, FrameData.class);
+      dc.root1Line(this, FrameData.class, 277);
       toStringPrivate(dc);
       dc.appendVarWithSpace("interpolationRatio", getInterpolationRatio(), 2);
       dc.appendVarWithSpace("diffSinceLastUpdate", getMillisFromNanos(timeDiffSinceLastUpdate));

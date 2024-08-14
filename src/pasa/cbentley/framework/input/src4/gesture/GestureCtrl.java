@@ -1,8 +1,8 @@
 package pasa.cbentley.framework.input.src4.gesture;
 
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
-import pasa.cbentley.framework.input.src4.InputRequests;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
+import pasa.cbentley.framework.input.src4.engine.InputRequests;
 
 /**
  * Every pointer press, a {@link GestureDetector} is started.

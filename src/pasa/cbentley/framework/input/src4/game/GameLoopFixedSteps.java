@@ -1,8 +1,8 @@
 package pasa.cbentley.framework.input.src4.game;
 
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.threading.GameLoop;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
+import pasa.cbentley.framework.input.src4.threading.CanvasLoopGame;
 
 /**
  * from 
@@ -11,7 +11,7 @@ import pasa.cbentley.framework.input.src4.threading.GameLoop;
  * @author Charles Bentley
  *
  */
-public class GameLoopFixedSteps extends GameLoop {
+public class GameLoopFixedSteps extends CanvasLoopGame {
    private int     fps        = 60;
 
    private int     frameCount = 0;
@@ -51,7 +51,7 @@ public class GameLoopFixedSteps extends GameLoop {
             //Do as many game updates as we need to, potentially playing catchup.
             double timeDiffSinceLastUpdate = thisFrameTime - lastUpdateTime;
             while (timeDiffSinceLastUpdate > TIME_BETWEEN_UPDATES && updateCount < MAX_UPDATES_BEFORE_RENDER) {
-               input();
+               simulationUpdate();;
                lastUpdateTime += TIME_BETWEEN_UPDATES;
                updateCount++;
             }

@@ -1,21 +1,19 @@
 package pasa.cbentley.framework.input.src4.event.jobs;
 
-import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.interfaces.ITimeCtrl;
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.core.src4.logging.IDLog;
-import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.core.src4.structs.listdoublelink.LinkedListDouble;
 import pasa.cbentley.core.src4.structs.listdoublelink.ListElement;
-import pasa.cbentley.framework.coreui.src4.event.BEvent;
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
-import pasa.cbentley.framework.input.src4.DragController3;
-import pasa.cbentley.framework.input.src4.InputState;
-import pasa.cbentley.framework.input.src4.CanvasResult;
+import pasa.cbentley.framework.core.ui.src4.event.BEvent;
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 import pasa.cbentley.framework.input.src4.ctx.ToStringStaticInput;
-import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
+import pasa.cbentley.framework.input.src4.engine.OutputStateCanvas;
+import pasa.cbentley.framework.input.src4.event.ctrl.DragController3;
 import pasa.cbentley.framework.input.src4.interfaces.IJobEvent;
+import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
 
 /**
  * Run {@link IJobEvent}.
@@ -42,7 +40,7 @@ import pasa.cbentley.framework.input.src4.interfaces.IJobEvent;
  * <b>Event Thread</b> : why or Why not using: {@link Display#callSerially(Runnable)} ?
  * <br>
  * The repeater may work serially. IN that case, repeat will be dependant on the painting time.
- * When working solo, {@link CanvasResult} are piled up and fired when painting method finishes.
+ * When working solo, {@link OutputStateCanvas} are piled up and fired when painting method finishes.
  * <br>
  * In Active Rendering Mode, the repeater is not used.
  * Repeats are done automatically
@@ -51,17 +49,16 @@ import pasa.cbentley.framework.input.src4.interfaces.IJobEvent;
  * This thread will be interrupted on pause and created again
  * when Canvas is unpaused.
  * <br>
- * TODO how is this running with {@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING}
+ * TODO how is this running with {@link ITechThreadPaint#THREADING_1_UI_UPDATERENDERING}
  * <br>
  * Don't we want long press to be controlled by update
  * @author Charles-Philip Bentley
  *
  */
-public class JobsEventRunner implements Runnable, IStringable {
+public class JobsEventRunner extends ObjectIC implements Runnable {
 
    private CanvasAppliInput canvas;
 
-   protected final InputCtx ic;
 
    private LinkedListDouble list;
 
@@ -78,14 +75,14 @@ public class JobsEventRunner implements Runnable, IStringable {
    public boolean           waitAgain;
 
    public JobsEventRunner(InputCtx ic, CanvasAppliInput ctr) {
-      this.ic = ic;
+      super(ic);
       this.canvas = ctr;
       mtimer = ic.getTimeCtrl();
       list = new LinkedListDouble(ic.getUC());
    }
 
    /**
-    * Add a JobEvent
+    * Add a {@link BaseJob}
     * @param er
     */
    public void addJob(BaseJob er) {
@@ -163,7 +160,7 @@ public class JobsEventRunner implements Runnable, IStringable {
     * A new event. check type and cancel pending Jobs. Releases removes Press repeats.
     * Any event cancels a long press.
     * <br>
-    * Called in the {@link ITechPaintThread#THREAD_0_HOST_HUI}.
+    * Called in the {@link ITechThreadPaint#THREAD_0_HOST_HUI}.
     * <br>
     * @param is
     */
@@ -287,17 +284,12 @@ public class JobsEventRunner implements Runnable, IStringable {
       }
    }
 
-   public IDLog toDLog() {
-      return canvas.toDLog();
-   }
 
    //#mdebug
-   public String toString() {
-      return Dctx.toString(this);
-   }
-
    public void toString(Dctx dc) {
-      dc.root(this, "JobsEventRunner");
+      dc.root(this, JobsEventRunner.class, 300);
+      toStringPrivate(dc);
+      super.toString(dc.sup());
       dc.appendVarWithSpace("NumJobs", numJobs);
       dc.appendVarWithSpace("Running", run);
       dc.appendVarWithSpace("Time", timeBefore);
@@ -317,12 +309,11 @@ public class JobsEventRunner implements Runnable, IStringable {
       }
    }
 
-   public String toString1Line() {
-      return Dctx.toString1Line(this);
-   }
-
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, "JobsEventRunner");
+      dc.root1Line(this, JobsEventRunner.class, 300);
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
+      
       dc.appendVarWithSpace("NumJobs", numJobs);
       dc.appendVarWithSpace("Running", run);
       dc.appendVarWithSpace("Time", timeBefore);
@@ -333,9 +324,9 @@ public class JobsEventRunner implements Runnable, IStringable {
       }
    }
 
-   public UCtx toStringGetUCtx() {
-      return ic.getUC();
+   private void toStringPrivate(Dctx dc) {
+      
    }
-
    //#enddebug
+   
 }

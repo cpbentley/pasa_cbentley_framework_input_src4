@@ -9,10 +9,10 @@ import pasa.cbentley.core.src4.ctx.ICtx;
 import pasa.cbentley.core.src4.interfaces.ITimeCtrl;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.src4.thread.WorkerThread;
-import pasa.cbentley.framework.core.src4.ctx.CoreFrameworkCtx;
-import pasa.cbentley.framework.coreui.src4.ctx.CoreUiCtx;
-import pasa.cbentley.framework.coreui.src4.tech.IBOCanvasHost;
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
+import pasa.cbentley.framework.core.framework.src4.ctx.CoreFrameworkCtx;
+import pasa.cbentley.framework.core.ui.src4.ctx.CoreUiCtx;
+import pasa.cbentley.framework.core.ui.src4.tech.IBOCanvasHost;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
 import pasa.cbentley.framework.input.src4.interfaces.IBOCanvasAppli;
 
 /**
@@ -24,7 +24,7 @@ import pasa.cbentley.framework.input.src4.interfaces.IBOCanvasAppli;
  *
  */
 public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
-   public static final int          CTX_ID = 8;
+   public static final int          CTX_ID = 38;
 
    private BOModuleInput            boModule;
 
@@ -38,7 +38,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
     * @param cfc
     */
    public InputCtx(CoreFrameworkCtx cfc) {
-      this(new ConfigInputDefault(cfc.getUC()), cfc);
+      this(null, cfc);
    }
 
    /**
@@ -48,7 +48,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
     * @param cfc
     */
    public InputCtx(IConfigInput config, CoreFrameworkCtx cfc) {
-      super(config, cfc.getBOC());
+      super(config == null ? new ConfigInputDefault(cfc.getUC()) : config, cfc.getBOC());
       this.cfc = cfc;
       boModule = new BOModuleInput(this);
 
@@ -166,7 +166,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
 
    protected void matchConfig(IConfigBO config, ByteObject settings) {
       IConfigInput configi = (IConfigInput) config;
-      settings.set1(CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1, configi.getCanvasDefaultScreenMode());
+      settings.set1(CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1, configi.getCanvasDefaultThreadingMode());
       settings.set1(CTX_INPUT_OFFSET_03_CANVAS_DEFAULT_SCREEN_MODE1, configi.getCanvasDefaultScreenMode());
       settings.set1(CTX_INPUT_OFFSET_04_CANVAS_DEFAULT_DEBUG_FLAGS1, configi.getCanvasDefaultDebugFlags());
       settings.set4(CTX_INPUT_OFFSET_05_CANVAS_DEFAULT_BG_COLOR4, configi.getCanvasDefaultBgColor());
@@ -191,7 +191,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
    }
 
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, "InputCtx");
+      dc.root1Line(this, InputCtx.class, 194);
       toStringPrivate(dc);
       super.toString1Line(dc.sup1Line());
    }

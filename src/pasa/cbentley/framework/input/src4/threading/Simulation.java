@@ -7,11 +7,12 @@ import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.src4.logging.IDLog;
 import pasa.cbentley.core.src4.logging.IStringable;
-import pasa.cbentley.framework.input.src4.InputState;
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.engine.InputStateCanvas;
 import pasa.cbentley.framework.input.src4.game.FrameData;
-import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
-import pasa.cbentley.framework.input.src4.interfaces.IUpdatableSim;
+import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
+import pasa.cbentley.framework.input.src4.interfaces.ISimulationUpdatable;
 
 /**
  * 
@@ -32,23 +33,26 @@ public class Simulation implements IStringable {
     * tick simulations running
     * @param is
     */
-   public void simulationUpdate(InputState is) {
+   public void simulationUpdate(InputStateCanvas is) {
       Enumeration en = simObjects.elements();
       FrameData data = is.getFrameData();
+      if (data == null) {
+         throw new NullPointerException("Framedata cannot be null. Must be set");
+      }
       while (en.hasMoreElements()) {
-         IUpdatableSim runnableSim = (IUpdatableSim) en.nextElement();
+         ISimulationUpdatable runnableSim = (ISimulationUpdatable) en.nextElement();
          runnableSim.update(data);
       }
    }
 
    /**
-    * {@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}, the call be done serially
+    * {@link ITechThreadPaint#THREADING_0_ONE_TO_RULE_ALL}, the call be done serially
     * @param sim
     */
-   public void simulationAdd(IUpdatableSim sim) {
+   public void simulationAdd(ISimulationUpdatable sim) {
       simObjects.addElement(sim);
    }
-   
+
    //#mdebug
    public IDLog toDLog() {
       return toStringGetUCtx().toDLog();
@@ -81,6 +85,5 @@ public class Simulation implements IStringable {
    }
 
    //#enddebug
-   
 
 }

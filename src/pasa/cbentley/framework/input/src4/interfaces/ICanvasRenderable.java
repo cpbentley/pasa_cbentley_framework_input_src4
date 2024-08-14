@@ -1,12 +1,12 @@
 package pasa.cbentley.framework.input.src4.interfaces;
 
 import pasa.cbentley.core.src4.logging.IStringable;
+import pasa.cbentley.framework.core.ui.src4.event.AppliEvent;
+import pasa.cbentley.framework.core.ui.src4.interfaces.ICanvasAppli;
+import pasa.cbentley.framework.core.ui.src4.interfaces.ICanvasHost;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
-import pasa.cbentley.framework.coreui.src4.event.AppliEvent;
-import pasa.cbentley.framework.coreui.src4.interfaces.ICanvasAppli;
-import pasa.cbentley.framework.coreui.src4.interfaces.ICanvasHost;
-import pasa.cbentley.framework.input.src4.InputState;
-import pasa.cbentley.framework.input.src4.CanvasResult;
+import pasa.cbentley.framework.input.src4.engine.OutputStateCanvas;
+import pasa.cbentley.framework.input.src4.engine.InputStateCanvas;
 
 /**
  * How does it know it gets resized?
@@ -32,7 +32,7 @@ public interface ICanvasRenderable extends IStringable {
     * @param is
     * @param sr
     */
-   public void render(IGraphics g, InputState is, CanvasResult sr, int w, int h);
+   public void render(IGraphics g, InputStateCanvas is, OutputStateCanvas sr, int w, int h);
 
    /**
     * App events provides functionnality for 
@@ -40,6 +40,6 @@ public interface ICanvasRenderable extends IStringable {
     * @param ic
     * @param sr
     */
-   public void ctrlUIEvent(InputState ic, CanvasResult sr);
+   public void ctrlUIEvent(InputStateCanvas ic, OutputStateCanvas sr);
 
 }

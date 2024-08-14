@@ -1,7 +1,7 @@
 package pasa.cbentley.framework.input.src4.interfaces;
 
-import pasa.cbentley.framework.coreui.src4.interfaces.BCodes;
-import pasa.cbentley.framework.coreui.src4.tech.ITechCodes;
+import pasa.cbentley.framework.core.ui.src4.interfaces.BCodes;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechCodes;
 
 public interface ILocks {
 

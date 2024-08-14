@@ -1,9 +1,11 @@
 package pasa.cbentley.framework.input.src4.interfaces;
 
 import pasa.cbentley.byteobjects.src4.core.interfaces.IByteObject;
-import pasa.cbentley.framework.coreui.src4.tech.IBOCanvasHost;
-import pasa.cbentley.framework.coreui.src4.tech.ITechHostUI;
+import pasa.cbentley.framework.core.ui.src4.tech.IBOCanvasHost;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechHostUI;
+import pasa.cbentley.framework.input.src4.ctx.IBOCtxSettingsInput;
 import pasa.cbentley.framework.input.src4.ctx.IBOTypesInput;
+import pasa.cbentley.framework.input.src4.ctx.IConfigInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 
 /**
@@ -36,11 +38,15 @@ public interface IBOCanvasAppli extends IByteObject {
     * Set for the controlling canvas
     * 
     * <br>
-    * <li>{@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}
-    * <li>{@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING}
-    * <li>{@link ITechPaintThread#THREADING_2_UIUPDATE_RENDERING}
-    * <li>{@link ITechPaintThread#THREADING_3_THREE_SEPARATE}
+    * <li>{@link ITechThreadPaint#THREADING_0_ONE_TO_RULE_ALL}
+    * <li>{@link ITechThreadPaint#THREADING_1_UI_UPDATERENDERING}
+    * <li>{@link ITechThreadPaint#THREADING_2_UIUPDATE_RENDERING}
+    * <li>{@link ITechThreadPaint#THREADING_3_THREE_SEPARATE}
     * 
+    * <p>
+    * Configured by {@link IBOCtxSettingsInput#CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1}
+    * and {@link IConfigInput#getCanvasDefaultThreadingMode()}
+    * </p>
     */
    public static final int CANVAS_APP_OFFSET_03_THREADING_MODE1 = A_OBJECT_BASIC_SIZE + 2;
 

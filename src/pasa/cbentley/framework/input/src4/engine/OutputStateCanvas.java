@@ -1,4 +1,4 @@
-package pasa.cbentley.framework.input.src4;
+package pasa.cbentley.framework.input.src4.engine;
 
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.interfaces.C;
@@ -9,19 +9,24 @@ import pasa.cbentley.core.src4.structs.IntToStrings;
 import pasa.cbentley.core.src4.structs.synch.MutexSignal;
 import pasa.cbentley.core.src4.utils.BitUtils;
 import pasa.cbentley.core.src4.utils.StringUtils;
+import pasa.cbentley.framework.core.ui.src4.exec.ExecutionContext;
+import pasa.cbentley.framework.core.ui.src4.exec.OutputState;
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
+import pasa.cbentley.framework.core.ui.src4.interfaces.IActionFeedback;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechInputFeedback;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
-import pasa.cbentley.framework.coreui.src4.exec.ExecutionContext;
-import pasa.cbentley.framework.coreui.src4.interfaces.IActionFeedback;
-import pasa.cbentley.framework.coreui.src4.tech.ITechInputFeedback;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 import pasa.cbentley.framework.input.src4.interfaces.ITechInputCycle;
-import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 import pasa.cbentley.framework.input.src4.interfaces.ITechScreenResults;
+import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
 
 /**
  * Used by {@link InputState} to coalesce the {@link CanvasAppliInput} consequences of executing code.
  * <br>
+ * 
+ * It may also impact other Canvas in other windows
+ * 
  * When a GUI event travels through several classes, this class allows us to track
  * whether or not a repaint has already been called, what areas are to be repainted,
  * what kind of actions code has already done relative to the original event.
@@ -37,7 +42,7 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechScreenResults;
  * @author Charles-Philip Bentley
  *
  */
-public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechScreenResults, IStringable {
+public class OutputStateCanvas extends OutputState implements ITechInputFeedback, ITechInputCycle, ITechScreenResults, IStringable {
 
    /**
     * Short Strings describing the actions that were done
@@ -74,11 +79,7 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
     */
    private ExecutionContext   exctx;
 
-   private InputState         inputState;
-
-   private float              interpolation;
-
-   private CanvasResult       linked;
+   private OutputStateCanvas  linked;
 
    /**
     * TODO deals with multiple locks. use semaphore
@@ -115,25 +116,36 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
 
    private volatile boolean   waiters = false;
 
+   protected final InputCtx   ic;
+
+   private RepaintHelper        repaintCtrl;
+
+   public OutputStateCanvas(InputCtx ic, CanvasAppliInput canvas) {
+      this(ic, canvas, CYCLE_0_USER_EVENT);
+   }
+
    /**
     * 
     * @param ic
-    * @param ctrl
+    * @param canvas
     * @param cycle
     */
-   public CanvasResult(InputCtx ic, CanvasAppliInput ctrl, int cycle) {
-      super(ic);
+   public OutputStateCanvas(InputCtx ic, CanvasAppliInput canvas, int cycle) {
+      super(ic.getCUC());
+      this.ic = ic;
       UCtx uc = ic.getUC();
       sema = new MutexSignal(uc);
       runUpdates = new FiFoQueue(uc);
       actionStrs = new IntToStrings(uc);
-      this.ctrl = ctrl;
+      this.ctrl = canvas;
       cycleContext = cycle;
       if (cycleContext == ITechInputCycle.CYCLE_2_ANIMATION_EVENT) {
          lock = new Integer(0);
          setFlag(ITechScreenResults.FLAG_15_LOCK, true);
       }
       resetAll();
+      
+      //repaintCtrl = canvas.createRepaintHelper();
    }
 
    public void actionDone() {
@@ -179,18 +191,6 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
       return exctx;
    }
 
-   /**
-    * The inputstate at the time of the 
-    * @return
-    */
-   InputState getInput() {
-      return inputState;
-   }
-
-   public float getInterpolation() {
-      return interpolation;
-   }
-
    public Object getLock() {
       return lock;
    }
@@ -217,8 +217,8 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
     * <br>
     * False if repaint flag has not yet been build.
     * <br>
-    * <li> {@link ITechPaintThread#REPAINT_01_FULL}
-    * <li> {@link ITechPaintThread#REPAINT_01_FULL}
+    * <li> {@link ITechThreadPaint#REPAINT_01_FULL}
+    * <li> {@link ITechThreadPaint#REPAINT_01_FULL}
     * 
     * @param flag
     * @return
@@ -228,7 +228,7 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
    }
 
    /**
-    * Test flags from {@link CanvasResult}.
+    * Test flags from {@link OutputStateCanvas}.
     * <li> {@link IActionFeedback#FLAG_01_ACTION_DONE}
     * <li> {@link IActionFeedback#FLAG_02_FULL_REPAINT}
     * <li> {@link IActionFeedback#FLAG_03_MENU_REPAINT}
@@ -247,7 +247,7 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
    }
 
    /**
-    * True when an Action was flagged on the {@link CanvasResult}.
+    * True when an Action was flagged on the {@link OutputStateCanvas}.
     * <br>
     * @return
     */
@@ -297,7 +297,7 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
       return this.resultFlags != 0;
    }
 
-   public void merge(CanvasResult sr) {
+   public void merge(OutputStateCanvas sr) {
       //simplest is when there is a full repaint.
       if (sr.hasResultFlag(FLAG_02_FULL_REPAINT)) {
          this.setFlag(FLAG_02_FULL_REPAINT, true);
@@ -314,7 +314,7 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
       mergeSub(sr);
    }
 
-   public void mergeSub(CanvasResult sr) {
+   public void mergeSub(OutputStateCanvas sr) {
 
    }
 
@@ -328,7 +328,7 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
       setFlag(ITechScreenResults.FLAG_06_ACTIVE, false);
       //
       if (hasResultFlag(FLAG_15_SCREEN_LOCK)) {
-         CanvasResult sr = this;
+         OutputStateCanvas sr = this;
          do {
             //release
             if (sr.hasResultFlag(FLAG_15_SCREEN_LOCK)) {
@@ -341,7 +341,7 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
          //if (Controller.getMe().isLockingAnimation) {
          synchronized (lock) {
             //#debug
-            toDLog().pFlow("Notifying Lock " + this.hashCode() + " " + Thread.currentThread().getName(), null, CanvasResult.class, "paintEnd");
+            toDLog().pFlow("Notifying Lock " + this.hashCode() + " " + Thread.currentThread().getName(), null, OutputStateCanvas.class, "paintEnd");
             //paint thread
             lock.notifyAll();
          }
@@ -350,7 +350,7 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
    }
 
    /**
-    * Resets all {@link CanvasResult} properties except cycle
+    * Resets all {@link OutputStateCanvas} properties except cycle
     * <li>Reset Clip
     * <li> Zero flags and repaint flags
     * <li> Zero action strings
@@ -479,14 +479,6 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
       setFlag(FLAG_02_FULL_REPAINT, true);
    }
 
-   public void setInputState(InputState ic) {
-      this.inputState = ic;
-   }
-
-   public void setInterpolation(float interpol) {
-      interpolation = interpol;
-   }
-
    /**
     * Set descriptive flags.
     * <br>
@@ -504,10 +496,9 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
       cycleContext = type;
    }
 
-
    //#mdebug
    public void toString(Dctx dc) {
-      dc.root(this, CanvasResult.class, 530);
+      dc.root(this, OutputStateCanvas.class, 530);
       toStringPrivate(dc);
       super.toString(dc.sup());
 
@@ -516,10 +507,10 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
          dc.append("RepaintsFlags:NONE");
       } else {
          dc.append("RepaintsFlags:");
-         if (hasRepaintFlag(ITechPaintThread.REPAINT_01_FULL)) {
+         if (hasRepaintFlag(ITechThreadPaint.REPAINT_01_FULL)) {
             dc.append("Full");
          }
-         if (hasRepaintFlag(ITechPaintThread.REPAINT_02_EXTERNAL)) {
+         if (hasRepaintFlag(ITechThreadPaint.REPAINT_02_EXTERNAL)) {
             dc.append("External");
          }
       }
@@ -542,11 +533,11 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
       dc.nlLvl("Link", linked);
       dc.appendVarWithSpace("Message", screenMessage);
       dc.appendVarWithSpace("Anchor", screenMessage);
-      dc.appendVarWithSpace("Interpolation", StringUtils.prettyFloat(interpolation));
+
    }
 
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, CanvasResult.class);
+      dc.root1Line(this, OutputStateCanvas.class);
       toStringPrivate(dc);
       super.toString1Line(dc.sup1Line());
 
@@ -560,9 +551,8 @@ public class CanvasResult extends ObjectIC implements ITechInputFeedback, ITechS
       }
    }
 
-
    public String toStringClip(IGraphics g) {
-      Dctx d = new Dctx(inputState.toStringGetUCtx());
+      Dctx d = new Dctx(ic.toStringGetUCtx());
       toStringClip(g, d);
       return d.toString();
    }

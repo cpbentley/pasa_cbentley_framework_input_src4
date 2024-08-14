@@ -1,12 +1,12 @@
 package pasa.cbentley.framework.input.src4.event.jobs;
 
 import pasa.cbentley.core.src4.utils.BitUtils;
-import pasa.cbentley.framework.coreui.src4.event.GesturePointer;
-import pasa.cbentley.framework.coreui.src4.event.RepeatEvent;
-import pasa.cbentley.framework.coreui.src4.tech.ITechGestures;
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
-import pasa.cbentley.framework.input.src4.InputState;
+import pasa.cbentley.framework.core.ui.src4.event.GesturePointer;
+import pasa.cbentley.framework.core.ui.src4.event.RepeatEvent;
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechGestures;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
 
 public class GestureTrailObject extends GestureTrailJob {
 

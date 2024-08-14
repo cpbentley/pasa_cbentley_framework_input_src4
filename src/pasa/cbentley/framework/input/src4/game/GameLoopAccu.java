@@ -1,8 +1,8 @@
 package pasa.cbentley.framework.input.src4.game;
 
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.threading.GameLoop;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
+import pasa.cbentley.framework.input.src4.threading.CanvasLoopGame;
 
 /**
  * Fix Your Timestep!
@@ -11,7 +11,7 @@ import pasa.cbentley.framework.input.src4.threading.GameLoop;
  * @author Charles Bentley
  *
  */
-public class GameLoopAccu extends GameLoop {
+public class GameLoopAccu extends CanvasLoopGame {
 
    public GameLoopAccu(InputCtx ic, CanvasAppliInput canvas) {
       super(ic, canvas);
@@ -37,7 +37,7 @@ public class GameLoopAccu extends GameLoop {
          accumulator += frameTime;
 
          while (accumulator >= dt) {
-            doupdate(totalTime, dt);
+            simulationUpdate(totalTime, dt);
             totalTime += dt;
             accumulator -= dt;
          }

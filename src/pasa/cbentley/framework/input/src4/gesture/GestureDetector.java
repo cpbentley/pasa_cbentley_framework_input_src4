@@ -10,11 +10,11 @@ import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.core.src4.logging.ITechLvl;
 import pasa.cbentley.core.src4.utils.BitUtils;
 import pasa.cbentley.core.src4.utils.IntUtils;
-import pasa.cbentley.framework.coreui.src4.event.GestureEvent;
-import pasa.cbentley.framework.coreui.src4.tech.ITechGestures;
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
-import pasa.cbentley.framework.input.src4.InputState;
+import pasa.cbentley.framework.core.ui.src4.event.GestureEvent;
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechGestures;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
 
 /**
  * Describes press, a drag and a release or more complex pointer gesture.

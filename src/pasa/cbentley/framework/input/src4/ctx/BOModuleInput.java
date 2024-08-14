@@ -2,10 +2,8 @@ package pasa.cbentley.framework.input.src4.ctx;
 
 import pasa.cbentley.byteobjects.src4.core.BOModuleAbstract;
 import pasa.cbentley.byteobjects.src4.core.ByteObject;
-import pasa.cbentley.byteobjects.src4.ctx.IBOTypesBOC;
-import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.framework.coreui.src4.ctx.ToStringStaticCoreUi;
+import pasa.cbentley.framework.core.ui.src4.ctx.ToStringStaticCoreUi;
 import pasa.cbentley.framework.input.src4.interfaces.IBOCanvasAppli;
 
 public class BOModuleInput extends BOModuleAbstract {
@@ -17,26 +15,23 @@ public class BOModuleInput extends BOModuleAbstract {
       this.ic = ic;
    }
 
-   public String toStringGetDIDString(int did, int value) {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
    public ByteObject getFlagOrderedBO(ByteObject bo, int offset, int flag) {
       // TODO Auto-generated method stub
       return null;
    }
 
    public ByteObject merge(ByteObject root, ByteObject merge) {
-      // TODO Auto-generated method stub
-      if(merge.hasSubType(IBOTypesBOC.TYPE_011_MERGE_MASK)) {
-         //merge it
-         boc.implementationProblem();
-         return merge;
-      } else {
-         //assume opaque
-         return merge;
+      int type = merge.getType();
+      switch (type) {
       }
+      return null;
+   }
+
+   //#mdebug
+   public void toString(Dctx dc) {
+      dc.root(this, BOModuleInput.class, "@line5");
+      toStringPrivate(dc);
+      super.toString(dc.sup());
    }
 
    public boolean toString(Dctx dc, ByteObject bo) {
@@ -68,6 +63,12 @@ public class BOModuleInput extends BOModuleAbstract {
       return true;
    }
 
+   public void toString1Line(Dctx dc) {
+      dc.root1Line(this, BOModuleInput.class);
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
+   }
+
    public boolean toString1Line(Dctx dc, ByteObject bo) {
       int type = bo.getType();
       switch (type) {
@@ -80,30 +81,22 @@ public class BOModuleInput extends BOModuleAbstract {
       return true;
    }
 
-   public String toStringOffset(ByteObject o, int offset) {
+   public String toStringGetDIDString(int did, int value) {
       // TODO Auto-generated method stub
       return null;
    }
 
-   public String toStringType(int type) {
-      return ToStringStaticInput.toStringTypeBO(type);
-   }
-
-   //#mdebug
-   public void toString(Dctx dc) {
-      dc.root(this, BOModuleInput.class, "@line5");
-      toStringPrivate(dc);
-      super.toString(dc.sup());
+   public String toStringOffset(ByteObject o, int offset) {
+      // TODO Auto-generated method stub
+      return null;
    }
 
    private void toStringPrivate(Dctx dc) {
       
    }
 
-   public void toString1Line(Dctx dc) {
-      dc.root1Line(this, BOModuleInput.class);
-      toStringPrivate(dc);
-      super.toString1Line(dc.sup1Line());
+   public String toStringType(int type) {
+      return ToStringStaticInput.toStringTypeBO(type);
    }
 
    //#enddebug

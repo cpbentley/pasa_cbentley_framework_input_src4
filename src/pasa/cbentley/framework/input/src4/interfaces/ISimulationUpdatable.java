@@ -13,7 +13,7 @@ import pasa.cbentley.framework.input.src4.game.FrameData;
  * @author Charles Bentley
  *
  */
-public interface IUpdatableSim {
+public interface ISimulationUpdatable {
    /**
     * Called when the time has elapsed. The simulation has to update the state of its objects best it can using
     * the {@link FrameData} information.

@@ -1,9 +1,9 @@
 package pasa.cbentley.framework.input.src4.ctx;
 
 import pasa.cbentley.byteobjects.src4.core.interfaces.IBOCtxSettings;
-import pasa.cbentley.framework.coreui.src4.tech.IBOCanvasHost;
-import pasa.cbentley.framework.coreui.src4.tech.ITechHostUI;
-import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
+import pasa.cbentley.framework.core.ui.src4.tech.IBOCanvasHost;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechHostUI;
+import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
 
 /**
  * Config for {@link InputCtx}
@@ -42,10 +42,10 @@ public interface IBOCtxSettingsInput extends IBOCtxSettings {
     * Set for the controlling canvas
     * 
     * <br>
-    * <li>{@link ITechPaintThread#THREADING_0_ONE_TO_RULE_ALL}
-    * <li>{@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING}
-    * <li>{@link ITechPaintThread#THREADING_2_UIUPDATE_RENDERING}
-    * <li>{@link ITechPaintThread#THREADING_3_THREE_SEPARATE}
+    * <li>{@link ITechThreadPaint#THREADING_0_ONE_TO_RULE_ALL}
+    * <li>{@link ITechThreadPaint#THREADING_1_UI_UPDATERENDERING}
+    * <li>{@link ITechThreadPaint#THREADING_2_UIUPDATE_RENDERING}
+    * <li>{@link ITechThreadPaint#THREADING_3_THREE_SEPARATE}
     * 
     */
    public static final int CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1 = CTX_BASIC_SIZE + 1;

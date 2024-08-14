@@ -1,4 +1,4 @@
-package pasa.cbentley.framework.input.src4;
+package pasa.cbentley.framework.input.src4.engine;
 
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
@@ -8,22 +8,22 @@ import pasa.cbentley.framework.input.src4.ctx.IFlagsToStringInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 import pasa.cbentley.framework.input.src4.interfaces.ITechInputCycle;
-import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
 import pasa.cbentley.framework.input.src4.interfaces.ITechScreenResults;
+import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
 
 /**
- * Manages the {@link CanvasResult} and repaint mechanics for a {@link CanvasAppliInput}
+ * Manages the {@link OutputStateCanvas} and repaint mechanics for a {@link CanvasAppliInput}
  * <br>
  * <br>
  * 
  * @author Charles Bentley
  *
  */
-public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycle {
+public class RepaintHelper extends ObjectIC implements IStringable, ITechInputCycle {
    /**
     * 
     */
-   protected CanvasResult     canvasResultBusiness;
+   protected OutputStateCanvas     canvasResultBusiness;
 
    /**
     * The {@link CanvasAppliInput} on which this repaint manages.
@@ -49,40 +49,40 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
    protected boolean          isEventThreadState;
 
    /**
-    * We must protect thread access because GUI request {@link CanvasResult} from it
+    * We must protect thread access because GUI request {@link OutputStateCanvas} from it
     * an
     */
    private FiFoQueue          queue;
 
    /**
-    * Reserve of {@link CanvasResult}.
+    * Reserve of {@link OutputStateCanvas}.
     * <br>
-    * Reset with {@link CanvasResult#resetAll()}
+    * Reset with {@link OutputStateCanvas#resetAll()}
     */
    private FiFoQueue          queueSR;
 
    protected FiFoQueue        runUpdates;
 
    /**
-    * Base {@link CanvasResult}.
+    * Base {@link OutputStateCanvas}.
     * <br>
     * When active, Controller creates a new one.
     * 
     */
-   protected CanvasResult     canvasResultEvent;
+   protected OutputStateCanvas     canvasResultEvent;
 
 
    /**
     * T
     * @param canvas
     */
-   public RepaintCtrl(InputCtx ic, CanvasAppliInput canvas) {
+   public RepaintHelper(InputCtx ic, CanvasAppliInput canvas) {
       super(ic);
       this.canvas = canvas;
       UCtx uc = ic.getUC();
       queue = new FiFoQueue(uc);
       queueSR = new FiFoQueue(uc);
-      if(this.getClass() == RepaintCtrl.class) {
+      if(this.getClass() == RepaintHelper.class) {
          constructHelpers();
       }
    }
@@ -98,28 +98,28 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
     * How do we make sure it has been resetted?
     */
    void attachScreenResult() {
-      CanvasResult sr = canvasResultEvent;
+      OutputStateCanvas sr = canvasResultEvent;
       if (canvasResultEvent.hasResultFlag(ITechScreenResults.FLAG_06_ACTIVE)) {
          //use another
-         sr = new CanvasResult(ic, canvas, CYCLE_0_USER_EVENT);
+         sr = new OutputStateCanvas(ic, canvas, CYCLE_0_USER_EVENT);
       } else {
          sr.resetAll();
       }
    }
 
-   public void clearResult(CanvasResult sr) {
+   public void clearResult(OutputStateCanvas sr) {
       sr.resetAll();
       queue.put(sr);
    }
 
    /**
-    * Any business thread with an effect create a {@link CanvasResult} here.
+    * Any business thread with an effect create a {@link OutputStateCanvas} here.
     * 
     * @param id
     * @return
     */
-   public CanvasResult create(int id) {
-      return new CanvasResult(ic, canvas, id);
+   public OutputStateCanvas create(int id) {
+      return new OutputStateCanvas(ic, canvas, id);
    }
 
    public void endEvent() {
@@ -127,9 +127,9 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
       eventThread = null;
    }
 
-   protected CanvasResult getEmptySR(int type) {
+   protected OutputStateCanvas getEmptyOutputState(int type) {
       synchronized (queueSR) {
-         CanvasResult sr = (CanvasResult) queueSR.getHead();
+         OutputStateCanvas sr = (OutputStateCanvas) queueSR.getHead();
          if (sr == null) {
             sr = create(type);
          } else {
@@ -139,40 +139,42 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
       }
    }
 
-   public CanvasResult getExternResult() {
+   public OutputStateCanvas getExternResult() {
       //repaint call originates from the outside of the Bentley Framework
       //#debug
-      canvas.toDLog().pDraw("Repaint Call From Outside : Null ScreenResult", null, RepaintCtrl.class, "getExternResult@145");
+      canvas.toDLog().pDraw("Repaint Call From Outside : Null ScreenResult", null, RepaintHelper.class, "getExternResult@145");
 
-      CanvasResult sr = getEmptySR(CYCLE_0_USER_EVENT);
+      OutputStateCanvas sr = getEmptyOutputState(CYCLE_0_USER_EVENT);
       //do a full repaint according to framework semantics
-      sr.setRepaintFlag(ITechPaintThread.REPAINT_01_FULL, true);
-      sr.setRepaintFlag(ITechPaintThread.REPAINT_02_EXTERNAL, true);
+      sr.setRepaintFlag(ITechThreadPaint.REPAINT_01_FULL, true);
+      sr.setRepaintFlag(ITechThreadPaint.REPAINT_02_EXTERNAL, true);
       return sr;
    }
 
    /**
-    * Merge all pending Results into 1 to be used by the thread {@link ITechPaintThread#THREAD_2_RENDER}
+    * Merge all pending Results into 1 to be used by the thread {@link ITechThreadPaint#THREAD_2_RENDER}
     * <br>
     * Never returns null.
     * @return
     */
-   public synchronized CanvasResult getNextRender() {
+   public synchronized OutputStateCanvas getNextRender() {
       synchronized (queue) {
          //reads pending repaints
-         CanvasResult sr = (CanvasResult) queue.getHead();
-         CanvasResult s = null;
-         while ((s = (CanvasResult) queue.getHead()) != null) {
-            sr.merge(s);
-         }
+         OutputStateCanvas sr = (OutputStateCanvas) queue.getHead();
          //if none.. still null.
          if (sr == null) {
             //create one
             sr = getExternResult();
          }
+         
+         OutputStateCanvas s = null;
+         while ((s = (OutputStateCanvas) queue.getHead()) != null) {
+            sr.merge(s);
+         }
+     
          //debug stuff
          if (canvas.hasDebugFlag(IFlagsToStringInput.Debug_8_ForceFullRepaints)) {
-            sr.setRepaintFlag(ITechPaintThread.REPAINT_01_FULL, true);
+            sr.setRepaintFlag(ITechThreadPaint.REPAINT_01_FULL, true);
          }
          if (sr == null) {
             throw new NullPointerException();
@@ -183,14 +185,14 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
    }
 
    /**
-    * Returns the {@link CanvasResult} inside the Event Thread (Keys Pointers)
-    * Returns the Event {@link CanvasResult} if one event is currently being processed.
+    * Returns the {@link OutputStateCanvas} inside the Event Thread (Keys Pointers)
+    * Returns the Event {@link OutputStateCanvas} if one event is currently being processed.
     * <br>
     * Calling it outside will generate an {@link IllegalStateException} exception.
-    * Return a business {@link CanvasResult} otherwise.
+    * Return a business {@link OutputStateCanvas} otherwise.
     * @return
     */
-   public CanvasResult getScreenResult() {
+   public OutputStateCanvas getScreenResult() {
 
       if (isEventThreadState) {
          return canvasResultEvent;
@@ -205,7 +207,7 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
     * They know for certain they are running inside a business thread
     * @return
     */
-   public CanvasResult getScreenResultBusi() {
+   public OutputStateCanvas getScreenResultBusi() {
       return canvasResultBusiness;
    }
 
@@ -222,7 +224,7 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
    }
 
    /**
-    * Queues the {@link CanvasResult} for repaint.
+    * Queues the {@link OutputStateCanvas} for repaint.
     * <br>
     * If there are several requests? 
     * What happens depends on the threading mode.
@@ -236,12 +238,12 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
     * The request is dropped when it doesn't bring 
     * @param sr
     */
-   public void queueRepaint(CanvasResult sr) {
+   public void queueRepaint(OutputStateCanvas sr) {
       queue.put(sr);
    }
 
    /**
-    * This method will block until the {@link CanvasResult} has been honored.
+    * This method will block until the {@link OutputStateCanvas} has been honored.
     * <br>
     * This method MUST be called outisde the rendering thread.
     * 
@@ -250,7 +252,7 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
     * <br>
     * for instance all animations are stopped.
     */
-   public void queueRepaintBlock(CanvasResult sr) throws InterruptedException {
+   public void queueRepaintBlock(OutputStateCanvas sr) throws InterruptedException {
       //we lock on the semaphore. very unlikely but this prevent the repaint from fully completing
       //between repaint and semaphore release
       synchronized (sr.sema) {
@@ -263,17 +265,17 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
    }
 
    /**
-    * Calls for a repaint of the screen according to the {@link CanvasResult} data.
+    * Calls for a repaint of the screen according to the {@link OutputStateCanvas} data.
     * <br>
     * <br>
-    * In Active Rendering mode, the {@link CanvasResult} is merged to Active one.
+    * In Active Rendering mode, the {@link OutputStateCanvas} is merged to Active one.
     * In Active mode, call this may notify the rendering thread if it is sleeping.
     * Rendering thread may decide to sleep because no work is needed.
     * <br>
     * <br>
-    * Adds a {@link CanvasResult} controls what has to be drawn.
+    * Adds a {@link OutputStateCanvas} controls what has to be drawn.
     * <br>
-    * We must match the paint call to all {@link CanvasResult} originators
+    * We must match the paint call to all {@link OutputStateCanvas} originators
     * <br>
     * When Event and Business collide:
     * <br>
@@ -291,9 +293,9 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
     * <br> 
     * @param sr
     */
-   public void repaint(CanvasResult sr) {
+   public void repaint(OutputStateCanvas sr) {
       //call the repaint method
-      if (sr.hasRepaintFlag(ITechPaintThread.REPAINT_01_FULL)) {
+      if (sr.hasRepaintFlag(ITechThreadPaint.REPAINT_01_FULL)) {
          canvas.repaintHiJack();
       } else {
          //#debug
@@ -306,9 +308,9 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
       }
    }
 
-   private CanvasResult rotate() {
+   private OutputStateCanvas rotate() {
       synchronized (queue) {
-         CanvasResult sr = (CanvasResult) queue.getHead();
+         OutputStateCanvas sr = (OutputStateCanvas) queue.getHead();
          if (sr == null) {
             sr = create(CYCLE_1_BUSINESS_EVENT);
             queue.put(sr);
@@ -318,7 +320,7 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
    }
 
    /**
-    * After calling this method a new fresh {@link CanvasResult} will be referenced
+    * After calling this method a new fresh {@link OutputStateCanvas} will be referenced
     * 
     */
    public void rotateBusinessResult() {
@@ -330,12 +332,12 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
    }
 
    /**
-    * Returns the {@link CanvasResult} to be used to give feedback of this event
+    * Returns the {@link OutputStateCanvas} to be used to give feedback of this event
     */
-   public CanvasResult startEvent() {
+   public OutputStateCanvas startEvent() {
       isEventThreadState = true;
       eventThread = Thread.currentThread();
-      CanvasResult sr = getEmptySR(CYCLE_0_USER_EVENT);
+      OutputStateCanvas sr = getEmptyOutputState(CYCLE_0_USER_EVENT);
       //set the type
 
       return sr;
@@ -344,7 +346,7 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
 
    //#mdebug
    public void toString(Dctx dc) {
-      dc.root(this, RepaintCtrl.class, 350);
+      dc.root(this, RepaintHelper.class, 350);
       toStringPrivate(dc);
       super.toString(dc.sup());
       
@@ -361,7 +363,7 @@ public class RepaintCtrl extends ObjectIC implements IStringable, ITechInputCycl
    }
 
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, RepaintCtrl.class);
+      dc.root1Line(this, RepaintHelper.class);
       toStringPrivate(dc);
       super.toString1Line(dc.sup1Line());
    }

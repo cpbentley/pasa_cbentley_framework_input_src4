@@ -1,10 +1,10 @@
 package pasa.cbentley.framework.input.src4.game;
 
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.threading.GameLoop;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
+import pasa.cbentley.framework.input.src4.threading.CanvasLoopGame;
 
-public class GameLoopVariable extends GameLoop {
+public class GameLoopVariable extends CanvasLoopGame {
 
    private boolean isRunning;
 
@@ -43,13 +43,14 @@ public class GameLoopVariable extends GameLoop {
          // update our FPS counter if a second has passed since
          // we last recorded
          if (lastFpsTime >= 1000000000) {
-            System.out.println("(FPS: " + fps + ")");
+            //#debug
+            toDLog().pAlways("(FPS: " + fps + ")", this, GameLoopVariable.class, "run", LVL_05_FINE, true);
             lastFpsTime = 0;
             fps = 0;
          }
 
          // update the game logic
-         input();
+         simulationUpdate();
 
          // draw everyting
          simulationRender();

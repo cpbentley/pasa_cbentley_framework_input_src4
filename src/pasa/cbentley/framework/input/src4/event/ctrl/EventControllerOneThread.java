@@ -1,53 +1,38 @@
 package pasa.cbentley.framework.input.src4.event.ctrl;
 
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.framework.coreui.src4.event.BEvent;
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
-import pasa.cbentley.framework.input.src4.EventController;
-import pasa.cbentley.framework.input.src4.InputState;
+import pasa.cbentley.framework.core.ui.src4.event.BEvent;
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
+import pasa.cbentley.framework.input.src4.engine.ExecutionContextCanvas;
+import pasa.cbentley.framework.input.src4.engine.InputStateCanvas;
+import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
 
 /**
  * No special treatment.
- * <br>
  * Drag events are queued in the Host event queue and will be serially processed
- * <br>
- * <br>
+ * 
  * {@link EventControllerOneThreadCtrled} for the Event Queue.
+ * 
  * @author Charles Bentley
  *
  */
 public class EventControllerOneThread extends EventController {
-   /**
-    * The current {@link InputState}. or the image of the whole queue.
-    * <br>
-    * In a single thread there is only a single reference.
-    * <br>
-    * In Mode {@link ITechPaintThread#THREADING_1_UI_UPDATERENDERING},
-    * the UI thread updates the {@link InputState}
-    * 
-    * <br>
-    * Any thread can get a reference from this. But it is not advisable.
-    * <br>
-    * Depending on the thread model
-    */
-   protected InputState inputState;
 
    public EventControllerOneThread(InputCtx ic, CanvasAppliInput canvas) {
       super(ic, canvas);
-      inputState = canvas.createInputState();
+
    }
 
-   public void event(BEvent g, CanvasAppliInput canvas) {
-      boolean isAccepted = super.event(inputState, g, canvas);
+   public void event(BEvent ev) {
+      boolean isAccepted = super.event(inputState, ev, canvas);
       if (isAccepted) {
-         canvas.processInputState(inputState);
+         ExecutionContextCanvas ec = canvas.createExecutionContextCanvas();
+         ec.setInputState(inputState);
+         ec.setOutputState(outputState);
+         canvas.processInputState(ec, inputState, outputState);
       }
-   }
-
-   public InputState getState() {
-      return inputState;
    }
 
    /**
@@ -59,14 +44,21 @@ public class EventControllerOneThread extends EventController {
    }
 
    //#mdebug
-
    public void toString(Dctx dc) {
-      dc.root(this, "EventControllerOneThread");
+      dc.root(this, EventControllerOneThread.class, 63);
+      toStringPrivate(dc);
       super.toString(dc.sup());
    }
 
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, "EventControllerOneThread");
+      dc.root1Line(this, EventControllerOneThread.class, 63);
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
+   }
+
+   private void toStringPrivate(Dctx dc) {
+
    }
    //#enddebug
+
 }

@@ -5,8 +5,8 @@ import pasa.cbentley.byteobjects.src4.ctx.ABOCtx;
 import pasa.cbentley.byteobjects.src4.ctx.ConfigAbstractBO;
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.utils.interfaces.IColors;
-import pasa.cbentley.framework.coreui.src4.tech.ITechHostUI;
-import pasa.cbentley.framework.input.src4.interfaces.ITechPaintThread;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechHostUI;
+import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
 
 /**
  * 
@@ -24,7 +24,7 @@ public class ConfigInputDefault extends ConfigAbstractBO implements IConfigInput
    }
    
    public int getCanvasDefaultThreadingMode() {
-      return ITechPaintThread.THREADING_0_ONE_TO_RULE_ALL;
+      return ITechThreadPaint.THREADING_0_ONE_TO_RULE_ALL;
    }
 
    public int getCanvasDefaultScreenMode() {

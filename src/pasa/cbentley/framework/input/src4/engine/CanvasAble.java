@@ -1,5 +1,6 @@
-package pasa.cbentley.framework.input.src4;
+package pasa.cbentley.framework.input.src4.engine;
 
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.interfaces.ICanvasRenderable;
@@ -13,11 +14,11 @@ public class CanvasAble extends CanvasAppliInput {
       this.cr = cr;
    }
 
-   protected void render(IGraphics g, InputState is, CanvasResult sr) {
-      cr.render(g, is, sr,getWidth(),getHeight());
+   public void render(IGraphics g, ExecutionContextCanvas ec, InputStateCanvas is, OutputStateCanvas sr) {
+      cr.render(g, is, sr, getWidth(), getHeight());
    }
 
-   protected void ctrlUIEvent(InputState ic, CanvasResult sr) {
+   protected void ctrlUIEvent(ExecutionContextCanvas ec, InputStateCanvas ic, OutputStateCanvas sr) {
       cr.ctrlUIEvent(ic, sr);
    }
 
@@ -25,6 +26,5 @@ public class CanvasAble extends CanvasAppliInput {
       // TODO Auto-generated method stub
       return null;
    }
-
 
 }

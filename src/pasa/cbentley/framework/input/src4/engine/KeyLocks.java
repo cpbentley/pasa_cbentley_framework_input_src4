@@ -1,12 +1,13 @@
-package pasa.cbentley.framework.input.src4;
+package pasa.cbentley.framework.input.src4.engine;
 
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.src4.logging.IDLog;
 import pasa.cbentley.core.src4.logging.IStringable;
-import pasa.cbentley.framework.coreui.src4.interfaces.BCodes;
-import pasa.cbentley.framework.coreui.src4.tech.ITechCodes;
-import pasa.cbentley.framework.coreui.src4.tech.ITechInputFeedback;
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
+import pasa.cbentley.framework.core.ui.src4.interfaces.BCodes;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechCodes;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechInputFeedback;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.interfaces.ILocks;
 
@@ -14,7 +15,7 @@ public class KeyLocks implements IStringable {
 
    private InputState    is;
 
-   private CanvasResult sr;
+   private OutputStateCanvas sr;
 
    private InputCtx ic;
 
@@ -22,7 +23,7 @@ public class KeyLocks implements IStringable {
       this.ic = ic;
    }
 
-   public void set(InputState is, CanvasResult sr) {
+   public void set(InputState is, OutputStateCanvas sr) {
       this.is = is;
       this.sr = sr;
    }

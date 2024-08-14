@@ -1,12 +1,12 @@
 package pasa.cbentley.framework.input.src4.event.jobs;
 
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.framework.coreui.src4.event.GestureEvent;
-import pasa.cbentley.framework.coreui.src4.event.GesturePointer;
-import pasa.cbentley.framework.coreui.src4.event.RepeatEvent;
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
-import pasa.cbentley.framework.input.src4.InputState;
+import pasa.cbentley.framework.core.ui.src4.event.GestureEvent;
+import pasa.cbentley.framework.core.ui.src4.event.GesturePointer;
+import pasa.cbentley.framework.core.ui.src4.event.RepeatEvent;
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
 import pasa.cbentley.framework.input.src4.interfaces.IJobEvent;
 
 /**

@@ -1,6 +1,6 @@
 package pasa.cbentley.framework.input.src4.interfaces;
 
-import pasa.cbentley.framework.input.src4.CanvasResult;
+import pasa.cbentley.framework.input.src4.engine.OutputStateCanvas;
 
 /**
  * Specific flags
@@ -10,7 +10,7 @@ import pasa.cbentley.framework.input.src4.CanvasResult;
 public interface ITechScreenResults {
 
    /**
-    * Flag {@link CanvasResult} as being used in the repaint cycle before that painting call finishes.
+    * Flag {@link OutputStateCanvas} as being used in the repaint cycle before that painting call finishes.
     */
    public static final int FLAG_06_ACTIVE       = 1 << 5;
 

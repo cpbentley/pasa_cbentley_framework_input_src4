@@ -1,31 +1,34 @@
 package pasa.cbentley.framework.input.src4.threading;
 
 import pasa.cbentley.core.src4.structs.synch.BlockingQueueUnlimited;
-import pasa.cbentley.framework.input.src4.CanvasAppliInput;
-import pasa.cbentley.framework.input.src4.EventThreader;
-import pasa.cbentley.framework.input.src4.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
+import pasa.cbentley.framework.input.src4.engine.ExecutionContextCanvas;
+import pasa.cbentley.framework.input.src4.engine.InputStateCanvas;
+import pasa.cbentley.framework.input.src4.engine.OutputStateCanvas;
 
-public class UpdateThread extends EventThreader {
+public class LoopThreadUpdate2 extends CanvasLoop {
 
    /**
     * Full of input queue. notified when 
     */
    BlockingQueueUnlimited inputQueue;
 
-   public UpdateThread(InputCtx ic, CanvasAppliInput canvas) {
+   public LoopThreadUpdate2(InputCtx ic, CanvasAppliInput canvas) {
       super(ic, canvas);
    }
 
    public void run() {
       while (isRunning) {
-         InputState is;
+         int lastID = -1;
          try {
             //blocks until there is a request
             Object request = inputQueue.dequeue();
-            if (request instanceof InputState) {
-               is = (InputState) request;
-               super.process(is);
+            if (request instanceof InputStateCanvas) {
+               ExecutionContextCanvas ec = canvas.createExecutionContextEvent();
+               OutputStateCanvas os = ec.getOutputStateCanvas();
+               InputStateCanvas is = ec.getInputStateCanvas();
+               super.process(ec, is, os);
             } else if (request instanceof Runnable) {
                Runnable run = (Runnable) request;
                run.run();

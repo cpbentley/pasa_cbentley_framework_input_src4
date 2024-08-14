@@ -1,4 +1,4 @@
-package pasa.cbentley.framework.input.src4;
+package pasa.cbentley.framework.input.src4.engine;
 
 public class TriggerEvent {
 

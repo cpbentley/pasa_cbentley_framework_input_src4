@@ -7,6 +7,7 @@ import pasa.cbentley.framework.core.ui.src4.event.BEvent;
 import pasa.cbentley.framework.core.ui.src4.input.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
+import pasa.cbentley.framework.input.src4.engine.ExecutionContextCanvas;
 import pasa.cbentley.framework.input.src4.engine.InputStateCanvas;
 import pasa.cbentley.framework.input.src4.gesture.GestureDetector;
 import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
@@ -16,7 +17,7 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
  * @author Charles Bentley
  *
  */
-public class EventControllerQueued extends EventController {
+public class EventControllerQueuedSynchro extends EventController {
 
    /**
     * {@link InputState} queue. Consumed by the update thread as discrete events.
@@ -29,13 +30,12 @@ public class EventControllerQueued extends EventController {
    private BlockingQueueUnlimited inputQueue;
 
    /**
-    * Used InputState are queued
+    * Queue of {@link BEvent}.
     */
    private FiFoQueue              inputQueueFresh;
 
-   protected InputStateCanvas           lastKnownStateAvailable;
 
-   public EventControllerQueued(InputCtx ic, CanvasAppliInput canvas) {
+   public EventControllerQueuedSynchro(InputCtx ic, CanvasAppliInput canvas) {
       super(ic, canvas);
       inputQueue = new BlockingQueueUnlimited(ic.getUC());
       inputQueueFresh = new FiFoQueue(ic.getUC());
@@ -53,57 +53,35 @@ public class EventControllerQueued extends EventController {
     * When only one event and no other event was generated, use this state 
     * as the basis for next
     */
-   public synchronized void endOfEvent(InputStateCanvas is) {
-      if (inputState == is) {
-         lastKnownStateAvailable = is;
-      } else {
-         //dump inputstate
-         inputQueueFresh.put(is);
-      }
-
+   public synchronized void endOfExecutionEvent(ExecutionContextCanvas ec, InputStateCanvas is) {
    }
 
-   public void event(BEvent g) {
+   public synchronized void event(BEvent event) {
       //#debug
-      toDLog().pFlow("msg", this, EventControllerQueued.class, "getNextInputState@85", LVL_04_FINER, DEV_0_1LINE_THREAD);
+      toDLog().pFlow("Enqueued", event, EventControllerQueuedSynchro.class, "event@62", LVL_04_FINER, DEV_0_1LINE_THREAD);
 
-      InputStateCanvas is = getNextInputState();
-      boolean isAccepted = super.event(is, g, canvas);
-      if (isAccepted) {
-         //get next inputstate
-         inputQueue.enqueue(is);
-         setLastKnownState(is);
-      }
-   }
+      inputQueueFresh.put(event);
 
-   /**
-    * Called in the UI thread
-    * @return
-    */
-   private synchronized InputStateCanvas getNextInputState() {
-      //#debug
-      toDLog().pFlow("msg", this, EventControllerQueued.class, "getNextInputState@85", LVL_04_FINER, DEV_0_1LINE_THREAD);
-      if (lastKnownStateAvailable != null) {
-         InputStateCanvas is = lastKnownStateAvailable;
-         lastKnownStateAvailable = null;
-         return is;
-      } else {
-         //get next from queue take a copy of the previous
-         InputStateCanvas is = (InputStateCanvas) inputQueueFresh.getHead();
-         if (is == null) {
-            is = (InputStateCanvas) canvas.createInputState();
-         }
-         is.cloneFrom(inputState);
-         return is;
-      }
    }
 
    public BlockingQueueUnlimited getQeue() {
       return inputQueue;
    }
 
-   public void setLastKnownState(InputStateCanvas is) {
-      this.inputState = is;
+   /**
+    * Look up if queue is not empty
+    */
+   public synchronized InputStateCanvas getInputState() {
+      //#debug
+      toDLog().pFlow("numInQueue="+inputQueueFresh.size(), this, EventControllerQueuedSynchro.class, "getState@62", LVL_04_FINER, DEV_0_1LINE_THREAD);
+
+      Object ev = inputQueueFresh.getHead();
+      if (ev != null) {
+         BEvent event = (BEvent) ev;
+         boolean isAccepted = super.event(this.inputState, event, this.canvas);
+         //we don't care here
+      }
+      return inputState;
    }
 
    public void setQueue(BlockingQueueUnlimited queue) {
@@ -112,13 +90,13 @@ public class EventControllerQueued extends EventController {
 
    //#mdebug
    public void toString(Dctx dc) {
-      dc.root(this, EventControllerQueued.class, 140);
+      dc.root(this, EventControllerQueuedSynchro.class, 140);
       toStringPrivate(dc);
       super.toString(dc.sup());
    }
 
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, EventControllerQueued.class, 140);
+      dc.root1Line(this, EventControllerQueuedSynchro.class, 140);
       toStringPrivate(dc);
       super.toString1Line(dc.sup1Line());
    }

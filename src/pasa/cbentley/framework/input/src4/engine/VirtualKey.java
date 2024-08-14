@@ -1,6 +1,6 @@
-package pasa.cbentley.framework.input.src4;
+package pasa.cbentley.framework.input.src4.engine;
 
-import pasa.cbentley.framework.coreui.src4.event.GestureArea;
+import pasa.cbentley.framework.core.ui.src4.event.GestureArea;
 
 public class VirtualKey {
 

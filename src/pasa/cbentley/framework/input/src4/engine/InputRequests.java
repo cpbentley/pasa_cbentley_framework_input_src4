@@ -1,4 +1,4 @@
-package pasa.cbentley.framework.input.src4;
+package pasa.cbentley.framework.input.src4.engine;
 
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.interfaces.C;
@@ -9,20 +9,21 @@ import pasa.cbentley.core.src4.structs.IntToInts;
 import pasa.cbentley.core.src4.structs.IntToObjects;
 import pasa.cbentley.core.src4.structs.listdoublelink.LinkedListDouble;
 import pasa.cbentley.core.src4.structs.listdoublelink.ListElementHolder;
-import pasa.cbentley.framework.coreui.src4.event.BEvent;
-import pasa.cbentley.framework.coreui.src4.event.DeviceEventGroup;
-import pasa.cbentley.framework.coreui.src4.event.EventKey;
-import pasa.cbentley.framework.coreui.src4.event.GestureArea;
-import pasa.cbentley.framework.coreui.src4.event.GestureEvent;
-import pasa.cbentley.framework.coreui.src4.event.GesturePath;
-import pasa.cbentley.framework.coreui.src4.event.GesturePointer;
-import pasa.cbentley.framework.coreui.src4.event.RepeatEvent;
-import pasa.cbentley.framework.coreui.src4.event.VoiceEvent;
-import pasa.cbentley.framework.coreui.src4.interfaces.IHostGestures;
-import pasa.cbentley.framework.coreui.src4.tech.ITechGestures;
+import pasa.cbentley.framework.core.ui.src4.event.BEvent;
+import pasa.cbentley.framework.core.ui.src4.event.DeviceEventGroup;
+import pasa.cbentley.framework.core.ui.src4.event.EventKey;
+import pasa.cbentley.framework.core.ui.src4.event.GestureArea;
+import pasa.cbentley.framework.core.ui.src4.event.GestureEvent;
+import pasa.cbentley.framework.core.ui.src4.event.GesturePath;
+import pasa.cbentley.framework.core.ui.src4.event.GesturePointer;
+import pasa.cbentley.framework.core.ui.src4.event.RepeatEvent;
+import pasa.cbentley.framework.core.ui.src4.event.VoiceEvent;
+import pasa.cbentley.framework.core.ui.src4.input.InputState;
+import pasa.cbentley.framework.core.ui.src4.input.NUpleEvent;
+import pasa.cbentley.framework.core.ui.src4.interfaces.IHostGestures;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechGestures;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
-import pasa.cbentley.framework.input.src4.event.NUpleEvent;
 import pasa.cbentley.framework.input.src4.event.jobs.BaseJob;
 import pasa.cbentley.framework.input.src4.event.jobs.GestureTrailJob;
 import pasa.cbentley.framework.input.src4.event.jobs.JobsEventRunner;
@@ -31,23 +32,26 @@ import pasa.cbentley.framework.input.src4.event.jobs.RepeatJob;
 /**
  * Collects requests for events during the update process of an event. At the end of the update cycle,
  * {@link InputRequests} registers events at the Host or {@link JobsEventRunner} of the {@link CanvasAppliInput} =.
- * <br>
- * <br>
+ * 
+ * <p>
  * Class of {@link InputState} from which application code requests input requests.
- * <br>
+ * </p>
+ * 
  * Requests ranges from
  * <li>Repeating key events, usually for keys
  * <li>Host Gesture such as {@link ITechGestures#GESTURE_FLAG_5_SHAKE}
  * <li> Timer for a long press {@link ITechGestures#GESTURE_TYPE_4_LONG_PRESS}
  * <li> {@link GestureTrailJob}
- * <br>
- * <br>
+ * 
  * One time requests will be erased 
  * 
  * Requests by running code to the InputState machine.
  * <br>
+ * 
  * When a key press or pointer press event occurs, the application may want to listen to
  * repetitions or pointer gestures. 
+ * 
+ * A Command may request a repetition ?
  * <br>
  * When  pointer is pressed, dragging events may generate commands.
  * Is it precise dragging or intent dragging?
@@ -149,6 +153,7 @@ public class InputRequests extends ObjectIC implements IStringable {
    public void apply() {
       doPositives();
       doNegatives();
+      //send jobs to the event runner thread of the Canvas
       for (int i = 0; i < gestureBaseJobs.nextempty; i++) {
          BaseJob gt = (BaseJob) gestureBaseJobs.getObjectAtIndex(i);
          canvas.eventRun.addJob(gt);
@@ -176,13 +181,16 @@ public class InputRequests extends ObjectIC implements IStringable {
          boolean isCancel = nuple.isNewEventCanceling(is, e);
          if (isCancel) {
             //#debug
-            canvas.toDLog().pEvent1("Cancelling " + nuple.toString1Line(), e, InputRequests.class, "cancelNuples");
+            toDLog().pEvent1("Cancelling " + nuple.toString1Line(), e, InputRequests.class, "cancelNuples@185");
             bj.removeFromList();
          }
          bj = next;
       }
    }
 
+   /**
+    * Clear all requests
+    */
    public void clear() {
       er = null;
       dragReleaseGestures = 0;
@@ -445,7 +453,7 @@ public class InputRequests extends ObjectIC implements IStringable {
    public NUpleEvent requestNUpleJob(EventKey ek) {
       NUpleEvent nu = getNUpleJob(ek);
       if (nu == null) {
-         nu = new NUpleEvent(ic, ek, is);
+         nu = new NUpleEvent(ic.getCUC(), ek, is);
          nupleListActive.addFreeHolder(nu);
          return nu;
       } else {
@@ -470,35 +478,11 @@ public class InputRequests extends ObjectIC implements IStringable {
       if (er.getSource() == null) {
          throw new NullPointerException();
       }
-      RepeatJob rj = new RepeatJob(ic, canvas, er);
-      requestRepeatJob(rj);
-   }
-
-   /**
-    * 
-    * @param job
-    */
-   public void requestRepeatJob(RepeatJob job) {
+      RepeatJob job = new RepeatJob(ic, canvas, er);
       gestureBaseJobs.add(job);
    }
 
-   public void requestRepetition(RepeatEvent er) {
-      this.er = er;
-      //repeats.add(er);
-   }
-
-   /**
-    * Posts the {@link DeviceEventGroup}
-    * @param deg
-    */
-   public void requestSimulJob(DeviceEventGroup deg) {
-      is.queuePost(deg);
-   }
-
-   public void requestUpdate() {
-
-   }
-
+ 
    /**
     * Requests the host for voice commands
     * @param ve

@@ -1,6 +1,6 @@
 package pasa.cbentley.framework.input.src4.gesture;
 
-import pasa.cbentley.framework.coreui.src4.tech.ITechGestures;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechGestures;
 
 /**
  * Encapsulates a Gesture occurence
