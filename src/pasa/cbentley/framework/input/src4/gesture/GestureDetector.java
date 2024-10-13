@@ -77,14 +77,14 @@ public class GestureDetector implements ITechGestures, IStringable {
       /**
        * 
        */
-      private GestureDetector  pg;
+      private GestureDetector  gestureDetector;
 
       private int              step      = 0;
 
       public RunTask(GestureDetector pg, CanvasAppliInput ctrl) {
          if (pg == null)
             throw new NullPointerException();
-         this.pg = pg;
+         this.gestureDetector = pg;
          this.ctrl = ctrl;
       }
 
@@ -95,10 +95,10 @@ public class GestureDetector implements ITechGestures, IStringable {
          //toLog().printFlow("#PointerGesture#run isFinished=" + isGesturedFinished() + " " + pg.toStringOneLine());
          while (!isStopped && !isGesturedFinished()) {
             //repaint with the new positions
-            ic.callSerially(new Runnable() {
+            ic.executeMainLater(new Runnable() {
                public void run() {
                   gesturedSteps();
-                  ctrl.pointerGestureEvent(pg.currentGesture);
+                  ctrl.pointerGestureEvent(gestureDetector.currentGesture);
                }
             });
             //toLog().printFlow("#PointerGesture#run step=" + step + pg.toStringOneLine());

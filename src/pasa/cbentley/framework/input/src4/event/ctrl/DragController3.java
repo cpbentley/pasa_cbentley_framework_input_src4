@@ -226,7 +226,7 @@ public class DragController3 implements Runnable, IStringable {
    }
 
    private void sendEvent() {
-      ic.callSerially(new Runnable() {
+      ic.executeMainLater(new Runnable() {
          public void run() {
             sendEventMy();
          }

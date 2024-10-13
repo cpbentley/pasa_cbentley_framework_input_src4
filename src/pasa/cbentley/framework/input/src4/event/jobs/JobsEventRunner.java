@@ -37,7 +37,7 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
  * the key release event is recieved. That mechanism works for Cabled Mode.
  * <br>
  * <br>
- * <b>Event Thread</b> : why or Why not using: {@link Display#callSerially(Runnable)} ?
+ * <b>Event Thread</b> : why or Why not using: {@link Display#executeMainLater(Runnable)} ?
  * <br>
  * The repeater may work serially. IN that case, repeat will be dependant on the painting time.
  * When working solo, {@link OutputStateCanvas} are piled up and fired when painting method finishes.
@@ -112,7 +112,7 @@ public class JobsEventRunner extends ObjectIC implements Runnable {
       //do a launch cancel
       boolean runCancel = cJob.cancel();
       if (runCancel) {
-         ic.callSerially(cJob);
+         ic.executeMainLater(cJob);
       }
 
       cJob.removeFromList();
@@ -128,7 +128,7 @@ public class JobsEventRunner extends ObjectIC implements Runnable {
       toDLog().pEvent1("", cJob, JobsEventRunner.class, "finalizeJob");
       //send event?
       if (cJob.isSendFinalized()) {
-         ic.callSerially(cJob);
+         ic.executeMainLater(cJob);
       }
       cJob.removeFromList();
       numJobs--;
@@ -270,7 +270,7 @@ public class JobsEventRunner extends ObjectIC implements Runnable {
 
    private void runJob(BaseJob je) {
       je.launch();
-      ic.callSerially(je);
+      ic.executeMainLater(je);
    }
 
    public void startThread() {

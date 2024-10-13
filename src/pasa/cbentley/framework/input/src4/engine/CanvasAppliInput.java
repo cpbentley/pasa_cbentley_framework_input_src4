@@ -4,6 +4,7 @@ import pasa.cbentley.byteobjects.src4.core.ByteObject;
 import pasa.cbentley.byteobjects.src4.stator.StatorWriterBO;
 import pasa.cbentley.core.src4.event.BusEvent;
 import pasa.cbentley.core.src4.event.IEventConsumer;
+import pasa.cbentley.core.src4.interfaces.IExecutor;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.src4.logging.ITechConfig;
 import pasa.cbentley.core.src4.logging.ITechLvl;
@@ -353,7 +354,8 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       sema = new MutexSignal(ic.getUC());
 
       //#debug
-      toDLog().pInit("Init Thread=" + threadRender, null, CanvasAppliInput.class, "Created@354");
+      toDLog().pCreate("Init Thread=" + threadRender, this, CanvasAppliInput.class, "Created@356", LVL_04_FINER, true);
+
    }
 
    /**
@@ -1347,6 +1349,15 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       super.repaint();
    }
 
+   private void runExec(Runnable run, boolean threadSafe) {
+      IExecutor exec = ic.getExecutor();
+      if (threadSafe) {
+         exec.executeWorker(run); //TODO may add an ID for thread worker
+      } else {
+         exec.executeMainLater(run);
+      }
+   }
+
    /**
     * Any code that modifies rendering state must be done here.
     * <br>
@@ -1359,11 +1370,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       } else if (threadRender != null) {
          render.queueRun(run);
       } else {
-         if (threadSafe) {
-            ic.getWorkerThreadInput().addToQueue(run);
-         } else {
-            ic.callSerially(run);
-         }
+         runExec(run, threadSafe);
       }
    }
 
@@ -1385,11 +1392,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
       } else if (threadUpdate != null) {
          updater.queueRun(run);
       } else {
-         if (threadSafe) {
-            ic.getWorkerThreadInput().addToQueue(run);
-         } else {
-            ic.callSerially(run);
-         }
+         runExec(run, threadSafe);
       }
    }
 
@@ -1651,9 +1654,9 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
 
    }
 
-   protected void stateWriteToParamSub(StatorWriter state) {
+   public void stateWriteToParamSub(StatorWriter state) {
       super.stateWriteToParamSub(state);
-      ((StatorWriterBO) state).writeByteObject(boCanvasAppli); //it is not null
+      ((StatorWriterBO) state).dataWriteByteObject(boCanvasAppli); //it is not null
    }
 
    //#mdebug

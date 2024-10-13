@@ -7,6 +7,7 @@ import pasa.cbentley.framework.core.ui.src4.event.BEvent;
 import pasa.cbentley.framework.core.ui.src4.event.DeviceEventGroup;
 import pasa.cbentley.framework.core.ui.src4.event.RepeatEvent;
 import pasa.cbentley.framework.core.ui.src4.input.InputState;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechCodes;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.event.jobs.BaseJob;
 import pasa.cbentley.framework.input.src4.event.jobs.JobsEventRunner;
@@ -202,5 +203,9 @@ public class InputStateCanvas extends InputState {
 
    }
    //#enddebug
+
+
+
+
 
 }

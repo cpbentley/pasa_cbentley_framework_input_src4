@@ -6,9 +6,9 @@ import pasa.cbentley.byteobjects.src4.ctx.IConfigBO;
 import pasa.cbentley.byteobjects.src4.ctx.IStaticIDsBO;
 import pasa.cbentley.core.src4.ctx.CtxManager;
 import pasa.cbentley.core.src4.ctx.ICtx;
+import pasa.cbentley.core.src4.interfaces.IExecutor;
 import pasa.cbentley.core.src4.interfaces.ITimeCtrl;
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.core.src4.thread.WorkerThread;
 import pasa.cbentley.framework.core.framework.src4.ctx.CoreFrameworkCtx;
 import pasa.cbentley.framework.core.ui.src4.ctx.CoreUiCtx;
 import pasa.cbentley.framework.core.ui.src4.tech.IBOCanvasHost;
@@ -29,8 +29,6 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
    private BOModuleInput            boModule;
 
    protected final CoreFrameworkCtx cfc;
-
-   private WorkerThread             workerThread;
 
    /**
     * Creates an {@link InputCtx} with the default configuration {@link ConfigInputDefault}
@@ -60,7 +58,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
       }
 
       //#debug
-      toDLog().pInit("", this, InputCtx.class, "Created@65", LVL_04_FINER, true);
+      toDLog().pCreate("", this, InputCtx.class, "Created@65", LVL_05_FINE, true);
    }
 
    protected void applySettings(ByteObject settingsNew, ByteObject settingsOld) {
@@ -68,11 +66,6 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
       //#debug
       toDLog().pFlow("", null, InputCtx.class, "applySettings", LVL_04_FINER, true);
 
-   }
-
-   //TODO remove use executor directly
-   public void callSerially(Runnable runnable) {
-      cfc.getCUC().getExecutor().executeMainLater(runnable);
    }
 
    /**
@@ -86,6 +79,34 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
       ByteObject tech = cfc.getBOC().getByteObjectFactory().createByteObject(type, size);
       setTechCanvasAppliDefault(tech);
       return tech;
+   }
+
+   /**
+    * Parameters used when no {@link IBOCanvasHost} is explicitely define when a {@link CanvasAppliInput}
+    * is created.
+    * @return
+    */
+   public ByteObject createBOTechCanvasAppliDefault() {
+
+      int type = IBOTypesInput.TYPE_1_CANVAS_APPLI;
+      int size = IBOCanvasAppli.CANVAS_APP_BASIC_SIZE;
+      //
+      ByteObject tech = cfc.getBOC().getByteObjectFactory().createByteObject(type, size);
+
+      ByteObject ctxSettings = this.getBOCtxSettings();
+      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1, ctxSettings.get1(CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1));
+      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_04_SCREEN_MODE1, ctxSettings.get1(CTX_INPUT_OFFSET_03_CANVAS_DEFAULT_SCREEN_MODE1));
+      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_05_DEBUG_FLAGS1, ctxSettings.get1(CTX_INPUT_OFFSET_04_CANVAS_DEFAULT_DEBUG_FLAGS1));
+      tech.set4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4, ctxSettings.get1(CTX_INPUT_OFFSET_05_CANVAS_DEFAULT_BG_COLOR4));
+      return tech;
+   }
+
+   /**
+   * Convenience method for executing
+   * @param runnable
+   */
+   public void executeMainLater(Runnable runnable) {
+      cfc.getCUC().getExecutor().executeMainLater(runnable);
    }
 
    public void exitInputContext() {
@@ -129,39 +150,12 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
       return cfc.getCUC();
    }
 
-   public CoreFrameworkCtx getHOC() {
-      return cfc;
-   }
-
-   /**
-    * Parameters used when no {@link IBOCanvasHost} is explicitely define when a {@link CanvasAppliInput}
-    * is created.
-    * @return
-    */
-   public ByteObject createBOTechCanvasAppliDefault() {
-
-      int type = IBOTypesInput.TYPE_1_CANVAS_APPLI;
-      int size = IBOCanvasAppli.CANVAS_APP_BASIC_SIZE;
-      //
-      ByteObject tech = cfc.getBOC().getByteObjectFactory().createByteObject(type, size);
-
-      ByteObject ctxSettings = this.getBOCtxSettings();
-      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1, ctxSettings.get1(CTX_INPUT_OFFSET_02_CANVAS_DEFAULT_THREADING_MODE1));
-      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_04_SCREEN_MODE1, ctxSettings.get1(CTX_INPUT_OFFSET_03_CANVAS_DEFAULT_SCREEN_MODE1));
-      tech.set1(IBOCanvasAppli.CANVAS_APP_OFFSET_05_DEBUG_FLAGS1, ctxSettings.get1(CTX_INPUT_OFFSET_04_CANVAS_DEFAULT_DEBUG_FLAGS1));
-      tech.set4(IBOCanvasAppli.CANVAS_APP_OFFSET_06_BG_COLOR4, ctxSettings.get1(CTX_INPUT_OFFSET_05_CANVAS_DEFAULT_BG_COLOR4));
-      return tech;
+   public IExecutor getExecutor() {
+      return cfc.getCUC().getExecutor();
    }
 
    public ITimeCtrl getTimeCtrl() {
       return cfc.getTimeCtrl();
-   }
-
-   public WorkerThread getWorkerThreadInput() {
-      if (workerThread == null) {
-         workerThread = new WorkerThread(getUC());
-      }
-      return workerThread;
    }
 
    protected void matchConfig(IConfigBO config, ByteObject settings) {
@@ -187,7 +181,6 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
       super.toString(dc.sup());
       dc.nlLvl(createBOCanvasAppliDefault(), "createTechCanvasAppliDefault");
       dc.nlLvl(cfc, "cfc");
-      dc.nlLvl(workerThread, "workerThread");
    }
 
    public void toString1Line(Dctx dc) {
