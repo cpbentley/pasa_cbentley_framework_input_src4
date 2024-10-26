@@ -1,17 +1,16 @@
 package pasa.cbentley.framework.input.src4.game;
 
-import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.core.src4.logging.IDLog;
 import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 
 /**
  * Owner of a frame data? Canvas? TODO
  * @author Charles Bentley
  *
  */
-public class FrameData implements IStringable {
+public class FrameData extends ObjectIC implements IStringable {
 
    public static final float MILLISECONDS_IN_A_SECOND = 1000;
 
@@ -34,8 +33,6 @@ public class FrameData implements IStringable {
 
    private float             hertzUpdate;
 
-   protected final InputCtx  ic;
-
    private float             interpolation;
 
    private int               maxUpdateStepsWithoutRender;
@@ -57,9 +54,9 @@ public class FrameData implements IStringable {
    /**
     * Nano seconds between updates
     */
-   private double            timeNsBetweenUpdates;
+   private double            timeNanoBetweenUpdates;
 
-   private double            timeNsTargetBetweenRenders;
+   private double            timeNanoTargetBetweenRenders;
 
    private double            timeThisFrame;
 
@@ -68,7 +65,7 @@ public class FrameData implements IStringable {
    private int               updateID;
 
    public FrameData(InputCtx ic) {
-      this.ic = ic;
+      super(ic);
       maxUpdateStepsWithoutRender = 4;
       setHertzRender(60.0f);
       setHertzUpdate(30.0f);
@@ -80,8 +77,8 @@ public class FrameData implements IStringable {
    public void avoidCatchUp() {
       //If for some reason an update takes forever, we don't want to do an insane number of catchups.
       //If you were doing some sort of game that needed to keep EXACT time, you would get rid of this.
-      if (timeDiffSinceLastUpdate > timeNsBetweenUpdates) {
-         timeLastUpdate = timeThisFrame - timeNsBetweenUpdates;
+      if (timeDiffSinceLastUpdate > timeNanoBetweenUpdates) {
+         timeLastUpdate = timeThisFrame - timeNanoBetweenUpdates;
       }
    }
 
@@ -90,15 +87,15 @@ public class FrameData implements IStringable {
     */
    public void computeInterpolation() {
       //
-      interpolation = Math.min(1.0f, (float) (timeDiffSinceLastUpdate / timeNsBetweenUpdates));
-   }
-
-   public float getElapsedTimeNs() {
-      return (float) timeNsBetweenUpdates;
+      interpolation = Math.min(1.0f, (float) (timeDiffSinceLastUpdate / timeNanoBetweenUpdates));
    }
 
    public float getElapsedTimeMs() {
-      return (float) timeNsBetweenUpdates / 1000000f;
+      return (float) timeNanoBetweenUpdates / 1000000f;
+   }
+
+   public float getElapsedTimeNs() {
+      return (float) timeNanoBetweenUpdates;
    }
 
    public int getFPS() {
@@ -127,12 +124,16 @@ public class FrameData implements IStringable {
       return (float) timeDiffSinceLastUpdate / 1000000f;
    }
 
+   public int getMillisFromNanos(double nanos) {
+      return (int) (nanos / 1000000d);
+   }
+
    public float getTimeBetweenUpdates() {
-      return (float) timeNsBetweenUpdates;
+      return (float) timeNanoBetweenUpdates;
    }
 
    public float getTimeTargetBetweenRenders() {
-      return (float) timeNsTargetBetweenRenders;
+      return (float) timeNanoTargetBetweenRenders;
    }
 
    public int getUpdateID() {
@@ -147,8 +148,8 @@ public class FrameData implements IStringable {
    }
 
    public boolean isSleeping() {
-      if (timeThisFrame - timeLastRender < timeNsTargetBetweenRenders) {
-         if (timeDiffSinceLastUpdate < timeNsBetweenUpdates) {
+      if (timeThisFrame - timeLastRender < timeNanoTargetBetweenRenders) {
+         if (timeDiffSinceLastUpdate < timeNanoBetweenUpdates) {
             return true;
          }
       }
@@ -156,7 +157,7 @@ public class FrameData implements IStringable {
    }
 
    public boolean isUpdating() {
-      if (timeDiffSinceLastUpdate > timeNsBetweenUpdates) {
+      if (timeDiffSinceLastUpdate > timeNanoBetweenUpdates) {
          if (updateCountFrame < maxUpdateStepsWithoutRender) {
             return true;
          }
@@ -188,22 +189,30 @@ public class FrameData implements IStringable {
    public void nextUpdate() {
       updateID++;
       updateCountFrame++;
-      timeLastUpdate += timeNsBetweenUpdates;
-      timeDiffSinceLastUpdate -= timeNsBetweenUpdates;
-   }
-
-   public void setHertzRender(float timesPerSecond) {
-      this.hertzRenderTarget = timesPerSecond;
-      timeNsTargetBetweenRenders = NANOSECONDS_IN_A_SECOND / hertzRenderTarget;
+      timeLastUpdate += timeNanoBetweenUpdates;
+      timeDiffSinceLastUpdate -= timeNanoBetweenUpdates;
    }
 
    /**
-    * Decides the time between updates
-    * @param timesPerSecond
+    * Usually 60 fps.. frames per second
+    * 
+    * @param timesPerSecond number of times per second we want to render
+    */
+   public void setHertzRender(float timesPerSecond) {
+      this.hertzRenderTarget = timesPerSecond;
+      timeNanoTargetBetweenRenders = NANOSECONDS_IN_A_SECOND / hertzRenderTarget;
+   }
+
+   /**
+    * Usually 10 update frames per second.
+    * 
+    * Decides the time between updates.
+    * 
+    * @param timesPerSecond number of times per second we want to update
     */
    public void setHertzUpdate(float timesPerSecond) {
       this.hertzUpdate = timesPerSecond;
-      timeNsBetweenUpdates = NANOSECONDS_IN_A_SECOND / hertzUpdate;
+      this.timeNanoBetweenUpdates = NANOSECONDS_IN_A_SECOND / hertzUpdate;
    }
 
    public void setMaxUpdateStepsWithoutRender(int num) {
@@ -211,7 +220,7 @@ public class FrameData implements IStringable {
    }
 
    public void setTimeBetweenUpdates(float timeBetweenUpdates) {
-      this.timeNsBetweenUpdates = timeBetweenUpdates;
+      this.timeNanoBetweenUpdates = timeBetweenUpdates;
    }
 
    public void setTimeLastRender(float timeLastRender) {
@@ -219,7 +228,7 @@ public class FrameData implements IStringable {
    }
 
    public void setTimeTargetBetweenRenders(float timeTargetBetweenRenders) {
-      this.timeNsTargetBetweenRenders = timeTargetBetweenRenders;
+      this.timeNanoTargetBetweenRenders = timeTargetBetweenRenders;
    }
 
    public void startNew() {
@@ -231,26 +240,15 @@ public class FrameData implements IStringable {
       timeDiffSinceLastUpdate = timeThisFrame - timeLastUpdate;
    }
 
-   public int getMillisFromNanos(double nanos) {
-      return (int) (nanos / 1000000d);
-   }
-
    public void tickFrameTime() {
       timeThisFrame = ic.getTimeCtrl().getTickNano();
    }
 
    //#mdebug
-   public IDLog toDLog() {
-      return toStringGetUCtx().toDLog();
-   }
-
-   public String toString() {
-      return Dctx.toString(this);
-   }
-
    public void toString(Dctx dc) {
-      dc.root(this, FrameData.class, 250);
+      dc.root(this, FrameData.class, toStringGetLine(250));
       toStringPrivate(dc);
+      super.toString(dc.sup());
 
       dc.appendVarWithSpace("interpolation", interpolation);
 
@@ -261,7 +259,7 @@ public class FrameData implements IStringable {
       dc.appendVarWithSpace("fps", fps);
       dc.appendVarWithSpace("fpsLastSecond", fpsLastSecond);
 
-      dc.appendVarWithSpace("timeTargetBetweenRenders", timeNsTargetBetweenRenders);
+      dc.appendVarWithSpace("timeTargetBetweenRenders", timeNanoTargetBetweenRenders);
       dc.appendVarWithSpace("timeThisFrame", timeThisFrame);
       dc.appendVarWithSpace("timeLastRender", timeLastRender);
       dc.appendVarWithSpace("timeLastUpdate", timeLastUpdate);
@@ -271,31 +269,24 @@ public class FrameData implements IStringable {
 
    }
 
-   public String toString1Line() {
-      return Dctx.toString1Line(this);
-   }
-
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, FrameData.class, 277);
+      dc.root1Line(this, FrameData.class, toStringGetLine(250));
       toStringPrivate(dc);
-      dc.appendVarWithSpace("interpolationRatio", getInterpolationRatio(), 2);
+      super.toString1Line(dc.sup1Line());
+
+      dc.appendVarWithSpace("interpolTime", getInterpolationTime(), 2);
+      dc.appendVarWithSpace("interpolRatio", getInterpolationRatio(), 2);
       dc.appendVarWithSpace("diffSinceLastUpdate", getMillisFromNanos(timeDiffSinceLastUpdate));
 
-   }
-
-   public UCtx toStringGetUCtx() {
-      return ic.getUC();
    }
 
    private void toStringPrivate(Dctx dc) {
       dc.appendVarWithSpace("frameID", frameID);
       dc.appendVarWithSpace("updateID", updateID);
       dc.append(" ");
-      dc.append(getMillisFromNanos(timeNsBetweenUpdates));
+      dc.append(getMillisFromNanos(timeNanoBetweenUpdates));
       dc.append(" ms between updates");
-
    }
-
    //#enddebug
 
 }

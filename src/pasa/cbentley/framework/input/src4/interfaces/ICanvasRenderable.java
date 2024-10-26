@@ -1,7 +1,7 @@
 package pasa.cbentley.framework.input.src4.interfaces;
 
 import pasa.cbentley.core.src4.logging.IStringable;
-import pasa.cbentley.framework.core.ui.src4.event.AppliEvent;
+import pasa.cbentley.framework.core.ui.src4.event.EventAppli;
 import pasa.cbentley.framework.core.ui.src4.interfaces.ICanvasAppli;
 import pasa.cbentley.framework.core.ui.src4.interfaces.ICanvasHost;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
@@ -11,7 +11,7 @@ import pasa.cbentley.framework.input.src4.engine.InputStateCanvas;
 /**
  * How does it know it gets resized?
  * <br>
- * {@link AppliEvent}
+ * {@link EventAppli}
  * 
  * <br>
  * How does it access the underlying {@link ICanvasAppli} and {@link ICanvasHost} it is running on?

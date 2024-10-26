@@ -41,6 +41,7 @@ public class BOModuleInput extends BOModuleAbstract {
             dc.rootN(bo, "IBOCanvasAppli");
             int subType = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_02_TYPE_SUB1);
             dc.appendVarWithSpace("subType", subType);
+            
             int threadMode = bo.get1(IBOCanvasAppli.CANVAS_APP_OFFSET_03_THREADING_MODE1);
             dc.appendVarWithNewLine("treadMode", ToStringStaticInput.toStringThreadingMode(threadMode));
             
@@ -53,7 +54,7 @@ public class BOModuleInput extends BOModuleAbstract {
             //look for a sub type string
             if(subType != 0) {
                dc.nl();
-               boc.getBOModuleManager().toStringSubType(dc, bo, subType);
+               //boc.getBOModuleManager().toStringSubType(dc, bo, subType);
             }
             
             break;

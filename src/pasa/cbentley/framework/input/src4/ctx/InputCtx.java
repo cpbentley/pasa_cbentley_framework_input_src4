@@ -64,7 +64,7 @@ public class InputCtx extends ABOCtx implements IBOCtxSettingsInput {
    protected void applySettings(ByteObject settingsNew, ByteObject settingsOld) {
       //default canvas settings are applied when calling method
       //#debug
-      toDLog().pFlow("", null, InputCtx.class, "applySettings", LVL_04_FINER, true);
+      toDLog().pFlow("", null, InputCtx.class, "applySettings@67", LVL_04_FINER, true);
 
    }
 

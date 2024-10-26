@@ -7,6 +7,7 @@ import pasa.cbentley.framework.input.src4.ctx.IBOCtxSettingsInput;
 import pasa.cbentley.framework.input.src4.ctx.IBOTypesInput;
 import pasa.cbentley.framework.input.src4.ctx.IConfigInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
 
 /**
  * The base canvas definition for the {@link InputCtx} module.
@@ -31,6 +32,8 @@ public interface IBOCanvasAppli extends IByteObject {
 
    /**
     * Sub type of canvas
+    * 0 if {@link CanvasAppliInput} ?
+    * 
     */
    public static final int CANVAS_APP_OFFSET_02_TYPE_SUB1       = A_OBJECT_BASIC_SIZE + 1;
 

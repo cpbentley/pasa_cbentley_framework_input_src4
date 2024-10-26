@@ -8,15 +8,12 @@ import pasa.cbentley.core.src4.structs.FiFoQueue;
 import pasa.cbentley.core.src4.structs.IntToStrings;
 import pasa.cbentley.core.src4.structs.synch.MutexSignal;
 import pasa.cbentley.core.src4.utils.BitUtils;
-import pasa.cbentley.core.src4.utils.StringUtils;
 import pasa.cbentley.framework.core.ui.src4.exec.ExecutionContext;
 import pasa.cbentley.framework.core.ui.src4.exec.OutputState;
 import pasa.cbentley.framework.core.ui.src4.input.InputState;
-import pasa.cbentley.framework.core.ui.src4.interfaces.IActionFeedback;
 import pasa.cbentley.framework.core.ui.src4.tech.ITechInputFeedback;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
-import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 import pasa.cbentley.framework.input.src4.interfaces.ITechInputCycle;
 import pasa.cbentley.framework.input.src4.interfaces.ITechScreenResults;
 import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
@@ -35,9 +32,6 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
  * Simple
  * Result of a 
  * <li> {@link MCmd} execution 
- * <br>
- * <br>
- * Implements the {@link IActionFeedback}
  * 
  * @author Charles-Philip Bentley
  *
@@ -229,11 +223,11 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
 
    /**
     * Test flags from {@link OutputStateCanvas}.
-    * <li> {@link IActionFeedback#FLAG_01_ACTION_DONE}
-    * <li> {@link IActionFeedback#FLAG_02_FULL_REPAINT}
-    * <li> {@link IActionFeedback#FLAG_03_MENU_REPAINT}
-    * <li> {@link IActionFeedback#FLAG_04_RENEW_LAYOUT}
-    * <li> {@link IActionFeedback#FLAG_05_USER_MESSAGE}
+    * <li> {@link ITechInputFeedback#FLAG_01_ACTION_DONE}
+    * <li> {@link ITechInputFeedback#FLAG_02_FULL_REPAINT}
+    * <li> {@link ITechInputFeedback#FLAG_03_MENU_REPAINT}
+    * <li> {@link ITechInputFeedback#FLAG_04_RENEW_LAYOUT}
+    * <li> {@link ITechInputFeedback#FLAG_05_USER_MESSAGE}
     * <br>
     * <br>
     * etc
@@ -498,7 +492,7 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
 
    //#mdebug
    public void toString(Dctx dc) {
-      dc.root(this, OutputStateCanvas.class, 530);
+      dc.root(this, OutputStateCanvas.class, toStringGetLine(500));
       toStringPrivate(dc);
       super.toString(dc.sup());
 

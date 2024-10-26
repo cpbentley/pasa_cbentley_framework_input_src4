@@ -9,6 +9,7 @@ import pasa.cbentley.core.src4.logging.IDLog;
 import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.framework.core.ui.src4.input.InputState;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
+import pasa.cbentley.framework.input.src4.ctx.ObjectIC;
 import pasa.cbentley.framework.input.src4.engine.InputStateCanvas;
 import pasa.cbentley.framework.input.src4.game.FrameData;
 import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
@@ -19,14 +20,12 @@ import pasa.cbentley.framework.input.src4.interfaces.ISimulationUpdatable;
  * @author Charles Bentley
  *
  */
-public class Simulation implements IStringable {
+public class Simulation extends ObjectIC implements IStringable {
 
-   private Vector           simObjects = new Vector();
-
-   protected final InputCtx ic;
+   private Vector simObjects = new Vector();
 
    public Simulation(InputCtx ic) {
-      this.ic = ic;
+      super(ic);
    }
 
    /**
@@ -54,36 +53,28 @@ public class Simulation implements IStringable {
    }
 
    //#mdebug
-   public IDLog toDLog() {
-      return toStringGetUCtx().toDLog();
-   }
-
-   public String toString() {
-      return Dctx.toString(this);
-   }
-
    public void toString(Dctx dc) {
-      dc.root(this, Simulation.class, "@line5");
+      dc.root(this, Simulation.class, toStringGetLine(60));
       toStringPrivate(dc);
+      super.toString(dc.sup());
+
+      int num = simObjects.size();
+      dc.appendVar("number of simulations", num);
+      for (int i = 0; i < num; i++) {
+         ISimulationUpdatable e = (ISimulationUpdatable) simObjects.elementAt(i);
+         dc.nlLvl(e, "#" + (i + 1));
+      }
    }
 
-   public String toString1Line() {
-      return Dctx.toString1Line(this);
+   public void toString1Line(Dctx dc) {
+      dc.root1Line(this, Simulation.class, toStringGetLine(60));
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
    }
 
    private void toStringPrivate(Dctx dc) {
 
    }
-
-   public void toString1Line(Dctx dc) {
-      dc.root1Line(this, Simulation.class);
-      toStringPrivate(dc);
-   }
-
-   public UCtx toStringGetUCtx() {
-      return ic.getUC();
-   }
-
    //#enddebug
 
 }

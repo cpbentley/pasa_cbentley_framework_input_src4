@@ -4,6 +4,7 @@ import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.src4.logging.IDLog;
 import pasa.cbentley.core.src4.logging.IStringable;
+import pasa.cbentley.core.src4.logging.LogParameters;
 
 public abstract class ObjectIC implements IStringable {
 
@@ -16,7 +17,7 @@ public abstract class ObjectIC implements IStringable {
    public InputCtx getIC() {
       return ic;
    }
-   
+
    //#mdebug
    public IDLog toDLog() {
       return toStringGetUCtx().toDLog();
@@ -35,20 +36,27 @@ public abstract class ObjectIC implements IStringable {
       return Dctx.toString1Line(this);
    }
 
-   private void toStringPrivate(Dctx dc) {
-
-   }
-
    public void toString1Line(Dctx dc) {
       dc.root1Line(this, ObjectIC.class);
       toStringPrivate(dc);
+   }
+
+   public LogParameters toStringGetLine(Class cl, String method, int value) {
+      return toStringGetUCtx().toStringGetLine(cl, method, value);
+   }
+
+   public String toStringGetLine(int value) {
+      return toStringGetUCtx().toStringGetLine(value);
    }
 
    public UCtx toStringGetUCtx() {
       return ic.getUC();
    }
 
+   private void toStringPrivate(Dctx dc) {
+
+   }
+
    //#enddebug
-   
 
 }

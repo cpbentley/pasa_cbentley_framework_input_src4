@@ -1,6 +1,5 @@
 package pasa.cbentley.framework.input.src4.engine;
 
-import pasa.cbentley.framework.core.ui.src4.input.InputState;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.interfaces.ICanvasRenderable;

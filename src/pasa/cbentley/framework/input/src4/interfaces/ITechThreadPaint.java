@@ -1,6 +1,7 @@
 package pasa.cbentley.framework.input.src4.interfaces;
 
 import pasa.cbentley.byteobjects.src4.core.interfaces.IByteObject;
+import pasa.cbentley.core.src4.interfaces.IHost;
 import pasa.cbentley.core.src4.interfaces.ITech;
 import pasa.cbentley.framework.input.src4.threading.CanvasLoopGame;
 
@@ -32,14 +33,21 @@ public interface ITechThreadPaint extends ITech {
    /**
     * Uses a {@link CanvasLoopGame} single thread.
     * 
-    * 1 Thread
-    * <li>Host UI Events
     * <p>
-    * 1 Thread
+    * <b>Thread #1</b>
+    * <li>Gets UI Events and post them to the UpdateRendering thread.
+    * <li> Its the {@link IHost} own GUI thread. AWT or Fx or SWT
+    * </p>
+    * 
+    * <br>
+    * 
+    * <p>
+    * <b>Thread #2</b> does 
+    * <ul>
     * <li>Update
     * <li>Rendering
     * <li> {@link Runnable}
-    * 
+    * </ul>
     * That thread waits and executes Update and Render jobs from a single queue
     * </p>
     */

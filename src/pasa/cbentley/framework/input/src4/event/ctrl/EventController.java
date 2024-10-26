@@ -28,20 +28,13 @@ public abstract class EventController extends ObjectIC implements IStringable {
    protected CanvasAppliInput  canvas;
 
    /**
-    * The current {@link InputState}. or the image of the whole queue.
-    * <br>
-    * In a single thread there is only a single reference.
-    * <br>
-    * In Mode {@link ITechThreadPaint#THREADING_1_UI_UPDATERENDERING},
-    * the UI thread updates the {@link InputState}
-    * 
-    * <br>
-    * Any thread can get a reference from this. But it is not advisable.
-    * <br>
-    * Depending on the thread model
+    * See {@link EventController#getInputState()}
     */
    protected InputStateCanvas  inputState;
 
+   /**
+    * See {@link EventController#getOutputState()}
+    */
    protected OutputStateCanvas outputState;
 
    public EventController(InputCtx ic, CanvasAppliInput canvas) {
@@ -51,49 +44,56 @@ public abstract class EventController extends ObjectIC implements IStringable {
       outputState = (OutputStateCanvas) canvas.createOutputState();
    }
 
+   /**
+    * The {@link CanvasAppliInput} controlled by this {@link EventController}.
+    * 
+    * @return
+    */
    public CanvasAppliInput getCanvas() {
       return canvas;
    }
 
    /**
     * 
-    * Fetch the current {@link InputStateCanvas}, i.e. the very latest {@link InputStateCanvas}.
-    * <br>
-    * The {@link InputStateCanvas} is updated by the {@link ITechThreadPaint#THREAD_0_HOST_HUI} by external
-    * events.
-    * <br>
-    * In Threading Configuration 
+    * Fetch the lastest current {@link InputStateCanvas}.
+    * 
+    * <p>
+    * 
+    * <li> With {@link ITechThreadPaint#THREAD_0_HOST_HUI} it is updated by external events.
     * <li>{@link ITechThreadPaint#THREADING_1_UI_UPDATERENDERING} 
     * <li>{@link ITechThreadPaint#THREADING_3_THREE_SEPARATE} 
-    * <br>
-    * In Threading Configuration
-    * <li>{@link ITechThreadPaint#THREADING_2_UIUPDATE_RENDERING} 
-    * <br>
-    * Implementation may override for specific behavior.
-    * @return
+    * </p>
+    * 
+    * @return {@link InputStateCanvas}
     */
    public InputStateCanvas getInputState() {
       return inputState;
    }
 
+   /**
+    * 
+    * @return {@link OutputStateCanvas}
+    */
    public OutputStateCanvas getOutputState() {
       return outputState;
    }
 
    /**
+    * The {@link CanvasAppliInput} immediatly forwards {@link BEvent} here to be controlled.
     * 
-    * @param g
+    * @param be
     */
-   public abstract void event(BEvent g);
+   public abstract void event(BEvent be);
 
    /**
     * 
     * @param is
-    * @param g
+    * @param be
     * @return
     */
-   public boolean event(InputState is, BEvent g, CanvasAppliInput canvas) {
-      boolean isAccepted = is.addEvent(g, canvas);
+   public boolean event(InputState is, BEvent be, CanvasAppliInput canvas) {
+      boolean isAccepted = is.addEvent(be, canvas);
+      
       return isAccepted;
    }
 

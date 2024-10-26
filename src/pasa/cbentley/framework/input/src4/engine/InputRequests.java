@@ -10,7 +10,6 @@ import pasa.cbentley.core.src4.structs.IntToObjects;
 import pasa.cbentley.core.src4.structs.listdoublelink.LinkedListDouble;
 import pasa.cbentley.core.src4.structs.listdoublelink.ListElementHolder;
 import pasa.cbentley.framework.core.ui.src4.event.BEvent;
-import pasa.cbentley.framework.core.ui.src4.event.DeviceEventGroup;
 import pasa.cbentley.framework.core.ui.src4.event.EventKey;
 import pasa.cbentley.framework.core.ui.src4.event.GestureArea;
 import pasa.cbentley.framework.core.ui.src4.event.GestureEvent;

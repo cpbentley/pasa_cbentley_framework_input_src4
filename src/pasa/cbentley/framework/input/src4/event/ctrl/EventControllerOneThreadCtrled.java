@@ -25,8 +25,8 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
  * the MIDP thread updates the InputConfig.
  * 
  * Controller command matching codes may run in 3 threads:
- * <br>
- * <br>
+ * <p>
+ * 
  * With the {@link Repeater}.<br>
  * <b>Example with the Drag</b>: <br>
  * <li>Drag #0 on scrollbar is recieved and ignored (perf on slow CPU).
@@ -38,9 +38,13 @@ import pasa.cbentley.framework.input.src4.interfaces.ITechThreadPaint;
  * <li>Drag event #4 recieved. Update x,y of the previous event.
  * <li>Paint finishes
  * <li>Pending drag is process with the #4 x,y.
+ * </p>
  * 
+ * <p>
  * Dropping an Event is user friendly only with continuous events like dragging and navigational keys + other
  * keys that advetise are dropping friendly.
+ * </p>
+ * 
  * @author Charles Bentley
  *
  */

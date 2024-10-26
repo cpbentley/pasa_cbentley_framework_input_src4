@@ -1,5 +1,6 @@
 package pasa.cbentley.framework.input.src4.interfaces;
 
+import pasa.cbentley.core.src4.logging.IStringable;
 import pasa.cbentley.framework.input.src4.game.FrameData;
 
 /**
@@ -13,7 +14,7 @@ import pasa.cbentley.framework.input.src4.game.FrameData;
  * @author Charles Bentley
  *
  */
-public interface ISimulationUpdatable {
+public interface ISimulationUpdatable extends IStringable {
    /**
     * Called when the time has elapsed. The simulation has to update the state of its objects best it can using
     * the {@link FrameData} information.

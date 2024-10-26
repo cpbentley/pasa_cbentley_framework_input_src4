@@ -1,5 +1,6 @@
 package pasa.cbentley.framework.input.src4.engine;
 
+import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.framework.core.ui.src4.exec.ExecutionContext;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 
@@ -20,4 +21,24 @@ public class ExecutionContextCanvas extends ExecutionContext {
    public OutputStateCanvas getOutputStateCanvas() {
       return (OutputStateCanvas) os;
    }
+   
+   //#mdebug
+   public void toString(Dctx dc) {
+      dc.root(this, ExecutionContextCanvas.class, toStringGetLine(30));
+      toStringPrivate(dc);
+      super.toString(dc.sup());
+   }
+
+   public void toString1Line(Dctx dc) {
+      dc.root1Line(this, ExecutionContextCanvas.class, toStringGetLine(30));
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
+   }
+
+   private void toStringPrivate(Dctx dc) {
+      
+   }
+   //#enddebug
+   
+
 }
