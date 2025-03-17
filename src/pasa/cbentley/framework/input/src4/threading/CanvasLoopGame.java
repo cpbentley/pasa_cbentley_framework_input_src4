@@ -82,7 +82,7 @@ public abstract class CanvasLoopGame extends CanvasLoop {
       ExecutionContextCanvas ec = canvas.createExecutionContextEvent();
       OutputStateCanvas os = ec.getOutputStateCanvas();
       //#debug
-      toDLog().pFlow("", this, CanvasLoopGame.class, "input@99", LVL_04_FINER, DEV_X_ONELINE_THRE);
+      toDLog().pFlow("", this, CanvasLoopGame.class, "input@99", LVL_04_FINER, DEV_X_ONELINE_THREAD);
 
       //TODO what about a final input state version?
 
@@ -117,7 +117,7 @@ public abstract class CanvasLoopGame extends CanvasLoop {
 
    public void simulationRender() {
       //#debug
-      toDLog().pFlow("avoidRender=" + isAvoidRender, this, CanvasLoopGame.class, "simulationRender@122", LVL_04_FINER, DEV_X_ONELINE_THRE);
+      toDLog().pFlow("avoidRender=" + isAvoidRender, this, CanvasLoopGame.class, "simulationRender@122", LVL_04_FINER, DEV_X_ONELINE_THREAD);
       if (isAvoidRender) {
          return;
       }

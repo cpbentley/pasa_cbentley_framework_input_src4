@@ -4,7 +4,7 @@ import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.framework.core.ui.src4.event.BEvent;
 import pasa.cbentley.framework.core.ui.src4.event.RepeatEvent;
 import pasa.cbentley.framework.core.ui.src4.input.InputState;
-import pasa.cbentley.framework.core.ui.src4.tech.IInput;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechInput;
 import pasa.cbentley.framework.input.src4.ctx.InputCtx;
 import pasa.cbentley.framework.input.src4.engine.CanvasAppliInput;
 import pasa.cbentley.framework.input.src4.interfaces.IJobEvent;
@@ -128,7 +128,7 @@ public class RepeatJob extends TimerJob implements IJobEvent {
 
    private void nextRun() {
       int val = er.incrementSyncCount();
-      if (er.getRepeatType() != IInput.REPEAT_0_INFINITE && val >= er.getTarget()) {
+      if (er.getRepeatType() != ITechInput.REPEAT_0_INFINITE && val >= er.getTarget()) {
          er.setCanceled();
          setState(ITechInputJob.JOB_STATE_3_FINALIZED);
       }

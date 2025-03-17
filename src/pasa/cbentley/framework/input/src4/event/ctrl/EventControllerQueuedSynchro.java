@@ -58,7 +58,7 @@ public class EventControllerQueuedSynchro extends EventController {
 
    public synchronized void event(BEvent event) {
       //#debug
-      toDLog().pFlow("Enqueued", event, EventControllerQueuedSynchro.class, "event@62", LVL_04_FINER, DEV_X_ONELINE_THRE);
+      toDLog().pFlow("Enqueued", event, EventControllerQueuedSynchro.class, "event@62", LVL_04_FINER, DEV_X_ONELINE_THREAD);
 
       inputQueueFresh.put(event);
 
@@ -73,7 +73,7 @@ public class EventControllerQueuedSynchro extends EventController {
     */
    public synchronized InputStateCanvas getInputState() {
       //#debug
-      toDLog().pFlow("numInQueue="+inputQueueFresh.size(), this, EventControllerQueuedSynchro.class, "getState@62", LVL_04_FINER, DEV_X_ONELINE_THRE);
+      toDLog().pFlow("numInQueue="+inputQueueFresh.size(), this, EventControllerQueuedSynchro.class, "getState@62", LVL_04_FINER, DEV_X_ONELINE_THREAD);
 
       Object ev = inputQueueFresh.getHead();
       if (ev != null) {

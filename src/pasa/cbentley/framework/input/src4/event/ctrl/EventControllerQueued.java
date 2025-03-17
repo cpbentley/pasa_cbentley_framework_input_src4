@@ -65,7 +65,7 @@ public class EventControllerQueued extends EventController {
 
    public void event(BEvent g) {
       //#debug
-      toDLog().pFlow("msg", this, EventControllerQueued.class, "getNextInputState@85", LVL_04_FINER, DEV_X_ONELINE_THRE);
+      toDLog().pFlow("msg", this, EventControllerQueued.class, "getNextInputState@85", LVL_04_FINER, DEV_X_ONELINE_THREAD);
 
       InputStateCanvas is = getNextInputState();
       boolean isAccepted = super.event(is, g, canvas);
@@ -82,7 +82,7 @@ public class EventControllerQueued extends EventController {
     */
    private synchronized InputStateCanvas getNextInputState() {
       //#debug
-      toDLog().pFlow("msg", this, EventControllerQueued.class, "getNextInputState@85", LVL_04_FINER, DEV_X_ONELINE_THRE);
+      toDLog().pFlow("msg", this, EventControllerQueued.class, "getNextInputState@85", LVL_04_FINER, DEV_X_ONELINE_THREAD);
       if (lastKnownStateAvailable != null) {
          InputStateCanvas is = lastKnownStateAvailable;
          lastKnownStateAvailable = null;

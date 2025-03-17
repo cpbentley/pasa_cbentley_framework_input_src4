@@ -26,7 +26,7 @@ import pasa.cbentley.framework.core.ui.src4.input.ScreenOrientationCtrl;
 import pasa.cbentley.framework.core.ui.src4.interfaces.ICanvasAppli;
 import pasa.cbentley.framework.core.ui.src4.interfaces.ITechSenses;
 import pasa.cbentley.framework.core.ui.src4.tech.IBOCanvasHost;
-import pasa.cbentley.framework.core.ui.src4.tech.IInput;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechInput;
 import pasa.cbentley.framework.core.ui.src4.tech.ITechEvent;
 import pasa.cbentley.framework.core.ui.src4.tech.ITechFeaturesCanvas;
 import pasa.cbentley.framework.core.ui.src4.tech.ITechHostUI;
@@ -592,10 +592,10 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    protected void ctrlKey(ExecutionContextCanvas ec, InputStateCanvas is, OutputStateCanvas sr) {
       int mod = is.getMode();
       switch (mod) {
-         case IInput.MOD_0_PRESSED:
+         case ITechInput.MOD_0_PRESSED:
             ctrlKeyPressed(ec, is, sr);
             break;
-         case IInput.MOD_1_RELEASED:
+         case ITechInput.MOD_1_RELEASED:
             ctrlKeyReleased(is, sr);
             break;
          default:
@@ -630,16 +630,16 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
 
       int mod = is.getMode();
       switch (mod) {
-         case IInput.MOD_0_PRESSED:
+         case ITechInput.MOD_0_PRESSED:
             ctrlPointerPressed(ec, is, sr);
             break;
-         case IInput.MOD_1_RELEASED:
+         case ITechInput.MOD_1_RELEASED:
             ctrlPointerReleased(ec, is, sr);
             break;
-         case IInput.MOD_3_MOVED:
+         case ITechInput.MOD_3_MOVED:
             ctrlPointerMoved(ec, is, sr);
             break;
-         case IInput.MOD_5_WHEELED:
+         case ITechInput.MOD_5_WHEELED:
             ctrlPointerWheeled(ec, is, sr);
             break;
          default:
@@ -699,12 +699,15 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
    protected void eventToCanvas(BEvent ev) {
 
       //#debug
-      toDLog().pEvent("", ev, CanvasAppliInput.class, "eventToCanvas@653", LVL_04_FINER, DEV_4_THREAD);
+      toDLog().pEvent("START ->", ev, CanvasAppliInput.class, "eventToCanvas@"+toStringGetLine(700), LVL_04_FINER, DEV_X_ONELINE_THREAD);
 
       eventController.event(ev);
 
       //release lock
       //so when another tread wants it need to acquire lock ?
+
+      //#debug
+      toDLog().pEvent("END ->", ev, CanvasAppliInput.class, "eventToCanvas@"+toStringGetLine(700), LVL_04_FINER, DEV_X_ONELINE_THREAD);
 
    }
 
@@ -720,7 +723,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
 
    public void fixRotation(DeviceEventXY dex) {
       if (screenCtrl != null) {
-         if (dex.getDeviceMode() != IInput.MOD_5_WHEELED) {
+         if (dex.getDeviceMode() != ITechInput.MOD_5_WHEELED) {
             int x = dex.getX();
             int y = dex.getY();
             dex.updateX(screenCtrl.rotationXChange(x, y));
@@ -1256,7 +1259,7 @@ public abstract class CanvasAppliInput extends CanvasAppliAbstract implements IC
     */
    public void processInputStateContinuous(InputState is) {
       //#debug
-      toDLog().pFlow("", this, CanvasAppliInput.class, "processInputStateContinuous@" + toStringGetLine(1268), LVL_05_FINE, DEV_X_ONELINE_THRE);
+      toDLog().pFlow("", this, CanvasAppliInput.class, "processInputStateContinuous@" + toStringGetLine(1268), LVL_05_FINE, DEV_X_ONELINE_THREAD);
    }
 
    /**

@@ -14,6 +14,11 @@ public class ExecutionContextCanvas extends ExecutionContext {
       this.ic = ic;
    }
 
+   public void endRender() {
+      OutputStateCanvas os = getOutputStateCanvas();
+      os.endRender();
+   }
+
    public InputStateCanvas getInputStateCanvas() {
       return (InputStateCanvas) is;
    }
@@ -21,7 +26,12 @@ public class ExecutionContextCanvas extends ExecutionContext {
    public OutputStateCanvas getOutputStateCanvas() {
       return (OutputStateCanvas) os;
    }
-   
+
+   public void startRender() {
+      OutputStateCanvas os = getOutputStateCanvas();
+
+   }
+
    //#mdebug
    public void toString(Dctx dc) {
       dc.root(this, ExecutionContextCanvas.class, toStringGetLine(30));
@@ -36,9 +46,8 @@ public class ExecutionContextCanvas extends ExecutionContext {
    }
 
    private void toStringPrivate(Dctx dc) {
-      
+
    }
    //#enddebug
-   
 
 }

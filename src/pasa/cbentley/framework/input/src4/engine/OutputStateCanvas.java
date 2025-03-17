@@ -73,12 +73,16 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
     */
    private ExecutionContext   exctx;
 
+   protected final InputCtx   ic;
+
    private OutputStateCanvas  linked;
 
    /**
     * TODO deals with multiple locks. use semaphore
     */
    protected Object           lock;
+
+   private RepaintHelper      repaintCtrl;
 
    /**
     * 
@@ -110,10 +114,6 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
 
    private volatile boolean   waiters = false;
 
-   protected final InputCtx   ic;
-
-   private RepaintHelper        repaintCtrl;
-
    public OutputStateCanvas(InputCtx ic, CanvasAppliInput canvas) {
       this(ic, canvas, CYCLE_0_USER_EVENT);
    }
@@ -138,7 +138,7 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
          setFlag(ITechScreenResults.FLAG_15_LOCK, true);
       }
       resetAll();
-      
+
       //repaintCtrl = canvas.createRepaintHelper();
    }
 
@@ -148,7 +148,9 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
 
    public void actionDone(Object o, int type) {
       if (o == null) {
-         setActionDoneRepaint(BitUtils.hasFlag(type, FLAG_01_ACTION_DONE), BitUtils.hasFlag(type, FLAG_02_FULL_REPAINT));
+         boolean isActionDone = BitUtils.hasFlag(type, FLAG_01_ACTION_DONE);
+         boolean isFullRepaint = BitUtils.hasFlag(type, FLAG_02_FULL_REPAINT);
+         setActionDoneRepaint(isActionDone, isFullRepaint);
       }
    }
 
@@ -166,15 +168,6 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
 
    public void addRun(Runnable d) {
       runUpdates.put(d);
-   }
-
-   /**
-    * Will not be added if it is already there
-    * @param actionStr debug string of the action
-    */
-   public void debugSetActionDoneRepaint(String actionStr) {
-      setActionString(actionStr);
-      setActionDoneRepaint();
    }
 
    public IntToStrings getActionStrs() {
@@ -291,24 +284,28 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
       return this.resultFlags != 0;
    }
 
-   public void merge(OutputStateCanvas sr) {
+   /**
+    * Merge values from input {@link OutputStateCanvas} into this instance.
+    * @param os
+    */
+   public void merge(OutputStateCanvas os) {
       //simplest is when there is a full repaint.
-      if (sr.hasResultFlag(FLAG_02_FULL_REPAINT)) {
+      if (os.hasResultFlag(FLAG_02_FULL_REPAINT)) {
          this.setFlag(FLAG_02_FULL_REPAINT, true);
       }
-      if (sr.hasResultFlag(FLAG_05_USER_MESSAGE)) {
-         this.screenMessage = sr.screenMessage;
-         this.screenMessageTimeOut = sr.screenMessageTimeOut;
+      if (os.hasResultFlag(FLAG_05_USER_MESSAGE)) {
+         this.screenMessage = os.screenMessage;
+         this.screenMessageTimeOut = os.screenMessageTimeOut;
       }
       //at least one lock is requested
-      if (sr.hasResultFlag(ITechScreenResults.FLAG_15_LOCK)) {
+      if (os.hasResultFlag(ITechScreenResults.FLAG_15_LOCK)) {
          this.setFlag(ITechScreenResults.FLAG_15_LOCK, true);
       }
-      linked = sr;
-      mergeSub(sr);
+      linked = os;
+      mergeSub(os);
    }
 
-   public void mergeSub(OutputStateCanvas sr) {
+   protected void mergeSub(OutputStateCanvas sr) {
 
    }
 
@@ -318,7 +315,7 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
     * <br>
     * 
     */
-   public void paintEnd() {
+   public void endRender() {
       setFlag(ITechScreenResults.FLAG_06_ACTIVE, false);
       //
       if (hasResultFlag(FLAG_15_SCREEN_LOCK)) {
@@ -363,7 +360,13 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
       screenMessageTimeOut = 0;
    }
 
+   /**
+    * Sets the flag {@link ITechInputFeedback#FLAG_01_ACTION_DONE} to true.
+    */
    public void setActionDone() {
+      //#debug
+      toDLog().pSet("true", this, toStringGetLine(OutputStateCanvas.class, "setActionDone", 370), LVL_03_FINEST, true);
+      
       setFlag(FLAG_01_ACTION_DONE, true);
    }
 
@@ -376,8 +379,8 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
     * However when UP and DOWN are pressed together, they may generated 2 action done on the same loop
     */
    public void setActionDoneRepaint() {
-      setFlag(FLAG_01_ACTION_DONE, true);
-      setFlag(FLAG_02_FULL_REPAINT, true);
+      this.setActionDone();
+      this.setFullRepaint();
    }
 
    public void setActionDoneRepaint(boolean done, boolean repaint) {
@@ -445,8 +448,8 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
       screenMessageTimeOut = timeout;
       screenMessage = string;
       screenMessageAnchor = anchor;
-      setFlag(FLAG_01_ACTION_DONE, true);
-      setFlag(FLAG_02_FULL_REPAINT, true);
+      setActionDone();
+      setFullRepaint();
    }
 
    /**
@@ -564,5 +567,14 @@ public class OutputStateCanvas extends OutputState implements ITechInputFeedback
       return "";
    }
    //#enddebug
+
+   /**
+    * Will not be added if it is already there
+    * @param actionStr debug string of the action
+    */
+   public void toStringSetActionDoneRepaint(String actionStr) {
+      setActionString(actionStr);
+      setActionDoneRepaint();
+   }
 
 }
